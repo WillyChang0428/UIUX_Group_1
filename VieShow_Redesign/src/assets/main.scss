@@ -1,0 +1,5 @@
+// 1. 先引入你的自定義變數
+@import "./variables";
+
+// 2. 引入 Bootstrap 的原始碼 (這行會去 node_modules 抓檔案)
+@import "bootstrap/scss/bootstrap";
