@@ -10,4 +10,6 @@ npm install vite@latest vue-router pinia bootstrap -D sass
 
 vite原先的style.css不要用，直接用_variable.scss和main.scss設定bs
 
-_variable.scss 根據Figma設計規範去設定樣式
+variable.scss 根據Figma設計規範去設定樣式
+layout資料夾放不會隨著頁面不同而改變的重複性區塊，而隨頁面不同而切換的內容，放到views資料夾
+
