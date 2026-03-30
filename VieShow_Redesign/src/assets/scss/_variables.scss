@@ -72,5 +72,12 @@ $input-focus-border-color: $primary;
 
 // =============================================================================
 // ⚠️ 注意：此檔案結尾不需 import bootstrap，
-// 所有的整合請在 all.scss 中完成。
+// 所有的整合請在 main.scss 中完成。
 // =============================================================================
+@import "bootstrap/scss/functions";
+
+// 6. 載入 Bootstrap 的數據 (它會偵測上面的 $primary，如果有的話就用你的)
+@import "bootstrap/scss/variables";
+
+// 7. 載入 Bootstrap 的工具 (它會拿著上面的數據來生成工具)
+@import "bootstrap/scss/mixins";
