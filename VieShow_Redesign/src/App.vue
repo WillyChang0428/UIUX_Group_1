@@ -1,14 +1,13 @@
-<script setup>
-
-</script>
-
 <template>
-  <div id="app">
-    <router-view></router-view>
-    <div class="btn btn-tertiary">4654564</div>
-    </div>
+  <div class="app">
+    <MovieInfoBar />
+  </div>
 </template>
 
+<script setup>
+import MovieInfoBar from './components/Booking/FastBooking/SelectedInfoCard.vue'
+</script>
+
 <style>
-/* 你的全域樣式 */
+
 </style>
