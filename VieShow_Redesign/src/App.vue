@@ -1,12 +1,10 @@
 <script setup>
-
+import SignUpStepHeader from "./components/Layout/Parts/SignUpStepHeader.vue";
 </script>
 
 <template>
-  <div id="app">
-    <router-view></router-view>
-    <div class="btn btn-tertiary">4654564</div>
-    </div>
+  <SignUpStepHeader />
+  <router-view></router-view>
 </template>
 
 <style>
