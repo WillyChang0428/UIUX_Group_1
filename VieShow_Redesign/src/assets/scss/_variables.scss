@@ -1,6 +1,26 @@
 $white: #fff;
 $black: #000;
 
+// --- 漸層色系統 (Gradients) ---
+
+// 深色背景漸層 (適用於 Section 背景、卡片底色)
+// 由 #0F1115 與 #1E2025 交錯組成，營造深邃感
+$vieshow-gradient-dark: linear-gradient(
+  180deg, 
+  #0F1115 0%, 
+  #1E2025 31%, 
+  #0F1115 65%, 
+  #1E2025 100%
+);
+
+// 品牌藍漸層 (適用於 Primary 按鈕、標題強調)
+// 由深藍 #2660A9 到亮藍 #2F96EE
+$vieshow-gradient-primary: linear-gradient(
+  180deg, 
+  #2660A9 0%, 
+  #2F96EE 100%
+);
+
 // 1. 基礎色彩變數定義 (從 Figma Tokens 提取)
 $vieshow-primary:       #2F96EE;
 $vieshow-primary-dark:  #2A72CC;
@@ -48,13 +68,17 @@ $border-radius-xl:    2.5rem;   // 40px (自定義擴充)
 $border-radius-pill:  999px;
 
 // 5. 字體大小設定 (以 Desktop 為基準，建議使用 rem)
-$font-size-base:      1.125rem; // 18px
-$font-size-sm:        1rem;     // 16px
-$font-size-mini:      0.875rem; // 14px (自定義擴充)
+$display-font-sizes: (
+  1: 5rem,      // 80px (自定義擴充，適合超大電影標題)
+  2: 3.75rem,   // 60px (對應你的 H2 大標)
+  3: 3rem,      // 48px (對應你的 H4 大標)
+  4: 2.125rem,  // 34px (對應你原始的 h2-font-size) [cite: 202]
+  5: 1.625rem,  // 26px (對應你原始的 h4-font-size) [cite: 202]
+  6: 1.375rem   // 22px (對應你原始的 h5-font-size) [cite: 202]
+);
 
-$h2-font-size:        2.125rem; // 34px
-$h4-font-size:        1.625rem; // 26px
-$h5-font-size:        1.375rem; // 22px
+// 確保開啟響應式字體縮放 (預設為 true，建議保留)
+$enable-rfs: true;
 
 // 6. 間距系統 (Spacers) - 對應 Figma 的 Gap/spacing
 // Bootstrap 預設使用 $spacer: 1rem (16px)
@@ -77,6 +101,14 @@ $border-widths: (
   1: 1px,
   2: 2px
 );
+
+// --- 觸控範圍設定 (Touch Target) ---
+// 根據設計稿設定 45px 觸控範圍
+$touch-target-size: 45px; 
+
+// 計算所需的內距 (假設 Icon 本身是 24px)
+// (45px - 24px) / 2 = 10.5px
+$icon-touch-padding: 0.656rem; // 約 10.5px
 
 // --- 1. 全域元件字體轉換 (px to rem) ---
 // 假設 1rem = 16px (若你之前設定 base 為 18px，請依比例調整)

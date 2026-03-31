@@ -10,6 +10,25 @@
 // 4. 元件級樣式 (新增這一行)
 @import "./components/header";
 
+// 讓 Icon 擁有 45x45 的觸控熱區，但不影響視覺對齊
+.clickable-icon {
+  width: $touch-target-size;
+  height: $touch-target-size;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0; // 清除按鈕預設內距
+  color: inherit;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
 // 自定義按鈕尺寸擴充
 .btn-mini {
   padding: $btn-padding-y-mini $btn-padding-x-mini;

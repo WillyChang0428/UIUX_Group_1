@@ -1,11 +1,11 @@
 <script setup>
-
+import Header from './components/Layout/Parts/Header.vue'
 </script>
 
 <template>
   <div id="app">
     <router-view></router-view>
-    <div class="btn btn-tertiary">4654564</div>
+    <Header />
     </div>
 </template>
 
