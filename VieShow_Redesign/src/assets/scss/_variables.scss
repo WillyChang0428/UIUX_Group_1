@@ -180,6 +180,10 @@ $web-bottom-padding-mobile: 36px;
 $web-top-padding-pc:        86px;
 $web-bottom-padding-pc:     96px;
 
+
+
+//設定手機版最大寬度
+$mobile-max-width: 576px;
 // =============================================================================
 // ⚠️ 注意：此檔案結尾不需 import bootstrap，
 // =============================================================================
@@ -190,3 +194,4 @@ $web-bottom-padding-pc:     96px;
 
 // 7. 載入 Bootstrap 的工具 (它會拿著上面的數據來生成工具)
 @import "bootstrap/scss/mixins";
+
