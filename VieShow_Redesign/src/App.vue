@@ -1,12 +1,14 @@
 <script setup>
+
 </script>
 
 <template>
-<div class="btn btn-primary">123</div>
-<router-view />
-  
+  <div id="app">
+    <router-view></router-view>
+    
+    </div>
 </template>
 
-<style scoped lang="scss">
-
+<style>
+/* 你的全域樣式 */
 </style>
