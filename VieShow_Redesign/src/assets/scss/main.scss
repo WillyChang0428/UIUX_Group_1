@@ -1,5 +1,53 @@
-// 1. 先引入你的自定義變數
-@import "./variables";
+// 1. 先引入你的變數
+@import "variables";
 
-// 2. 引入 Bootstrap 的原始碼 (這行會去 node_modules 抓檔案)
+// 2. 引入 Bootstrap
 @import "bootstrap/scss/bootstrap";
+
+// 3. 引入其他自定義樣式
+// @import "common";
+
+// 4. 元件級樣式 (新增這一行)
+@import "./components/navbar";
+
+// 自定義按鈕尺寸擴充
+.btn-mini {
+  padding: $btn-padding-y-mini $btn-padding-x-mini;
+  font-size: 1rem; // 16px
+}
+
+.btn-label {
+  padding: $btn-padding-y-label $btn-padding-x-label;
+  font-size: 0.875rem; // 14px
+  pointer-events: none; // 如果 Label 只是標籤不可點擊
+}
+
+// 強制修正 Bootstrap Container 左右間距
+.container, .container-fluid {
+  padding-right: $container-padding-mobile;
+  padding-left: $container-padding-mobile;
+
+  @include media-breakpoint-up(md) {
+    padding-right: $container-padding-pc;
+    padding-left: $container-padding-pc;
+  }
+}
+
+// 全域頁面主容器樣式 (應用於 App.vue 或 Layout 元件)
+.main-wrapper {
+  padding-top: $web-top-padding-mobile;
+  padding-bottom: $web-bottom-padding-mobile;
+
+  @include media-breakpoint-up(md) {
+    padding-top: $web-top-padding-pc;
+    padding-bottom: $web-bottom-padding-pc;
+  }
+}
+
+// 放在所有 @import 之後
+@include media-breakpoint-down(md) {
+  :root {
+    --bs-border-radius: 0.5rem; 
+    // 你也可以在這裡放其他行動端的覆寫
+  }
+}

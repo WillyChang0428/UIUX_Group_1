@@ -1,74 +1,152 @@
-// =============================================================================
-// 1. 顏色系統 (Color System) - 根據 Figma 定義主色調
-// =============================================================================
-// 我們直接定義變數名稱，Bootstrap 會透過 !default 機制優先採用這裡的值
+$white: #fff;
+$black: #000;
 
-$primary:    #E50914; // 電影院經典紅 (Netflix Red)
-$secondary:  #222222; // 深灰色 (用於次要按鈕或背景)
-$success:    #46D369; // 成功狀態 (如：訂票成功、位子可選)
-$danger:     #D32F2F; // 錯誤狀態 (如：位子已售罄)
-$warning:    #FFC107; // 警告狀態 (如：剩餘位子極少)
-$info:       #29B6F6;
+// 1. 基礎色彩變數定義 (從 Figma Tokens 提取)
+$vieshow-primary:       #2F96EE;
+$vieshow-primary-dark:  #2A72CC;
+$vieshow-dark:          #1E2025;
+$vieshow-dark-section:  #2C2C2C;
+$vieshow-secondary-emp: #4A4A4A;
+$vieshow-secondary:     #9E9E9E;
+$vieshow-tertiary:      #C9C9C9;
+$vieshow-warning:       #EEB100;
+$vieshow-danger:        #ED3F20;
+$vieshow-success:       #4BB85B;
+$vieshow-info:          #EE7700; // 對應 Figma 的 Info
 
-// 全站背景與文字顏色 (電影院風格通常是深色底)
-$body-bg:    #111111; // 接近純黑的深色背景
-$body-color: #FFFFFF; // 全站預設文字為白色
+// 2. 覆蓋 Bootstrap 核心顏色系統
+$primary:       $vieshow-primary;
+$secondary:     $vieshow-secondary;
+$success:       $vieshow-success;
+$info:          $vieshow-info;
+$warning:       $vieshow-warning;
+$danger:        $vieshow-danger;
+$dark:          $vieshow-dark;
+$light:         #FFFFFF;
 
-// =============================================================================
-// 2. 間距系統 (Spacing System) - 對齊 Figma Spacing Tokens
-// =============================================================================
-// 先定義符合 Figma 規範的數值
-$spacing-xxs: 4px;
-$spacing-xs:  8px;
-$spacing-sm:  12px;
-$spacing-md:  16px;
-$spacing-lg:  24px;
-$spacing-xl:  48px;
-$spacing-xxl: 80px;
-
-// 關鍵步驟：將上述數值對應到 Bootstrap 的 0 ~ 6 層級
-// 以後大家寫 class="p-3" 就是 16px，寫 class="m-5" 就是 48px
-$spacers: (
-  0: 0,
-  1: $spacing-xxs, // 4px
-  2: $spacing-xs,  // 8px
-  3: $spacing-md,  // 16px
-  4: $spacing-lg,  // 24px
-  5: $spacing-xl,  // 48px
-  6: $spacing-xxl  // 80px (自定義擴充)
+// 3. 擴充 Theme Colors (讓團隊可以使用 .text-primary-dark, .bg-dark-section 等)
+// 注意：這部分在引入 bootstrap 之前定義，bootstrap 會自動 merge
+$custom-colors: (
+  "primary-dark":      $vieshow-primary-dark,
+  "dark-section":      $vieshow-dark-section,
+  "secondary-emphasis": $vieshow-secondary-emp,
+  "tertiary":          $vieshow-tertiary
 );
 
-// =============================================================================
-// 3. 圓角與陰影 (Borders & Shadows)
-// =============================================================================
-$border-radius:      0.5rem;   // 全站預設圓角 (約 8px)
-$border-radius-sm:   0.25rem;
-$border-radius-lg:   1rem;     // 大圓角 (用於海報卡片或 Modal)
+// 2. 引入 Bootstrap 的必要核心功能 (順序不可調換)
+@import "bootstrap/scss/functions";  // 提供 map-merge 邏輯 [cite: 537]
+@import "bootstrap/scss/variables";  // 提供 BS 預設的 $theme-colors 定義 [cite: 537, 574]
 
-$enable-shadows:     true;     // 開啟陰影功能
-$enable-transitions: true;     // 開啟全站漸變動畫 (Hover 效果更順)
+// 3. 現在才能進行合併！(因為上面已經載入了 $theme-colors)
+$theme-colors: map-merge($theme-colors, $custom-colors);
 
-// =============================================================================
-// 4. 文字排版 (Typography)
-// =============================================================================
-// 確保已在 index.html 引入字體，或使用系統預設
-$font-family-base:  'Noto Sans TC', system-ui, -apple-system, sans-serif;
-$font-size-base:    1rem;      // 16px
-$line-height-base:  1.5;
+// 4. 圓角設定 (以 Desktop 為基準)
+$border-radius-sm:    0.5rem;   // 8px
+$border-radius:       1rem;     // 16px
+$border-radius-lg:    1.5rem;   // 24px
+$border-radius-xl:    2.5rem;   // 40px (自定義擴充)
+$border-radius-pill:  999px;
 
-// =============================================================================
-// 5. 元件細節微調 (Component Overrides)
-// =============================================================================
-// 按鈕 Padding (讓按鈕看起來更大氣)
-$btn-padding-y:      0.625rem; // 10px
-$btn-padding-x:      1.25rem;  // 20px
-$btn-font-weight:    500;
+// 5. 字體大小設定 (以 Desktop 為基準，建議使用 rem)
+$font-size-base:      1.125rem; // 18px
+$font-size-sm:        1rem;     // 16px
+$font-size-mini:      0.875rem; // 14px (自定義擴充)
 
-// 表單輸入框微調
-$input-bg:           #2A2A2A;  // 輸入框深色背景
-$input-border-color: #444444;
-$input-color:        #FFFFFF;
-$input-focus-border-color: $primary;
+$h2-font-size:        2.125rem; // 34px
+$h4-font-size:        1.625rem; // 26px
+$h5-font-size:        1.375rem; // 22px
+
+// 6. 間距系統 (Spacers) - 對應 Figma 的 Gap/spacing
+// Bootstrap 預設使用 $spacer: 1rem (16px)
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: 0.5rem,    // xs: 8px
+  2: 1rem,      // sm: 16px
+  3: 2rem,      // md: 32px
+  4: 3rem,      // lg: 48px
+  5: 3.875rem,  // xl: 62px
+  6: 6rem,      // 2xl: 96px
+  7: 8rem,      // 3xl: 128px
+  8: 9rem       // 4xl: 144px
+);
+
+// 7. 邊框寬度
+$border-width:        1px;
+$border-widths: (
+  1: 1px,
+  2: 2px
+);
+
+// --- 1. 全域元件字體轉換 (px to rem) ---
+// 假設 1rem = 16px (若你之前設定 base 為 18px，請依比例調整)
+
+// --- 2. 按鈕：預設大小 (對應 Secondary.tokens.json) ---
+$btn-font-size:                1rem;          // 16px
+$btn-padding-y:                0.625rem;      // 10px
+$btn-padding-x:                1rem;          // 16px
+$btn-line-height:              1.25;          // (40px - 20px)/16px ≈ 1.25
+
+// --- 3. 按鈕：大尺寸 .btn-lg (對應 Primary.tokens.json) ---
+$btn-font-size-lg:             1.125rem;      // 18px
+$btn-padding-y-lg:             0.75rem;       // 12px
+$btn-padding-x-lg:             1.5rem;        // 24px
+
+// --- 4. 按鈕：小尺寸 .btn-sm (對應 Small.tokens.json) ---
+$btn-font-size-sm:             0.875rem;      // 14px
+$btn-padding-y-sm:             0.5rem;        // 8px
+$btn-padding-x-sm:             0.75rem;       // 12px
+
+// --- 5. 輸入框：Input (對應 Input.tokens.json) ---
+$input-font-size:              1rem;          // 16px
+$input-padding-y:              1rem;          // 16px
+$input-padding-x:              1.5rem;        // 24px
+$input-bg:                     $vieshow-dark-section; // 建議與背景區隔
+$input-color:                  $white;
+$input-border-color:           $vieshow-secondary-emp;
+
+// --- 6. 自定義擴充 (Bootstrap 預設無 Mini 與 Label，建議自訂 Class) ---
+// 這些可以寫在 _variables.scss 供全域使用，或寫在元件 SCSS
+// Mini (16px font, 4px/12px padding)
+$btn-padding-y-mini:           0.25rem;
+$btn-padding-x-mini:           0.75rem;
+
+// Label (14px font, 2px/12px padding)
+$btn-padding-y-label:          0.125rem;
+$btn-padding-x-label:          0.75rem;
+
+
+// 1. 中斷點設定 (Breakpoints)
+// 根據你的需求：Mobile 結束於 767px，PC 起始於 768px
+$grid-breakpoints: (
+  xs: 0,
+  sm: 360px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1980px
+);
+
+// 2. 容器最大寬度
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1800px // 留一點 margin 給 1980px 螢幕
+);
+
+// 3. 容器內距 (Container Padding)
+// Bootstrap 預設使用 $grid-gutter-width 的一半作為容器左右 padding
+$container-padding-mobile: 24px;
+$container-padding-pc:     48px;
+
+// 4. 頁面全域間距 (Web Padding)
+$web-top-padding-mobile:    134px;
+$web-bottom-padding-mobile: 36px;
+
+$web-top-padding-pc:        86px;
+$web-bottom-padding-pc:     96px;
 
 // =============================================================================
 // ⚠️ 注意：此檔案結尾不需 import bootstrap，
