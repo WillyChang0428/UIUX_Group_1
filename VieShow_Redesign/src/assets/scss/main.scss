@@ -10,6 +10,32 @@
 // 4. 元件級樣式 (新增這一行)
 @import "./components/header";
 
+// 針對全站按鈕的優化
+.btn {
+  @media (hover: none) {
+    &:hover {
+      background-color: inherit; // 手機端點擊後不保留 hover 背景色
+      color: inherit;
+    }
+  }
+}
+
+// 行距 150%
+.lh-relaxed {
+  line-height: $line-height-relaxed !important;
+}
+
+// 字距 30%
+.ls-wide {
+  letter-spacing: $letter-spacing-wide !important;
+}
+
+// 組合技：適合用於選單或大標題
+.text-spaced {
+  line-height: $line-height-relaxed;
+  letter-spacing: $letter-spacing-wide;
+}
+
 // 讓 Icon 擁有 45x45 的觸控熱區，但不影響視覺對齊
 .clickable-icon {
   width: $touch-target-size;
@@ -24,8 +50,10 @@
   color: inherit;
   transition: opacity 0.2s ease;
 
-  &:hover {
-    opacity: 0.7;
+  @include v.hover-focus {
+    &:hover {
+      opacity: 0.7;
+    }
   }
 }
 
@@ -42,7 +70,8 @@
 }
 
 // 強制修正 Bootstrap Container 左右間距
-.container, .container-fluid {
+.container,
+.container-fluid {
   padding-right: $container-padding-mobile;
   padding-left: $container-padding-mobile;
 
@@ -66,7 +95,7 @@
 // 放在所有 @import 之後
 @include media-breakpoint-down(md) {
   :root {
-    --bs-border-radius: 0.5rem; 
+    --bs-border-radius: 0.5rem;
     // 你也可以在這裡放其他行動端的覆寫
   }
 }
