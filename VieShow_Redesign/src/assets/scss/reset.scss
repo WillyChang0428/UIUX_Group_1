@@ -1,0 +1,20 @@
+// src/assets/scss/_reset.scss
+
+ul {
+  list-style: none; // 修正：清單圓點是用 list-style
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit; // 建議加上這行，讓連結預設繼承父層顏色，比較好開發
+}
+
+a:hover {
+  text-decoration: underline;
+}
