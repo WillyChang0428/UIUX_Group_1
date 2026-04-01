@@ -1,9 +1,12 @@
+<script setup>
+import MetadataInput from './components/Common/InputBox/MetadataInput.vue';
+</script >
+
 <template>
-<SignUpStart/>
-<InputBox/>
+  <metadataInput/>
 </template>
 
-<script setup>
+
 
 <style lang="scss" scoped>
 

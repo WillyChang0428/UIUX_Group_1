@@ -97,7 +97,7 @@
   color: inherit;
   transition: opacity 0.2s ease;
 
-  @include v.hover-focus {
+  @include hover-focus {
     &:hover { opacity: 0.7; }
   }
 }
@@ -114,11 +114,6 @@
   pointer-events: none; 
 }
 
-<<<<<<< HEAD
-// ==========================================
-// 4. 佈局容器強制對齊 (維持原本的 SCSS 變數斷點)
-// ==========================================
-=======
 
 
 // 強制修正 Bootstrap Container 左右間距
