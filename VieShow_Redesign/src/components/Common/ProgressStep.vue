@@ -1,13 +1,28 @@
 <!--使用方式
-<ProgressStep :currentStep="currentStep" :totalSteps="4" />
-    
-    <div class="d-flex gap-3 mt-4">
-      <BaseButton @click="currentStep--" :is-disabled="currentStep <= 1">上一步</BaseButton>
-      <BaseButton @click="currentStep++" :is-disabled="currentStep >= 4">下一步</BaseButton>
-    </div>
-</div> -->
+<script setup>
+import { ref } from 'vue';
+import ProgressStep from './components/Common/ProgressStep.vue';
+import SecondaryButton from './components/Common/Button/SecondaryButton.vue';
+
+// 💡 必須在父層定義響應式變數
+const currentStep = ref(1);
+const totalSteps = 4;
+</script>
+
+<template>
+  <ProgressStep :currentStep="currentStep" :totalSteps="totalSteps" />
+
+  <div class="d-flex gap-3 mt-4">
+    <SecondaryButton @click="currentStep > 1 && currentStep--" :isDisabled="currentStep <= 1">上一步</SecondaryButton>
+
+    <SecondaryButton @click="currentStep < totalSteps && currentStep++" :isDisabled="currentStep >= totalSteps">下一步
+    </SecondaryButton>
+  </div>
+</template>
+ -->
 
 <script setup>
+
 const props = defineProps({
     // 目前進行到第幾步 (1, 2, 3...)
     currentStep: {
