@@ -12,10 +12,14 @@
   // --- 預設狀態 (Mobile-First)：手機版數值 ---
   
   // 字體
+  --app-font-family: #{$font-family-base};
+  --bs-body-font-family: var(--app-font-family);
   --app-font-size-base: #{$font-size-base-mobile};
   --app-font-size-h2:   #{$h2-font-size-mobile};
+  --app-font-size-h3:   #{$h3-font-size-mobile};
   --app-font-size-h4:   #{$h4-font-size-mobile};
   --app-font-size-h5:   #{$h5-font-size-mobile};
+  --app-font-size-h6:   #{$h6-font-size-mobile};
   
   // 圓角
   --app-radius-sm:      #{$border-radius-sm-mobile};
@@ -45,8 +49,10 @@
   :root {
     --app-font-size-base: #{$font-size-base-pc};
     --app-font-size-h2:   #{$h2-font-size-pc};
+    --app-font-size-h3:   #{$h3-font-size-pc};
     --app-font-size-h4:   #{$h4-font-size-pc};
     --app-font-size-h5:   #{$h5-font-size-pc};
+    --app-font-size-h6:   #{$h6-font-size-pc};
     
     --app-radius-sm:      #{$border-radius-sm-pc};
     --app-radius:         #{$border-radius-pc};
@@ -64,6 +70,9 @@
   }
 }
 
+body {
+  font-family: var(--app-font-family) !important;
+}
 
 // 針對全站按鈕的優化 (手機端點擊後不保留 hover 背景色)
 .btn {
