@@ -60,14 +60,34 @@ $custom-colors: (
 // 3. 現在才能進行合併！(因為上面已經載入了 $theme-colors)
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
-// 4. 圓角設定 (以 Desktop 為基準)
-$border-radius-sm:    0.5rem;   // 8px
-$border-radius:       1rem;     // 16px
-$border-radius-lg:    1.5rem;   // 24px
-$border-radius-xl:    2.5rem;   // 40px (自定義擴充)
-$border-radius-pill:  999px;
 
-// 5. 字體大小設定 (以 Desktop 為基準，建議使用 rem)
+$font-size-mini-mobile: 12px;    $font-size-mini-pc: 14px;
+$font-size-sm-mobile:   14px;    $font-size-sm-pc:   16px;
+$font-size-base-mobile: 16px;    $font-size-base-pc: 18px; 
+$h6-font-size-mobile:   18px;    $h6-font-size-pc:   18px; 
+$h5-font-size-mobile:   20px;    $h5-font-size-pc:   22px;
+$h4-font-size-mobile:   24px;    $h4-font-size-pc:   26px;
+$h3-font-size-mobile:   32px;    $h3-font-size-pc:   32px; 
+$h2-font-size-mobile:   32px;    $h2-font-size-pc:   34px;
+
+$border-radius-sm-mobile: 4px;   $border-radius-sm-pc: 8px;   //
+$border-radius-mobile:    8px;   $border-radius-pc:    16px;
+$border-radius-lg-mobile: 12px;  $border-radius-lg-pc: 24px;
+$border-radius-xl-mobile: 20px;  $border-radius-xl-pc: 40px;
+$border-radius-pill:      999px;
+
+$font-size-base:   $font-size-base-mobile;
+$border-radius:    $border-radius-mobile;
+$border-radius-sm: $border-radius-sm-mobile;
+$border-radius-lg: $border-radius-lg-mobile;
+
+$h2-font-size:     $h2-font-size-mobile;
+$h3-font-size:     $h3-font-size-mobile;
+$h4-font-size:     $h4-font-size-mobile;
+$h5-font-size:     $h5-font-size-mobile;
+$h6-font-size:     $h6-font-size-mobile;
+
+// 5. 字體大小設定 (以 Desktop 為基準，建議使用 rem)***********
 $display-font-sizes: (
   1: 5rem,      // 80px
   2: 3.75rem,   // 60px 
@@ -77,13 +97,6 @@ $display-font-sizes: (
   6: 1.375rem   // 22px 
 );
 
-$font-size-mini: .75rem; // 12px 
-$font-size-sm:   0.875rem; // 14px
-$font-size-base: 1rem;     // 16px (Bootstrap 預設)
-$h6-font-size: 1.125rem; // 18px 
-$h5-font-size: 1.25rem; // 20px 
-$h4-font-size: 1.5rem; // 24px 
-$h3-font-size: 2rem; // 32px 
 
 
 // 確保開啟響應式字體縮放 (預設為 true，建議保留)
@@ -102,19 +115,28 @@ $line-height-relaxed: 1.5;
 $letter-spacing-wide: 0.1em;
 
 // 6. 間距系統 (Spacers) - 對應 Figma 的 Gap/spacing
+
+$spacing-xs-mobile:  4px;        $spacing-xs-pc:  8px;        
+$spacing-sm-mobile:  8px;        $spacing-sm-pc:  16px;
+$spacing-md-mobile:  16px;       $spacing-md-pc:  32px;
+$spacing-lg-mobile:  24px;       $spacing-lg-pc:  48px;
+$spacing-xl-mobile:  36px;       $spacing-xl-pc:  62px;
+$spacing-2xl-mobile: 48px;       $spacing-2xl-pc: 96px;
+$spacing-3xl-mobile: 64px;       $spacing-3xl-pc: 128px;
+$spacing-4xl-mobile: 72px;       $spacing-4xl-pc: 144px;
+
 // Bootstrap 預設使用 $spacer: 1rem (16px)
 $spacer: 1rem;
 $spacers: (
   0: 0,
-  1: .25rem,    // xs: 4px
-  2: .5rem,      // sm: 8px
-  3: 1rem,      // md: 16px
-  4: 1.5rem,      // lg: 24px
-  5: 2.25rem,  // xl: 36px
-  6: 3rem,      // 2xl: 48px
-  7: 4rem,      // 3xl: 64px
-  8: 4.5rem,      // 4xl: 72px
-  9: 5rem // 5xl: 144px
+  1: var(--gap-xs),   // 對應 Figma: xs
+  2: var(--gap-sm),   // 對應 Figma: sm
+  3: var(--gap-md),   // 對應 Figma: md (你的預設基準)
+  4: var(--gap-lg),   // 對應 Figma: lg
+  5: var(--gap-xl),   // 對應 Figma: xl
+  6: var(--gap-2xl),  // 對應 Figma: 2xl
+  7: var(--gap-3xl),  // 對應 Figma: 3xl
+  8: var(--gap-4xl)   // 對應 Figma: 4xl
 );
 
 // 7. 邊框寬度
@@ -124,6 +146,26 @@ $border-widths: (
   2: 2px
 );
 
+// 8. 按鈕變數覆寫
+//  Bootstrap 標準尺寸覆寫 [cite: 70-75]
+$btn-padding-y:                0.625rem; // 10px
+$btn-padding-x:                1rem;     // 16px
+
+$btn-padding-y-sm:             0.5rem;   // 8px
+$btn-padding-x-sm:             0.75rem;  // 12px  <-- 補上這行！
+
+$btn-padding-y-lg:             0.75rem;  // 12px
+$btn-padding-x-lg:             1.5rem;   // 24px
+
+//  自定義擴充尺寸 (供 main.scss 裡的 .btn-mini 使用) [cite: 79-81]
+$btn-padding-y-mini:           0.25rem;  // 4px
+$btn-padding-x-mini:           0.75rem;  // 12px
+
+$btn-padding-y-label:          0.125rem; // 2px
+$btn-padding-x-label:          0.75rem;  // 12px
+
+
+
 // --- 觸控範圍設定 (Touch Target) ---
 // 根據設計稿設定 45px 觸控範圍
 $touch-target-size: 45px; 
@@ -132,42 +174,6 @@ $touch-target-size: 45px;
 // (45px - 24px) / 2 = 10.5px
 $icon-touch-padding: 0.656rem; // 約 10.5px
 
-// --- 1. 全域元件字體轉換 (px to rem) ---
-// 假設 1rem = 16px (若你之前設定 base 為 18px，請依比例調整)
-
-// --- 2. 按鈕：預設大小 (對應 Secondary.tokens.json) ---
-$btn-font-size:                1rem;          // 16px
-$btn-padding-y:                0.625rem;      // 10px
-$btn-padding-x:                1rem;          // 16px
-$btn-line-height:              1.25;          // (40px - 20px)/16px ≈ 1.25
-
-// --- 3. 按鈕：大尺寸 .btn-lg (對應 Primary.tokens.json) ---
-$btn-font-size-lg:             1.125rem;      // 18px
-$btn-padding-y-lg:             0.75rem;       // 12px
-$btn-padding-x-lg:             1.5rem;        // 24px
-
-// --- 4. 按鈕：小尺寸 .btn-sm (對應 Small.tokens.json) ---
-$btn-font-size-sm:             0.875rem;      // 14px
-$btn-padding-y-sm:             0.5rem;        // 8px
-$btn-padding-x-sm:             0.75rem;       // 12px
-
-// --- 5. 輸入框：Input (對應 Input.tokens.json) ---
-$input-font-size:              1rem;          // 16px
-$input-padding-y:              1rem;          // 16px
-$input-padding-x:              1.5rem;        // 24px
-$input-bg:                     $vieshow-dark-section; // 建議與背景區隔
-$input-color:                  $white;
-$input-border-color:           $vieshow-secondary-emp;
-
-// --- 6. 自定義擴充 (Bootstrap 預設無 Mini 與 Label，建議自訂 Class) ---
-// 這些可以寫在 _variables.scss 供全域使用，或寫在元件 SCSS
-// Mini (16px font, 4px/12px padding)
-$btn-padding-y-mini:           0.25rem;
-$btn-padding-x-mini:           0.75rem;
-
-// Label (14px font, 2px/12px padding)
-$btn-padding-y-label:          0.125rem;
-$btn-padding-x-label:          0.75rem;
 
 
 // 1. 中斷點設定 (Breakpoints)
