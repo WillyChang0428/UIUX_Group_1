@@ -4,10 +4,13 @@ import 'bootstrap'
 import App from './App.vue'
 import vue3GoogleLogin from 'vue3-google-login'
 import router from './router'
+import { createPinia } from 'pinia'  
 
 // 1. 先誕生 Vue 實體，並把它命名為 'app' (這樣第 7 行才找得到東西)
 const app = createApp(App)
+const pinia = createPinia()  
 
+app.use(pinia)    
 // 2. 裝備一：掛載 Router (導航地圖)
 app.use(router)
 

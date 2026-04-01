@@ -1,35 +1,35 @@
 <template>
-  <div v-if="movie" class="movie-info-bar">
+  <div v-if="movieInfo" class="movie-info-bar">
     <div class="glass-card">
       <div class="glass-card__inner">
         <!-- 海報縮圖 -->
         <div class="poster-wrapper">
-          <img :src="movie.posterUrl" :alt="movie.titleZh" class="poster-img" />
+          <img :src="movieInfo.posterUrl" :alt="movieInfo.titleZh" class="poster-img" />
         </div>
-
+ 
         <!-- 電影資訊 -->
         <div class="movie-details">
           <!-- 第一行：中英文標題 -->
           <div class="title-row">
-            <span class="title-zh">{{ movie.titleZh }}</span>
-            <span class="title-en">{{ movie.titleEn }}</span>
+            <span class="title-zh">{{ movieInfo.titleZh }}</span>
+            <span class="title-en">{{ movieInfo.titleEn }}</span>
           </div>
-
+ 
           <!-- 第二行：所有資訊條列 -->
           <div class="meta-row">
-            <span>{{ movie.duration }}</span>
+            <span>{{ movieInfo.duration }}</span>
             <span class="sep">｜</span>
-            <span>{{ movie.rating }}</span>
+            <span>{{ movieInfo.rating }}</span>
             <span class="sep">｜</span>
-            <span>{{ movie.language }}</span>
+            <span>{{ movieInfo.language }}</span>
             <span class="sep">｜</span>
-            <span>{{ movie.format }}</span>
+            <span>{{ movieInfo.format }}</span>
             <span class="sep">｜</span>
-            <span>{{ movie.venue }}</span>
+            <span>{{ movieInfo.venue }}</span>
             <span class="sep">｜</span>
-            <span>{{ movie.date }}</span>
+            <span>{{ movieInfo.date }}</span>
             <span class="sep">｜</span>
-            <span>{{ movie.time }}</span>
+            <span>{{ movieInfo.time }}</span>
           </div>
         </div>
       </div>
@@ -38,23 +38,13 @@
 </template>
 
 <script setup>
-defineProps({
-  movie: {
-    type: Object,
-    default: () => ({
-      titleZh: '極限返航',
-      titleEn: 'PROJECT HAIL MARY',
-      posterUrl: 'https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20260225016.jpg',
-      duration: '156分',
-      rating: '保護級',
-      language: '英語',
-      format: '4DX',
-      venue: '台北信義威秀',
-      date: '2026年4月28日(二)',
-      time: '19:30',
-    }),
-  },
-})
+import { useMovieStore } from '@/store/movieStore'
+import { storeToRefs } from 'pinia'
+ 
+const movieStore = useMovieStore()
+ 
+// selectedInfoCard 從 store 取出，重新命名為 movieInfo 供 template 使用
+const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
 </script>
 
 <style lang="scss" scoped>

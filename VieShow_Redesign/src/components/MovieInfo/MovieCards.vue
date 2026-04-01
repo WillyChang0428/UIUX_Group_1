@@ -1,5 +1,9 @@
 <template>
-  <div class="movie-card" @click="handleCardClick">
+  <div
+    class="movie-card"
+    :class="{ 'movie-card--selected': isSelected }"
+    @click="handleCardClick"
+  >
     <!-- 海報區 -->
     <div class="movie-card__poster">
       <img
@@ -7,51 +11,54 @@
         :alt="movie.titleZh"
         class="movie-card__poster-img"
       />
-      <!-- 海報底部漸層遮罩 -->
       <div class="movie-card__poster-overlay" />
     </div>
-
+ 
     <!-- 資訊區 -->
     <div class="movie-card__body">
-      <!-- 標題 -->
       <div class="movie-card__titles">
         <h3 class="movie-card__title-zh">{{ movie.titleZh }}</h3>
         <p class="movie-card__title-en">{{ movie.titleEn }}</p>
       </div>
-
-      <!-- 上映日期 -->
-      <p class="movie-card__release">
-        上映日期：{{ movie.releaseDate }}
-      </p>
-
-      <!-- 快速訂票按鈕 -->
-      <button class="btn btn-primary btn-lg w-100 movie-card__btn" @click.stop="handleBook">
+      <p class="movie-card__release">上映日期：{{ movie.releaseDate }}</p>
+      <SecondaryButton
+        class="btn btn-primary btn-lg w-100 movie-card__btn"
+        @click.stop="handleBook"
+      >
         快速訂票
-      </button>
+      </SecondaryButton>
     </div>
   </div>
 </template>
 
 <script setup>
+import SecondaryButton from '@/components/Common/Button/SecondaryButton.vue'
+import { computed } from 'vue'
+import { useMovieStore } from '@/store/movieStore'
+ 
 const props = defineProps({
   movie: {
     type: Object,
-    default: () => ({
-      titleZh: '極限返航',
-      titleEn: 'PROJECT HAIL MARY',
-      posterUrl: 'https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20260225016.jpg',
-      releaseDate: '2026/03/18',
-    }),
+    required: true,
   },
 })
-
-const emit = defineEmits(['click', 'book'])
-
+ 
+const emit = defineEmits(['book'])
+const movieStore = useMovieStore()
+ 
+// 是否為目前選中的電影
+const isSelected = computed(() =>
+  movieStore.selectedMovieId === props.movie.id
+)
+ 
+// 點擊卡片 → 更新 store，SelectedInfoCard 自動同步
 const handleCardClick = () => {
-  emit('click', props.movie)
+  movieStore.selectMovie(props.movie.id)
 }
-
+ 
+// 點擊快速訂票
 const handleBook = () => {
+  movieStore.selectMovie(props.movie.id)
   emit('book', props.movie)
 }
 </script>
@@ -63,8 +70,9 @@ const handleBook = () => {
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 427px;
   background: $vieshow-dark;
-  border-radius: $border-radius;          // 16px
+  border-radius: $border-radius-sm;          // 16px
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -118,7 +126,7 @@ const handleBook = () => {
   display: flex;
   flex-direction: column;
   gap: map-get($spacers, 1);             // 8px
-  padding: map-get($spacers, 1) map-get($spacers, 2) map-get($spacers, 2); // 8px 16px 16px
+  padding: map-get($spacers, 3) map-get($spacers, 3) map-get($spacers, 3); // 8px 16px 16px
 }
 
 // ── 標題 ───────────────────────────────────────────────────────
@@ -126,6 +134,7 @@ const handleBook = () => {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  margin-bottom: 10px;
 }
 
 .movie-card__title-zh {
@@ -141,7 +150,7 @@ const handleBook = () => {
   margin: 0;
   font-size: $font-size-mini;                   // 0.875rem = 14px
   font-weight: 400;
-  color: $vieshow-secondary;                    // #9E9E9E
+  color: $light;                    // #9E9E9E
   letter-spacing: 0.1em;
   text-transform: uppercase;
   line-height: 1.4;
@@ -150,9 +159,11 @@ const handleBook = () => {
 // ── 上映日期 ───────────────────────────────────────────────────
 .movie-card__release {
   margin: 0;
-  font-size: $font-size-mini;                   // 0.875rem = 14px
-  color: $vieshow-secondary;                    // #9E9E9E
+  font-size: $font-size-mini;  
+  font-weight: 200px;                 // 0.875rem = 14px
+  color: $light;                    // #9E9E9E
   line-height: 1.5;
+  margin-bottom: 30px;
 }
 
 // ── 快速訂票按鈕 ───────────────────────────────────────────────
@@ -161,6 +172,5 @@ const handleBook = () => {
   margin-top: map-get($spacers, 1);             // 8px
   font-weight: 600;
   letter-spacing: 0.06em;
-  border-radius: $border-radius-pill;           // 圓角按鈕
 }
 </style>
