@@ -1,87 +1,71 @@
-<script setup>
+<!--使用方式
+<ProgressStep :currentStep="currentStep" :totalSteps="4" />
+    
+    <div class="d-flex gap-3 mt-4">
+      <BaseButton @click="currentStep--" :is-disabled="currentStep <= 1">上一步</BaseButton>
+      <BaseButton @click="currentStep++" :is-disabled="currentStep >= 4">下一步</BaseButton>
+    </div>
+</div> -->
 
+<script setup>
+const props = defineProps({
+    // 目前進行到第幾步 (1, 2, 3...)
+    currentStep: {
+        type: Number,
+        default: 1
+    },
+    // 總共有幾步
+    totalSteps: {
+        type: Number,
+        default: 4
+    }
+})
 </script>
 
 <template>
-  <!-- <router-view/> -->
-<div class="background">
-        <div class="ProgressStep progress1">
-            <div class="circle circle-active"></div>
-            <div class="line"></div>
-            <div class="circle"></div>
-            <div class="line"></div>
-            <div class="circle"></div>
-            <div class="line"></div>
-            <div class="circle"></div>
-        </div>
-        <div class="ProgressStep progress2">
-            <div class="circle circle-active"></div>
-            <div class="line line-active"></div>
-            <div class="circle circle-active"></div>
-            <div class="line"></div>
-            <div class="circle"></div>
-            <div class="line"></div>
-            <div class="circle"></div>
-        </div>
-        <div class="ProgressStep progress3">
-            <div class="circle circle-active"></div>
-            <div class="line line-active"></div>
-            <div class="circle circle-active"></div>
-            <div class="line line-active"></div>
-            <div class="circle circle-active"></div>
-            <div class="line"></div>
-            <div class="circle"></div>
-        </div>
-        <div class="ProgressStep progress4">
-            <div class="circle circle-active"></div>
-            <div class="line line-active"></div>
-            <div class="circle circle-active"></div>
-            <div class="line line-active"></div>
-            <div class="circle circle-active"></div>
-            <div class="line line-active"></div>
-            <div class="circle circle-active"></div>
-        </div>
+    <div class="progress-container">
+        <template v-for="n in totalSteps" :key="'step-' + n">
+            <div class="circle" :class="{ 'circle-active': n <= currentStep }"></div>
+
+            <div v-if="n < totalSteps" class="line" :class="{ 'line-active': n < currentStep }"></div>
+        </template>
     </div>
 </template>
 
 <style scoped lang="scss">
-/* 你的全域樣式 */
-    .background{
-    width: 500px;
-    height: 500px;
-    background-color:v.$black;
+.progress-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 24px 64px;
     display: flex;
-    flex-direction: column;
-    gap: 50px;
+    margin: 0 auto;
     align-items: center;
-    padding-top: 50px;
-    }
-    .ProgressStep{
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-    .circle {
+    justify-content: space-between;
+}
+
+.circle {
     width: 10px;
     height: 10px;
-    background-color:v.$vieshow-secondary-emp;
+    background-color: v.$vieshow-secondary-emp; // #4A4A4A
     border-radius: 50%;
-    filter: drop-shadow(0px 0px 11px rgba(47, 150, 238, 1));
-    }
+    transition: all 0.3s ease;
 
-    .circle-active {
-        background-color:v.$light;
-        filter: drop-shadow(0px 0px 11px rgba(47, 150, 238, 1));
+    &.circle-active {
+        background-color: v.$white;
+        // 使用你原本的發光效果
+        filter: drop-shadow(0px 0px 5px rgba(47, 150, 238, 1));
     }
+}
 
-    .line{
-        width: 40px;
-        height: 1px;
-        background-color: v.$vieshow-secondary-emp;
-        border-radius: 50%;
-    }
+.line {
+    flex-grow: 1; // 讓線條自動撐開間距
+    margin: 0 10px;
+    height: 1px;
+    background-color: v.$vieshow-secondary-emp; // #4A4A4A
+    transition: all 0.3s ease;
 
-    .line-active {
-        background-color:v.$light;
+    &.line-active {
+        background-color: v.$white;
     }
+}
 </style>
