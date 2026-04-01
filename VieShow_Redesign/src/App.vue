@@ -39,12 +39,8 @@ const handleSelect = (val) => {
   </FlatSelect>
 </template>
 
-<style lang="scss">
-/* 你的全域樣式 */
-body {
-  height: 100vh;
-  background: v.$vieshow-gradient-dark;
-  padding: 133px 0 0;
-  /* 預留 Header 的高度 */
-}
+
+
+<style lang="scss" scoped>
+
 </style>
