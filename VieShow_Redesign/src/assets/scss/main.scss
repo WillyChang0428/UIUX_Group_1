@@ -11,7 +11,7 @@
 // @import "common";
 
 // 4. 元件級樣式 (新增這一行)
-@import "./components/header";
+// @import "./components/header";
 
 // 針對全站按鈕的優化
 .btn {
@@ -70,6 +70,14 @@
   padding: $btn-padding-y-label $btn-padding-x-label;
   font-size: 0.875rem; // 14px
   pointer-events: none; // 如果 Label 只是標籤不可點擊
+}
+
+.input {
+padding: $input-padding-y $input-padding-x;
+font-size: $input-font-size;
+background-color: $input-bg;
+color: $input-color;
+border-color: $input-border-color;
 }
 
 // 強制修正 Bootstrap Container 左右間距
