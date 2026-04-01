@@ -80,6 +80,18 @@ $display-font-sizes: (
 // 確保開啟響應式字體縮放 (預設為 true，建議保留)
 $enable-rfs: true;
 
+// 覆蓋 Bootstrap 預設字體
+$font-family-base: 'Noto Sans TC', system-ui, -apple-system, sans-serif; 
+
+// 如果你想要標題也統一（或有特殊設定），也可以覆蓋這個：
+$font-family-sans-serif: $font-family-base;
+
+// 文字行距 (Line Height) - 150% 對應數值為 1.5 
+$line-height-relaxed: 1.5; 
+
+// 文字字距 (Letter Spacing) - 30% 對應 0.3em
+$letter-spacing-wide: 0.1em;
+
 // 6. 間距系統 (Spacers) - 對應 Figma 的 Gap/spacing
 // Bootstrap 預設使用 $spacer: 1rem (16px)
 $spacer: 1rem;
@@ -181,9 +193,14 @@ $web-top-padding-pc:        86px;
 $web-bottom-padding-pc:     96px;
 
 
-
-//設定手機版最大寬度
-$mobile-max-width: 576px;
+// 定義只在桌機（有滑鼠游標）才觸發的 hover 預防針
+@mixin hover-focus {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @content;
+    }
+  }
+}
 // =============================================================================
 // ⚠️ 注意：此檔案結尾不需 import bootstrap，
 // =============================================================================
