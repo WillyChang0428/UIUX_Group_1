@@ -1,9 +1,9 @@
 <script setup>
-import SelectBox from '@/components/Common/Selecter/SelectBox.vue'
+
 </script>
 
 <template>
-    <SelectBox />
+
 </template>
 
 <style lang="scss">
