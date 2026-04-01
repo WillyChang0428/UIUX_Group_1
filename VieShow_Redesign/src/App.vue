@@ -1,11 +1,11 @@
-<template>
-  
-</template>
-
 <script setup>
-
+// import Header from "./components/Layout/Parts/Header.vue";
+import BookingSelector from "./components/Booking/FastBooking/BookingSelector.vue";
 </script>
 
-<style lang="scss" scoped>
+<template>
+  <!-- <Header /> -->
+  <BookingSelector />
+</template>
 
-</style>
+<style lang="scss" scoped></style>
