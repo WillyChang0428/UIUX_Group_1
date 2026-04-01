@@ -52,7 +52,6 @@ const variant = computed(() => `btn-${props.status}`)
     font-size: v.$font-size-base;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-width: 100px;
     letter-spacing: 0.1em;
 
     // 1. Default (品牌藍漸層)

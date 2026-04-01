@@ -104,6 +104,8 @@ onUnmounted(() => {
 
     .select-header {
         display: flex;
+        width: 100%;
+        height: var(--gap-2xl);
         align-items: center;
         justify-content: space-between;
         padding: 12px 20px;
