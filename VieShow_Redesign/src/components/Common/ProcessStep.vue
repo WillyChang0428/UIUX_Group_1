@@ -49,7 +49,7 @@
     .background{
     width: 500px;
     height: 500px;
-    background-color: black;
+    background-color:v.$black;
     display: flex;
     flex-direction: column;
     gap: 50px;
@@ -64,24 +64,24 @@
     .circle {
     width: 10px;
     height: 10px;
-    background-color: #4A4A4A;
+    background-color:v.$vieshow-secondary-emp;
     border-radius: 50%;
     filter: drop-shadow(0px 0px 11px rgba(47, 150, 238, 1));
     }
 
     .circle-active {
-        background-color:#FFFFFF;
+        background-color:v.$light;
         filter: drop-shadow(0px 0px 11px rgba(47, 150, 238, 1));
     }
 
     .line{
         width: 40px;
         height: 1px;
-        background-color: #4A4A4A;
+        background-color: v.$vieshow-secondary-emp;
         border-radius: 50%;
     }
 
     .line-active {
-        background-color:v.$white;
+        background-color:v.$light;
     }
 </style>
