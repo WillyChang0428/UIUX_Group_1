@@ -2,6 +2,8 @@
 <script setup>
 import { ref } from 'vue'
 import FlatSelect from '@/components/Common/Selecter/FlatSelect.vue'
+import SelectCategory from '@/components/Common/Selecter/SelectCategory.vue'
+
 const isOpen = ref(false)         // 控制選單開關
 const isSelected = ref(false)     // 控制藍色選中樣式
 const selectedValue = ref('')     // 儲存選中的文字內容
@@ -25,6 +27,10 @@ isOpen.value = false;           // 自動收合選單
 <template #options>
 <li @click="handleSelect('選項 A')">選項 A</li>
 <li @click="handleSelect('選項 B')">選項 B</li>
+    <SelectCategory label="第二層選項">
+        <li @click="handleSelect('選項 A')">選項 A</li>
+        <li @click="handleSelect('選項 B')">選項 B</li>
+    </SelectCategory>
 </template>
 </FlatSelect>
 </template> 

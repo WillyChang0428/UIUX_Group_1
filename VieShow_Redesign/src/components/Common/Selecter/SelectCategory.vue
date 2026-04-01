@@ -12,24 +12,31 @@ const toggleExpand = async () => {
     isExpanded.value = !isExpanded.value;
 
     if (isExpanded.value) {
-        // 1. 等待 DOM 更新
         await nextTick();
 
-        // 2. 找到這個 li
-        const element = itemRef.value;
-        // 3. 找到外層那個有捲軸的容器 (向上找 class 為 options-list 的 div)
-        const container = element.closest('.options-list');
+        // 💡 增加一點點延遲，確保 Transition 動態開始
+        setTimeout(() => {
+            const element = itemRef.value;
+            const container = element.closest('.options-list');
 
-        if (container && element) {
-            // 4. 計算位移：li 距離頂部的距離
-            const topPos = element.offsetTop;
+            if (container && element) {
+                // 💡 核心計算法：
+                // 1. 元素相對於視窗頂部的距離
+                const elementTop = element.getBoundingClientRect().top;
+                // 2. 容器相對於視窗頂部的距離
+                const containerTop = container.getBoundingClientRect().top;
+                // 3. 目前容器已經捲動了多少
+                const currentScroll = container.scrollTop;
 
-            // 5. 執行容器內部的捲動
-            container.scrollTo({
-                top: topPos,
-                behavior: 'smooth' // 絲滑吸附
-            });
-        }
+                // 計算出該項目應該在容器內的絕對位置
+                const targetPos = elementTop - containerTop + currentScroll;
+
+                container.scrollTo({
+                    top: targetPos,
+                    behavior: 'smooth'
+                });
+            }
+        }, 100); // 💡 給 100ms 緩衝，讓動畫撐開空間
     }
 };
 </script>
