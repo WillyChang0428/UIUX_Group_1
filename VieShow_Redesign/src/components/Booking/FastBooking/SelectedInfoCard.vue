@@ -64,8 +64,6 @@ defineProps({
 .movie-info-bar {
   width: 100%;
   font-family: 'Noto Sans TC', 'PingFang TC', sans-serif;
-  background-image: url('https://images.pexels.com/photos/36428584/pexels-photo-36428584.jpeg');
-// background-color: aquamarine;
 }
 
 // ── 玻璃卡片：所有視覺效果集中在這裡 ───────────────────────
@@ -75,7 +73,7 @@ defineProps({
   border-radius: 0;                              // 無圓角
   overflow: hidden;
 
-  // ✅ 毛玻璃核心：backdrop-filter 必須存在
+  // 毛玻璃核心：backdrop-filter 必須存在
   backdrop-filter: blur(24px) saturate(180%) brightness(1.05);
   -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.05);
 
@@ -91,7 +89,7 @@ defineProps({
     0 1px 0 rgba($white, 0.06) inset;
 
   // ── 光源高光層（Light -38deg 80%）──────────────────────────
-  // ✅ ::before / ::after 掛在 .glass-card，position: relative 才有效
+  //  ::before / ::after 掛在 .glass-card，position: relative 才有效
   &::before {
     content: '';
     position: absolute;
@@ -177,7 +175,7 @@ defineProps({
 }
 
 .title-zh {
-  font-size: $h2-font-size;
+  font-size: 32px;
   font-weight: 700;
   color: $light;
   letter-spacing: 0.04em;
