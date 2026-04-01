@@ -6,10 +6,7 @@ import ProcessStep from '@/components/Common/ProcessStep.vue'
 
 <template>
   <router-view />
-<header>
-  <Header />
-  <ProcessStep />
-</header>
+  
 </template>
 
 <style lang="scss">
