@@ -1,12 +1,22 @@
 <script setup>
-import Header from '@/components/Layout/Parts/Header.vue'
-import ProcessStep from '@/components/Common/ProcessStep.vue'
+import { ref } from 'vue';
+import ProgressStep from './components/Common/ProgressStep.vue';
+import SecondaryButton from './components/Common/Button/SecondaryButton.vue';
 
+// 💡 必須在父層定義響應式變數
+const currentStep = ref(1);
+const totalSteps = 4;
 </script>
 
 <template>
-  <router-view />
-  
+  <ProgressStep :currentStep="currentStep" :totalSteps="totalSteps" />
+
+  <div class="d-flex gap-3 mt-4">
+    <SecondaryButton @click="currentStep > 1 && currentStep--" :isDisabled="currentStep <= 1">上一步</SecondaryButton>
+
+    <SecondaryButton @click="currentStep < totalSteps && currentStep++" :isDisabled="currentStep >= totalSteps">下一步
+    </SecondaryButton>
+  </div>
 </template>
 
 <style lang="scss">
@@ -14,6 +24,7 @@ import ProcessStep from '@/components/Common/ProcessStep.vue'
 body {
   height: 100vh;
   background: v.$vieshow-gradient-dark;
-  padding: 133px 0 0; /* 預留 Header 的高度 */
+  padding: 133px 0 0;
+  /* 預留 Header 的高度 */
 }
 </style>
