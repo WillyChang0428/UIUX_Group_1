@@ -64,9 +64,6 @@
   }
 }
 
-// ==========================================
-// 3. 全站通用優化 (保留組長原本的優質設定)
-// ==========================================
 
 // 針對全站按鈕的優化 (手機端點擊後不保留 hover 背景色)
 .btn {
@@ -100,7 +97,7 @@
   color: inherit;
   transition: opacity 0.2s ease;
 
-  @include v.hover-focus {
+  @include hover-focus {
     &:hover { opacity: 0.7; }
   }
 }
@@ -117,9 +114,7 @@
   pointer-events: none; 
 }
 
-// ==========================================
-// 4. 佈局容器強制對齊 (維持原本的 SCSS 變數斷點)
-// ==========================================
+
 
 // 強制修正 Bootstrap Container 左右間距
 .container,
@@ -142,4 +137,22 @@
     padding-top: $web-top-padding-pc;
     padding-bottom: $web-bottom-padding-pc;
   }
+}
+
+// ==========================================
+// 💡 自定義響應式圓角類別 (對應 Figma Token)
+// ==========================================
+.rounded-lg {
+  // 直接呼叫你在 :root 定義好的變數
+  // 這樣它在手機就會自動是 12px，電腦自動是 24px！
+  border-radius: var(--app-radius-lg) !important; 
+}
+
+// 如果你有用到 xl 或 sm，也可以一併建立
+.rounded-xl {
+  border-radius: var(--app-radius-xl) !important;
+}
+
+.rounded-sm {
+  border-radius: var(--app-radius-sm) !important;
 }
