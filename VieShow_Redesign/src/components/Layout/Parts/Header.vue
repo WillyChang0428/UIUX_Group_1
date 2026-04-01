@@ -1,5 +1,5 @@
 <template>
-  <div class="HeaderBg fixed-top pt-3">
+  <div class="HeaderBg fixed-top pt-6">
     <div class="container d-flex justify-content-between align-items-center">
       <div class="clickable-icon h2" @click="isMenuOpen = !isMenuOpen">
         <i :class="['fa-solid', isMenuOpen ? 'fa-xmark' : 'fa-bars', 'text-white']"></i>
