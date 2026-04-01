@@ -1,5 +1,5 @@
 <script setup>
-import BaseButton from './components/Common/BaseButton.vue'
+
 </script>
 
 <template>
@@ -8,5 +8,9 @@ import BaseButton from './components/Common/BaseButton.vue'
 
 <style lang="scss">
 /* 你的全域樣式 */
+body {
+  height: 100vh;
+  background: v.$vieshow-gradient-dark;
+}
 
 </style>

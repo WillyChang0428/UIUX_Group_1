@@ -10,8 +10,13 @@
         <i class="fa-solid fa-angle-left text-secondary"></i>
         <!-- </router-link> -->
       </li>
-      <li class="text-light">
-        分頁標題
+      <li class="d-flex justify-content-center align-items-center flex-grow-1 position-relative">
+        <p class="text-light fs-5">
+          分頁標題<!-- {{PageTitle}} -->
+        </p>
+        <div class="text-danger position-absolute end-0">
+          07:55
+        </div>
       </li>
       <li class="btn">
         <!-- <router-link to="/home"> -->
