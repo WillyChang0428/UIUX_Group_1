@@ -116,6 +116,7 @@ onUnmounted(() => {
   max-width: 500px; // 指南允許的非標準數值固定
 
   .select-header {
+    max-width: 486px;
     background-color: transparent !important;
     // 💡 呼叫響應式圓角與邊框顏色 [cite: 39, 148, 161]
     border: 1px solid v.$vieshow-secondary-emp;
@@ -126,6 +127,13 @@ onUnmounted(() => {
     background-color: transparent;
 
     .placeholder {
+      /* 💡 核心修正：強制單行並顯示省略號 */
+      white-space: nowrap;      // 強制文字不換行
+      overflow: hidden;         // 隱藏超出容器的內容
+      text-overflow: ellipsis;  // 在結尾顯示 "..."
+      display: block;           // 確保寬度限制生效
+      width: 100%;             // 佔滿父容器空間
+      padding-right: 10px;      // 預留一點空間給右側箭頭
       min-height: auto;
       background: transparent !important;
       box-shadow: none !important; // 💡 防止陰影產生的色塊感
