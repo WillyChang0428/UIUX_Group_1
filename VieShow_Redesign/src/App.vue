@@ -4,6 +4,7 @@ import Footer from "@/components/Layout/Parts/Footer/Footer.vue";
 import HomeBanner from "@/components/Home/HomeBanner.vue";
 import HomeHotMovie from "@/components/Home/HomeHotMovie.vue";
 import HomeLiveConcert from "@/components/Home/HomeLiveConcert.vue";
+import HomeNewsSection from "@/components/Home/HomeNewsSection.vue";
 </script>
 
 <template>
@@ -12,6 +13,7 @@ import HomeLiveConcert from "@/components/Home/HomeLiveConcert.vue";
     <HomeBanner />
     <HomeHotMovie />
     <HomeLiveConcert />
+    <HomeNewsSection />
     <Footer />
   </div>
 </template>
