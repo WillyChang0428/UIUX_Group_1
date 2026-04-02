@@ -1,9 +1,9 @@
 <script setup>
-
+//null
 </script>
 
 <template>
-
+<!-- null -->
 </template>
 
 <style lang="scss">
