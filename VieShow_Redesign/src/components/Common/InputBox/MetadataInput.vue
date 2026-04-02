@@ -32,7 +32,6 @@ const emit = defineEmits(['update:modelValue']);
   height: 48px;
   transition: opacity 0.3s ease, border-color 0.3s ease; 
   opacity: 0.7;
-
   border: 1px solid rgba(v.$light, 0.7) !important;
 
   &:focus-within {

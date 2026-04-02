@@ -1,9 +1,10 @@
 <script setup>
-//null
+import SignUpStep3 from './views/SignUp/SignUpStep3.vue'
+
 </script>
 
 <template>
-<!-- null -->
+<SignUpStep3 />
 </template>
 
 <style lang="scss">

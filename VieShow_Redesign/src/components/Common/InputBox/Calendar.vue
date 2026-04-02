@@ -2,10 +2,13 @@
 import { defineProps, defineEmits } from 'vue';
 import {VueDatePicker} from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import { ref } from 'vue';
+
+const isMenuOpen = ref(false);
 
 const props = defineProps({
   modelValue: { type: [Date, String], default: null },
-  label: { type: String, default: '生日' },
+  label: { type: String, default: '您的生日' },
   placeholder: { type: String, default: '請選擇日期' }
 });
 
@@ -29,10 +32,15 @@ const formatDate = (date) => {
       :dark="true"
       model-type="yyyy/MM/dd"
       :teleport="false"
+      @open="isMenuOpen = true"   
+      @closed="isMenuOpen = false"
     >
 
     <template #trigger>
-      <div class="metadata-input-wrapper d-flex align-items-center w-100 border rounded-lg bg-dark-section overflow-hidden">
+      <div 
+        class="metadata-input-wrapper d-flex align-items-center w-100 border rounded-lg bg-dark-section overflow-hidden" 
+        :class="{ 'is-active': isMenuOpen }"
+      >
         
         <div class="label-box px-3 d-flex align-items-center justify-content-center border-end border-secondary-emphasis">
           <span class="text-tertiary fs-6 fw-medium text-nowrap">{{ label }}</span>
@@ -57,13 +65,14 @@ const formatDate = (date) => {
 .metadata-input-wrapper {
   height: 48px;
   opacity: 0.7; // 預設 70% 透明
-  border-color: rgba(v.$light, 0.5) !important;
-  transition: all 0.3s ease;
+  border: 1px solid rgba(v.$light, 0.7) !important;
+  transition: all 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
-
-  &:hover {
-    opacity: 1;
-    border-color: rgba(v.$light, 0.8) !important;
+  
+  &.is-active {
+    opacity: 1;                      // 整體變為不透明
+    border-color: v.$light !important; // 邊框變為純白
+    box-shadow: 0 0 25px rgba(v.$light, 0.2); // 你的漂亮發光效果
   }
 }
 
