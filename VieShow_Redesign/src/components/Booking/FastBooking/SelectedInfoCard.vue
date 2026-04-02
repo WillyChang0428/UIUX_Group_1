@@ -176,7 +176,7 @@ const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
 }
 
 .title-en {
-  font-size: $font-size-mini;
+  font-size: $font-size-mini-mobile;
   font-weight: 500;
   color: $light;
   letter-spacing: 0.12em;
@@ -189,7 +189,7 @@ const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  font-size: $font-size-mini;
+  font-size: $font-size-mini-mobile;
   font-weight: 200;
   color: $light;
   line-height: 1.4;
