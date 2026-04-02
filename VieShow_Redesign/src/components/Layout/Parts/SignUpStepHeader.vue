@@ -31,6 +31,6 @@
 }
 .title {
   color: v.$light;
-  font-size: 20px;
+  font-size: v.$h5-font-size;
 }
 </style>
