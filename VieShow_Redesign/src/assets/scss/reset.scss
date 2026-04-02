@@ -22,3 +22,25 @@ a:hover {
 p, h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
+
+input, 
+button, 
+textarea, 
+select {
+  outline: none !important;
+  box-shadow: none !important;
+  
+  // 針對某些瀏覽器在 Focus 時會強制加上邊框
+  &:focus, 
+  &:active,
+  &:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: inherit; // 讓它繼承我們在組件裡定義的顏色
+  }
+}
+
+// 針對 Chrome/Safari 的特殊「黃色/藍色」外框
+:focus {
+  outline: none !important;
+}

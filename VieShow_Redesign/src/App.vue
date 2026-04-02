@@ -1,3 +1,7 @@
+<script setup>
+// null
+</script>
+
 <template>
 
 </template>
