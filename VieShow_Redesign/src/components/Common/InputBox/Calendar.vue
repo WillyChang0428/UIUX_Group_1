@@ -42,15 +42,14 @@ const formatDate = (date) => {
         :class="{ 'is-active': isMenuOpen }"
       >
         
-        <div class="label-box px-3 d-flex align-items-center justify-content-center border-end border-secondary-emphasis">
+        <div class="label-box px-3 h-100 d-flex align-items-center justify-content-center">
           <span class="text-tertiary fs-6 fw-medium text-nowrap">{{ label }}</span>
         </div>
 
         <div class="flex-grow-1 px-3 text-white d-flex align-items-center justify-content-between">
-          <span :class="{ 'text-secondary opacity-50': !modelValue }">
+          <span :class="{ 'text-secondary': !modelValue }">
             {{ modelValue ? formatDate(modelValue) : placeholder }}
           </span>
-          
           <i class="fa-regular fa-calendar-days text-tertiary"></i>
         </div>
       </div>
@@ -64,20 +63,37 @@ const formatDate = (date) => {
 /* 1. 沿用 MetadataInput 的高級感樣式 */
 .metadata-input-wrapper {
   height: 48px;
-  opacity: 0.7; // 預設 70% 透明
-  border: 1px solid rgba(v.$light, 0.7) !important;
-  transition: all 0.3s ease, border-color 0.3s ease;
+  opacity: 0.7;
+  border: 1px solid rgba(v.$light, 0.5) !important;
+  transition: all 0.3s ease; // 🌟 確保與 MetadataInput 同步
   cursor: pointer;
   
   &.is-active {
-    opacity: 1;                      // 整體變為不透明
-    border-color: v.$light !important; // 邊框變為純白
-    box-shadow: 0 0 25px rgba(v.$light, 0.2); // 你的漂亮發光效果
+    opacity: 1;
+    border-color: v.$light !important;
+    box-shadow: 0 0 25px rgba(v.$light, 0.2);
+
+    .label-box::after {
+      background-color: rgba(v.$light, 0.5);
+    }
   }
 }
 
 .label-box {
   min-width: 100px;
+  height: 100%;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background-color: rgba(v.$light, 0.2);
+    transition: background-color 0.3s ease;
+  }
 }
 
 /* 2. 深度自定義 DatePicker 彈出視窗的樣式，對齊 Vueshow 深色主題 */
