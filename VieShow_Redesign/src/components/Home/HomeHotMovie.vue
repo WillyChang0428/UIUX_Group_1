@@ -40,44 +40,49 @@
       </div>
     </div>
 
-    <div class="desktop-list d-none d-md-block container overflow-hidden">
-      <div
-        class="movie-track d-flex transition-ease"
-        :style="{ transform: `translateX(-${currentPage * 100}%)` }"
-      >
+    <div class="desktop-list d-none d-md-block container">
+      <div class="movie-window overflow-hidden">
         <div
-          v-for="(page, pIndex) in moviePages"
-          :key="'pc-' + pIndex"
-          class="movie-page d-flex flex-shrink-0 w-100"
+          class="movie-track d-flex transition-ease"
+          :style="{ transform: `translateX(-${desktopIndex * 25}%)` }"
         >
-          <div v-for="movie in page" :key="movie.id" class="movie-card-pc">
-            <div class="poster-box rounded-lg shadow-sm mb-3">
-              <img
-                :src="movie.posterUrl"
-                class="w-100 h-100 object-fit-cover rounded-lg"
-              />
-            </div>
-            <div class="text-start text-white px-1">
-              <h5 class="fw-bold mb-2 text-truncate">{{ movie.titleZh }}</h5>
-              <p class="small mb-1 text-secondary">
-                導演：{{ movie.director }}
-              </p>
-              <p class="small mb-4 text-secondary text-truncate">
-                演員：{{ movie.cast }}
-              </p>
-              <SecondaryButton @click="handleBooking(movie.id)" class="btn-sm"
-                >立即訂票</SecondaryButton
-              >
+          <div
+            v-for="movie in movieStore.movieList"
+            :key="'pc-' + movie.id"
+            class="movie-card-pc"
+          >
+            <div class="card-hover-wrapper d-flex flex-column h-100">
+              <div class="poster-box rounded-lg shadow-sm mb-3">
+                <img
+                  :src="movie.posterUrl"
+                  class="w-100 h-100 object-fit-cover"
+                />
+              </div>
+              <div class="text-content text-start text-white px-1">
+                <h5 class="fw-bold mb-2 text-truncate">{{ movie.titleZh }}</h5>
+                <p class="small mb-1 text-secondary text-truncate">
+                  導演：{{ movie.director }}
+                </p>
+                <p class="small mb-4 text-secondary text-truncate">
+                  演員：{{ movie.cast }}
+                </p>
+                <SecondaryButton @click="handleBooking(movie.id)" class="btn-sm"
+                  >立即訂票</SecondaryButton
+                >
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="pagination-controls d-none d-md-flex justify-content-center gap-3 mt-4">
-      <button class="nav-btn-static prev" @click="prevPage">
+
+    <div
+      class="pagination-controls d-none d-md-flex justify-content-center gap-3 mt-4"
+    >
+      <button class="nav-btn-static" @click="prevSlide">
         <i class="fa-solid fa-chevron-left"></i>
       </button>
-      <button class="nav-btn-static next" @click="nextPage">
+      <button class="nav-btn-static" @click="nextSlide">
         <i class="fa-solid fa-chevron-right"></i>
       </button>
     </div>
@@ -90,17 +95,23 @@ import { useMovieStore } from "@/store/movieStore";
 import SecondaryButton from "@/components/Common/Button/SecondaryButton.vue";
 
 const movieStore = useMovieStore();
-const currentIndex = ref(0); // 手機版索引
-const currentPage = ref(0); // 電腦版頁碼
+const currentIndex = ref(0);
+const desktopIndex = ref(0);
 let autoPlayTimer = null;
 
-// --- 共通邏輯 ---
 const currentMovie = computed(
   () => movieStore.movieList[currentIndex.value] || {},
 );
 const handleBooking = (id) => console.log("Booking:", id);
 
-// --- 手機版 3D 邏輯 ---
+const resetTimer = () => {
+  if (autoPlayTimer) clearInterval(autoPlayTimer);
+  autoPlayTimer = setInterval(() => {
+    nextSlide();
+  }, 8000);
+};
+
+// 手機版 3D 邏輯保持不變
 const getCardClass = (index) => ({ "is-active": index === currentIndex.value });
 const getCardStyle = (index) => {
   const total = movieStore.movieList.length;
@@ -115,7 +126,7 @@ const getCardStyle = (index) => {
   };
 };
 
-// 拽拉鎖定邏輯
+// 滑動邏輯
 let touchStartX = 0;
 const isSwiping = ref(false);
 const handleTouchStart = (e) => {
@@ -126,136 +137,134 @@ const handleTouchMove = (e) => {
   if (isSwiping.value) return;
   const deltaX = touchStartX - e.touches[0].clientX;
   if (Math.abs(deltaX) > 50) {
-    deltaX > 0
-      ? (currentIndex.value =
-          (currentIndex.value + 1) % movieStore.movieList.length)
-      : (currentIndex.value =
-          currentIndex.value === 0
-            ? movieStore.movieList.length - 1
-            : currentIndex.value - 1);
+    deltaX > 0 ? nextSlide() : prevSlide();
     isSwiping.value = true;
   }
 };
 const handleTouchEnd = () => (isSwiping.value = false);
 
-// --- 電腦版分頁邏輯 ---
-const moviePages = computed(() => {
-  const pages = [];
-  for (let i = 0; i < movieStore.movieList.length; i += 4) {
-    pages.push(movieStore.movieList.slice(i, i + 4));
-  }
-  return pages;
-});
-const nextPage = () => {
-  // 💡 邏輯：如果已經是最後一頁，就回到第 0 頁，否則加 1
-  currentPage.value = (currentPage.value + 1) % moviePages.value.length;
-};
-const prevPage = () => {
-  // 💡 邏輯：如果是第 0 頁，就跳到最後一頁，否則減 1
-  currentPage.value =
-    currentPage.value === 0
-      ? moviePages.value.length - 1
-      : currentPage.value - 1;
+// 切換邏輯
+const nextSlide = () => {
+  const total = movieStore.movieList.length;
+  currentIndex.value = (currentIndex.value + 1) % total;
+  if (desktopIndex.value >= total - 4) desktopIndex.value = 0;
+  else desktopIndex.value++;
+  resetTimer();
 };
 
-// 自動播放
+const prevSlide = () => {
+  const total = movieStore.movieList.length;
+  currentIndex.value =
+    currentIndex.value === 0 ? total - 1 : currentIndex.value - 1;
+  if (desktopIndex.value === 0) desktopIndex.value = total - 4;
+  else desktopIndex.value--;
+  resetTimer();
+};
+
 onMounted(() => {
-  autoPlayTimer = setInterval(() => {
-    nextPage();
-    currentIndex.value = (currentIndex.value + 1) % movieStore.movieList.length;
-  }, 8000);
+  resetTimer();
 });
-onUnmounted(() => clearInterval(autoPlayTimer));
+onUnmounted(() => {
+  if (autoPlayTimer) clearInterval(autoPlayTimer);
+});
 </script>
 
 <style scoped lang="scss">
 .hot-movie-section {
-  // 手機版樣式
+  // 手機版 (省略重複部分)
   .mobile-carousel {
-    min-height: 450px; // 給予足夠高度防止坍塌
+    min-height: 450px;
   }
   .carousel-container {
     height: 400px;
     perspective: 1000px;
-    position: relative; // 💡 確保絕對定位的子元素有參考點
+    position: relative;
   }
   .poster-card {
     width: 260px;
     height: 380px;
-    left: 50%; // 💡 關鍵修正：先推到 50%
-    margin-left: -130px; // 💡 關鍵修正：推回寬度的一半來達成完美水平置中
+    left: 50%;
+    margin-left: -130px;
     &.is-active {
       box-shadow: 0 0 20px rgba(v.$vieshow-primary, 0.4);
     }
   }
 
-  // 電腦版樣式
-  .desktop-list {
-    position: relative;
+  // 桌機版關鍵樣式
+  .movie-window {
+    padding: 20px 0; // 💡 預留空間給放大後的卡片，避免邊緣被切掉
+    overflow: hidden; // 確保容器裁切溢出內容
+    width: 100%;
   }
 
   .movie-track {
     display: flex;
-    flex-wrap: nowrap; /* 強制不換行，這是跑馬燈/輪播的關鍵 */
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-wrap: nowrap;
     width: 100%;
-  }
-
-  .movie-page {
-    /* 每一頁都要佔滿容器寬度 */
-    flex: 0 0 100%;
-    width: 100%;
-    display: flex;
-    justify-content: flex-start; /* 改回靠左 */
-    gap: var(--gap-md); /* 卡片之間的間距 */
-    padding-right: var(--gap-md);
+    align-items: stretch; // 💡 確保所有卡片容器高度一致
+    // 💡 關鍵：確保過渡屬性被正確編譯且優先級足夠
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: transform; // 優化效能
   }
 
   .movie-card-pc {
-    /* 關鍵修正：精確計算 4 張卡片的寬度 */
-    /* (100% - (3個間距 * 32px)) / 4 */
-    width: calc((100% - (3 * 32px)) / 4);
-    flex-shrink: 0;
+    flex: 0 0 25%; // 固定四張
+    max-width: 25%; // 💡 強制限制最大寬度，防止被內容撐開
+    padding: 0 calc(var(--gap-md) / 2); // [cite: 131]
+    box-sizing: border-box;
+    transition: transform 0.4s ease; // 平滑過渡
   }
-  .poster-box {
-    aspect-ratio: 2 / 3;
-    border: 1px solid v.$vieshow-secondary-emp;
-    border-radius: var(--app-radius); // 自動偵測 8px/16px [cite: 33]
+
+  /* 💡 Hover 整體放大效果 */
+  .card-hover-wrapper {
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+
     &:hover {
-      transform: translateY(-8px);
-      border-color: v.$vieshow-primary;
+      transform: scale(1.05); // 💡 整體微微放大 5%
+
+      .poster-box {
+        border-color: v.$vieshow-primary;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+      }
     }
   }
 
-  /* 💡 新增控制區容器 */
-  .pagination-controls {
+  .poster-box {
+    aspect-ratio: 2 / 3; // 💡 強制比例一致
     width: 100%;
-    padding-bottom: 20px;
+    overflow: hidden;
+    border-radius: var(--app-radius);
+    border: 1px solid v.$vieshow-secondary-emp;
+    transition: border-color 0.3s ease;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
-  /* 💡 修改按鈕樣式 (重新定義為 nav-btn-static) */
+  .text-content {
+    h5 {
+      font-size: var(--app-font-size-h5);
+    }
+    p {
+      font-size: var(--app-font-size-base);
+    }
+  }
+
   .nav-btn-static {
     width: 40px;
     height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(v.$white, 0.3); /* 加個邊框質感較好 */
     border-radius: 50%;
-    background-color: transparent;
+    border: 1px solid rgba(v.$white, 0.3);
+    background: transparent;
     color: v.$white;
     transition: all 0.3s ease;
-    cursor: pointer;
 
     &:hover {
       background: v.$vieshow-primary;
       border-color: v.$vieshow-primary;
-      color: v.$white;
-      transform: scale(1.1);
-    }
-
-    i {
-      font-size: 0.9rem;
     }
   }
 }
