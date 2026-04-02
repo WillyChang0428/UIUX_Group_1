@@ -1,7 +1,7 @@
 <template>
-  <div class="metadata-input-wrapper d-flex align-items-center w-100 border border-secondary-emphasis rounded-lg bg-dark-section overflow-hidden">
+  <div class="metadata-input-wrapper d-flex align-items-center w-100 border rounded-lg bg-dark-section overflow-hidden">
     
-    <div class="label-box px-3 d-flex align-items-center justify-content-center border-end border-secondary-emphasis">
+    <div class="label-box px-3 d-flex align-items-center justify-content-center border-end ">
       <span class="text-tertiary fs-6 fw-medium text-nowrap">{{ label }}</span>
     </div>
 
@@ -29,12 +29,16 @@ const emit = defineEmits(['update:modelValue']);
 <style lang="scss" scoped>
 // 這裡我們只寫 BS 沒辦法直接用 Class 達成的「特殊邏輯」
 .metadata-input-wrapper {
-  height: 48px; // 這是特定的設計稿高度
-  transition: border-color 0.2s;
+  height: 48px;
+  transition: opacity 0.3s ease, border-color 0.3s ease; 
+  opacity: 0.7;
 
-  // 4. 利用 focus-within 達成：當內層 input 被點擊，外層框變藍色 [cite: 116]
+  border: 1px solid rgba(v.$light, 0.7) !important;
+
   &:focus-within {
-    border-color: var(--bs-primary) !important; 
+    opacity: 1;                      // 整體變為不透明
+    border-color: v.$light !important; // 邊框變為純白
+    box-shadow: 0 0 25px rgba(v.$light, 0.2); // 額外加一點微光，更有質感
   }
 }
 
@@ -42,7 +46,6 @@ const emit = defineEmits(['update:modelValue']);
   min-width: 100px; // 確保標籤寬度一致
 }
 
-// 針對 Placeholder 的顏色微調，BS 預設較淺
 input::placeholder {
   color: var(--bs-secondary) !important;
   opacity: 0.7;
