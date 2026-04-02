@@ -52,7 +52,6 @@ const latestNews = computed(() => {
 @import "@/assets/scss/variables";
 
 .home-news-section {
-  background-color: v.$vieshow-dark; // 使用專案定義的深色背景 [cite: 138]
 
   .news-poster {
     aspect-ratio: 16 / 10; // 根據圖二比例設定

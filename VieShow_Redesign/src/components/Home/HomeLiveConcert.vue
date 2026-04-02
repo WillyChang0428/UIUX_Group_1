@@ -105,7 +105,6 @@ onUnmounted(() => {
 @import "@/assets/scss/variables";
 
 .home-live-concert {
-  background-color: v.$vieshow-dark; // 使用變數 [cite: 125, 160]
 
   .concert-track {
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
