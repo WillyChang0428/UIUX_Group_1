@@ -11,103 +11,98 @@
  -->
 
 <template>
-    <button class="base-btn" :class="[variant, { 'disabled': isDisabled }]" :disabled="isDisabled"
-        @click="$emit('click')">
-        <slot>次按鈕</slot>
-    </button>
+  <button
+    class="btn d-inline-flex align-items-center justify-content-center text-nowrap"
+    :class="[variant, { disabled: isDisabled }]"
+    :disabled="isDisabled"
+    @click="$emit('click')"
+  >
+    <span class="ls-wide">
+      <slot>次按鈕</slot>
+    </span>
+  </button>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
-    // 狀態選擇：default, unable, press, warning, secondary
-    status: {
-        type: String,
-        default: 'default'
-    },
-    // 是否禁用
-    isDisabled: {
-        type: Boolean,
-        default: false
-    }
-})
+  status: {
+    type: String,
+    default: "default",
+  },
+  isDisabled: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-defineEmits(['click'])
+defineEmits(["click"]);
 
-// 根據 status 轉化為 CSS class
-const variant = computed(() => `btn-${props.status}`)
+const variant = computed(() => `btn-${props.status}`);
 </script>
 
 <style scoped lang="scss">
-.base-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 16px;
-    border-radius: 8px; // 根據設計稿調整圓角
-    border: none;
-    color: white;
-    font-weight: 500;
-    font-size: v.$font-size-base;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 100px;
-    letter-spacing: 0.1em;
+.btn {
+  /* --- 1. 響應式基礎設定 (使用全域 CSS 變數) [cite: 50] --- */
 
-    // 1. Default (品牌藍漸層)
-    &.btn-default {
-        background: v.$vieshow-primary;
-    }
+  // 💡 圓角：自動切換手機 8px / 電腦 16px [cite: 4, 147]
+  border-radius: var(--app-radius) !important;
 
-    // 2. Unable (禁用灰色)
-    &.btn-unable,
-    &:disabled {
-        background-color: #C0C0C0; // 或 v.$vieshow-secondary-emp
-        cursor: not-allowed;
-        opacity: 0.8;
-        // 💡 關鍵：禁止所有滑鼠與觸控事件
-        pointer-events: none;
+  // 💡 內距：對應 Figma Token 之次按鈕尺寸 (10px 16px) [cite: 40, 59]
+  padding: v.$btn-padding-y v.$btn-padding-x;
 
-        // 讓點擊反饋（如 scale）在禁用時失效
-        &:active {
-            transform: none;
-        }
-    }
+  // 💡 字體：自動切換手機 16px / 電腦 18px [cite: 29, 143]
+  font-size: v.$h6-font-size-mobile;
+  font-weight: v.$font-weight-semibold !important;
 
-    // 3. Press (深藍色)
-    &.btn-press,
+  transition: all 0.2s ease;
+  border: none;
+  color: v.$white;
+
+  /* --- 2. 狀態色彩規範 (使用語意化變數) [cite: 158] --- */
+
+  // Default (品牌藍)
+  &.btn-default {
+    background: v.$vieshow-primary;
+  }
+
+  // 💡 Unable (禁用灰色)
+  &:disabled,
+  &.disabled {
+    background-color: v.$vieshow-secondary-emp !important; // #4A4A4A
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none; // 禁止所有事件
+
     &:active {
-        // 利用多層背景：最上層是 60% 透明黑，底層是品牌主色
-        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-            v.$vieshow-primary;
-        // 實作 Figma 的 1px Inside Stroke (內邊框)
-        // 使用 inset box-shadow 不會影響按鈕實際大小
-        box-shadow: inset 0 0 0 2px v.$vieshow-primary;
-
-        // 維持你想要的縮小壓入感
-        transform: scale(0.96);
-
-        // 確保文字依然清晰
-        color: rgba(white, 0.9);
+      transform: none !important;
     }
+  }
 
-    // 4. Warning (警告紅)
-    &.btn-warning {
-        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-            v.$vieshow-danger;
-        box-shadow: inset 0 0 0 1px v.$vieshow-danger;
-    }
+  // 💡 Press (按壓感)：實現縮小壓入感與深色反饋
+  &:active:not(:disabled) {
+    transform: scale(0.96) translateZ(0);
+    filter: brightness(0.95);
+    box-shadow: inset 0 0 0 2px rgba(v.$black, 0.2);
+  }
 
-    // 5. Second Choice (深灰色)
-    &.btn-secondary {
-        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-            v.$vieshow-secondary;
-    }
+  // Warning (警告紅)
+  &.btn-warning {
+    background: v.$vieshow-danger;
+  }
 
-    // 桌機端 Hover 微光效果
-    @include v.hover-focus {
-        filter: brightness(1.1);
-    }
+  // Second Choice (深灰色)
+  &.btn-secondary {
+    background: v.$vieshow-secondary;
+  }
+
+  /* --- 3. 桌機端優化 --- */
+
+  // 💡 使用手冊定義的 Mixin，防止手機端點擊後殘留 hover 色 [cite: 9, 48, 126]
+  @include v.hover-focus {
+    filter: brightness(1.05);
+    box-shadow: v.$box-shadow-sm;
+  }
 }
 </style>

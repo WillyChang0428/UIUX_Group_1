@@ -1,34 +1,43 @@
 <template>
   <Transition name="slide">
-    <div v-if="show" class="app-menu-overlay">
-      <ul class="menu-list">
+    <div v-if="show" class="app-menu-overlay w-100">
+      <ul class="menu-list list-unstyled m-0 p-0 text-center">
         <li
           v-for="item in menuItems"
           :key="item.text"
-          class="menu-item"
+          class="menu-item border-bottom"
           @mouseenter="handleMouseEnter(item)"
           @mouseleave="handleMouseLeave"
         >
-          <div class="main-link-container">
+          <div class="main-link-container w-100">
             <router-link
               :to="item.link"
-              class="main-link"
+              class="main-link d-flex flex-column py-4 text-decoration-none text-white"
               @click="handleMobileClick(item, $event)"
             >
-              <span class="chinese display-5 lh-relaxed">{{ item.text }}</span>
-              <span class="english" v-if="item.english">{{
-                item.english
+              <span class="chinese fw-bold h2 mb-2 ls-wide">{{
+                item.text
               }}</span>
+              <span
+                class="english fw-medium text-secondary h6 mb-0"
+                v-if="item.english"
+              >
+                {{ item.english }}
+              </span>
             </router-link>
           </div>
 
           <Transition name="expand">
             <ul
               v-if="item.subItems && activeSubMenu === item.text"
-              class="sub-menu-list"
+              class="sub-menu-list list-unstyled p-0"
             >
               <li v-for="sub in item.subItems" :key="sub.text">
-                <router-link :to="sub.link" @click="$emit('close')">
+                <router-link
+                  :to="sub.link"
+                  class="d-block py-3 text-secondary text-decoration-none fs-6"
+                  @click="$emit('close')"
+                >
                   {{ sub.text }}
                 </router-link>
               </li>
@@ -88,81 +97,74 @@ const menuItems = [
 <style scoped lang="scss">
 .app-menu-overlay {
   position: fixed;
-  top: 134px; // 符合你 Mobile 的 WebTopPadding [cite: 210]
+  // 💡 呼叫全域導航欄高度變數，確保手機/電腦自動對齊 [cite: 122]
+  top: v.$web-top-padding-mobile;
+
+  @include v.media-breakpoint-up(md) {
+    top: v.$web-top-padding-pc;
+  }
+
   left: 0;
-  width: 100%;
   height: fit-content;
-  background-color: v.$dark; // 使用你定義的黑色
+  background-color: v.$vieshow-dark; // [cite: 138]
   z-index: 1040;
   overflow-y: auto;
+
   &::-webkit-scrollbar {
-    display: none;
+    display: none; // [cite: 126]
   }
 }
 
-.menu-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  text-align: center;
+.menu-item {
+  // 💡 使用語意化邊框顏色變數 [cite: 161]
+  border-color: v.$vieshow-secondary-emp !important;
 
-  .menu-item {
-    border-bottom: 1px solid v.$vieshow-secondary-emp;
-
-    .main-link-container {
-      width: 100%;
-      cursor: pointer;
-    }
-
-    .main-link {
-      display: flex;
-      flex-direction: column;
-      padding: v.$spacer * 1.5 0;
-      text-decoration: none;
-      color: white;
-
-      .chinese {
-        position: relative;
-        font-weight: 600;
-        letter-spacing: 0.3em;
-        margin-right: -0.3em;
-      }
-      .english {
-        color: v.$vieshow-secondary;
-        letter-spacing: 0.2em;
-        margin-right: -0.2em;
-      }
-    }
+  .chinese {
+    // 💡 移除寫死數值，改用全域字距變數 (0.1em) [cite: 110]
+    // 若需更寬字距 (0.3em) 則依指南保留為特殊 CSS 寫法 [cite: 127]
+    letter-spacing: v.$letter-spacing-wide;
+    margin-right: calc(v.$letter-spacing-wide * -1);
   }
 }
 
 .sub-menu-list {
-  background-color: rgba(black, 0.2);
-  list-style: none;
-  padding: 0;
-  li a {
-    display: block;
-    padding: v.$spacer 0;
-    color: v.$vieshow-secondary;
-    font-size: v.$font-size-base;
-    text-decoration: none;
-  }
+  // 💡 背景透明度配合全域變數基準
+  background-color: rgba(v.$black, 0.2);
 }
 
-// 動態過渡
-.slide-enter-active,
-.slide-leave-active {
-  transition: transform 0.4s ease;
+/* 💡 從上而下絲滑展開效果 - 整合開發指南規範 [cite: 127] */
+.slide-enter-active {
+  transition:
+    clip-path 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.2s linear; // 稍微增加透明度過度，感官更流暢
 }
+
+.slide-leave-active {
+  transition:
+    clip-path 0.4s cubic-bezier(0.4, 0, 1, 1),
+    opacity 0.1s linear;
+}
+
 .slide-enter-from,
 .slide-leave-to {
-  transform: translateY(-100%);
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+}
+
+.slide-enter-to,
+.slide-leave-from {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+}
+
+.app-menu-overlay {
+  will-change: clip-path, opacity;
 }
 
 .expand-enter-active,
 .expand-leave-active {
   transition: all 0.3s ease;
-  max-height: 200px;
+  max-height: 500px;
   overflow: hidden;
 }
 .expand-enter-from,

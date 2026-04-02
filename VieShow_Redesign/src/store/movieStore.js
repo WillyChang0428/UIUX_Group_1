@@ -24,8 +24,8 @@ export const useMovieStore = defineStore('movie', () => {
     },
     {
       id: 2,
-      titleZh: '你的名字。',
-      titleEn: 'YOUR NAME.',
+      titleZh: '你的名字',
+      titleEn: 'YOUR NAME',
       posterUrl: 'https://upload.wikimedia.org/wikipedia/zh/4/4e/Your_name_poster.jpg',
       releaseDate: '2016/08/26',
       duration: '106分',
