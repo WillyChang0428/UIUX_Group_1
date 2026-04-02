@@ -46,7 +46,6 @@ const variant = computed(() => `btn-${props.status}`);
 
 <style scoped lang="scss">
 .btn {
-    
   /* --- 1. 響應式基礎設定 (呼叫 :root 全域變數) [cite: 2, 6, 52] --- */
 
   // 💡 圓角：自動切換 手機 8px / 電腦 16px [cite: 4, 31, 148]
@@ -55,8 +54,7 @@ const variant = computed(() => `btn-${props.status}`);
   // 💡 內距：對應 Figma Token 之小型 Padding [cite: 40-42, 101]
   padding: v.$btn-padding-y-sm v.$btn-padding-x-sm;
 
-  // 💡 字體大小：自動切換 手機 14px / 電腦 16px [cite: 29, 145]
-  font-size: var(--app-font-size-sm);
+  font-size: var(--app-font-size-sm) !important;
   font-weight: v.$font-weight-semibold !important;
 
   transition: all 0.2s ease;
@@ -85,14 +83,15 @@ const variant = computed(() => `btn-${props.status}`);
 
   // 💡 Press (按壓感)：實現縮小壓入感與深色反饋 [cite: 127]
   &:active:not(:disabled) {
-    transform: scale(0.96) translateZ(0);
-    filter: brightness(0.95);
-    box-shadow: inset 0 0 0 2px rgba(v.$black, 0.2); // 內邊框 [cite: 21, 165]
+    transform: scale(0.98) translateZ(0);
+    filter: brightness(0.9);
   }
 
   // Warning (警告紅) [cite: 24, 162]
   &.btn-warning {
-    background: v.$vieshow-danger;
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), v.$vieshow-danger;
+    box-shadow: inset 0 0 0 1px v.$vieshow-danger;
   }
 
   // Secondary (深灰色) [cite: 23, 161]
