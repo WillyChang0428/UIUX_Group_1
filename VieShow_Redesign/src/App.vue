@@ -8,6 +8,7 @@ import HomeNewsSection from "@/components/Home/HomeNewsSection.vue";
 import HomeSectionTitle from "@/components/Home/HomeSectionTitle.vue";
 import SelectBox from "@/components/Common/Selecter/SelectBox.vue";
 import HomeVideo from "@/components/Home/HomeVideo.vue";
+import GoOnTop from "@/components/Common/Button/GoOnTop.vue";
 </script>
 
 <template>
@@ -31,6 +32,7 @@ import HomeVideo from "@/components/Home/HomeVideo.vue";
     <HomeNewsSection />
     <Footer />
     <HomeVideo />
+    <GoOnTop />
   </div>
 </template>
 
