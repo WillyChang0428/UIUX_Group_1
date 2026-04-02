@@ -120,7 +120,7 @@ onUnmounted(() => {
     // 💡 呼叫響應式圓角與邊框顏色 [cite: 39, 148, 161]
     border: 1px solid v.$vieshow-secondary-emp;
     border-radius: var(--app-radius);
-    min-height: var(--gap-2xl); // 手機 48px / 電腦 96px
+    min-height: 48px;
     cursor: pointer;
     transition: all 0.3s ease;
     background-color: transparent;

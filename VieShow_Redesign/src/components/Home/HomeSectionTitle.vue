@@ -3,7 +3,7 @@
 -->
 
 <template>
-  <div class="home-section-title mb-6 mt-7">
+  <div class="home-section-title mb-2 mt-7">
     <router-link
       :to="link"
       class="title-link d-inline-flex align-items-center text-white"
