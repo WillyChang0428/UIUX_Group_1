@@ -115,6 +115,20 @@ body {
   }
 }
 
+.icon-lg {
+  font-size: var(--app-font-size-h2);
+}
+
+.icon-md {
+  font-size: var(--app-font-size-h4);
+}
+
+.icon-sm {
+  font-size: var(--app-font-size-base);
+}
+
+
+
 // 自定義按鈕尺寸擴充 (沿用舊的寫死變數，或後續換成 CSS 變數)
 .btn-mini {
   padding: $btn-padding-y-mini $btn-padding-x-mini;
