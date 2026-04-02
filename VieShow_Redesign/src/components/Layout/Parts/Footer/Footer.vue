@@ -14,6 +14,7 @@ import FooterMenu from "./FooterMenu.vue";
 </template>
 
 <style lang="scss" scoped>
+
 .logo img{
   width: 100%;
   max-width: 250px;
