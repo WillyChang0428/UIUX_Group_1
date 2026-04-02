@@ -178,7 +178,8 @@ const getYouTubeID = (url) => {
     background: linear-gradient(
       180deg,
       rgba(v.$black, 0.3) 0%,
-      rgba(v.$black, 0.6) 60%,
+      rgba(v.$black, 0.5) 50%,
+      rgba(v.$black, 0.7) 90%,
       v.$black 100%
     );
     z-index: 1;
