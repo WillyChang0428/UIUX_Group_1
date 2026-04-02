@@ -54,8 +54,8 @@ const variant = computed(() => `btn-${props.status}`);
   // 💡 內距：使用手冊規範的主按鈕大型 Padding (12px 24px) [cite: 41, 101]
   padding: v.$btn-padding-y-lg v.$btn-padding-x-lg;
 
-  // 💡 字體大小：自動切換手機 18px / 電腦 18px (H6 基準) [cite: 29, 32]
-  font-size: var(--app-font-size-h6);
+  // 💡 字體大小：自動切換手機 18px / 電腦 20px (H6 基準) [cite: 29, 32]
+  font-size: var(--app-font-size-h6) !important;
   font-weight: v.$font-weight-semibold !important;
 
   transition: all 0.2s ease;
@@ -66,12 +66,14 @@ const variant = computed(() => `btn-${props.status}`);
 
   // Default (品牌藍漸層) [cite: 22, 160]
   &.btn-default {
-    background: v.$vieshow-gradient-primary;
+    background: v.$vieshow-primary;
   }
 
   // Warning (警告紅) [cite: 24, 162]
   &.btn-warning {
-    background: v.$vieshow-danger;
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), v.$vieshow-danger;
+    box-shadow: inset 0 0 0 1px v.$vieshow-danger;
   }
 
   // Secondary (深灰色) [cite: 23]
@@ -93,10 +95,8 @@ const variant = computed(() => `btn-${props.status}`);
 
   // 💡 Press (按壓感)：實現縮小壓入感與深色反饋
   &:active:not(:disabled) {
-    transform: scale(0.96) translateZ(0);
-    filter: brightness(0.95);
-    // 實作 Figma 內邊框效果 [cite: 165]
-    box-shadow: inset 0 0 0 2px rgba(v.$black, 0.2);
+    transform: scale(0.98) translateZ(0);
+    filter: brightness(0.9);
   }
 
   // 💡 桌機端 Hover：使用預防針 Mixin，避免手機殘留

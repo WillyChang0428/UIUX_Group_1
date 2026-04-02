@@ -14,6 +14,8 @@
   // 字體
   --app-font-family: #{$font-family-base};
   --bs-body-font-family: var(--app-font-family);
+  --app-font-size-mini: #{$font-size-mini-mobile};
+  --app-font-size-sm:   #{$font-size-sm-mobile};
   --app-font-size-base: #{$font-size-base-mobile};
   --app-font-size-h2:   #{$h2-font-size-mobile};
   --app-font-size-h3:   #{$h3-font-size-mobile};
@@ -47,6 +49,8 @@
 // --- 向上加疊：螢幕大於 md (768px) 時，自動變更為 PC 版數值 ---
 @include media-breakpoint-up(md) {
   :root {
+    --app-font-size-mini: #{$font-size-mini-pc};
+    --app-font-size-sm:   #{$font-size-sm-pc};
     --app-font-size-base: #{$font-size-base-pc};
     --app-font-size-h2:   #{$h2-font-size-pc};
     --app-font-size-h3:   #{$h3-font-size-pc};

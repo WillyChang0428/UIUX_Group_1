@@ -53,7 +53,7 @@ const variant = computed(() => `btn-${props.status}`);
   padding: v.$btn-padding-y v.$btn-padding-x;
 
   // 💡 字體：自動切換手機 16px / 電腦 18px [cite: 29, 143]
-  font-size: v.$h6-font-size-mobile;
+  font-size: var(--app-font-size-base) !important;
   font-weight: v.$font-weight-semibold !important;
 
   transition: all 0.2s ease;
@@ -82,14 +82,15 @@ const variant = computed(() => `btn-${props.status}`);
 
   // 💡 Press (按壓感)：實現縮小壓入感與深色反饋
   &:active:not(:disabled) {
-    transform: scale(0.96) translateZ(0);
-    filter: brightness(0.95);
-    box-shadow: inset 0 0 0 2px rgba(v.$black, 0.2);
+    transform: scale(0.98) translateZ(0);
+    filter: brightness(0.9);
   }
 
   // Warning (警告紅)
   &.btn-warning {
-    background: v.$vieshow-danger;
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), v.$vieshow-danger;
+    box-shadow: inset 0 0 0 1px v.$vieshow-danger;
   }
 
   // Second Choice (深灰色)
