@@ -62,19 +62,21 @@
       </div>
     </div>
 
-    <div class="d-none d-md-block">
-      <button
-        class="nav-btn prev position-absolute top-50 start-0 translate-middle-y ms-4 clickable-icon"
-        @click="prevSlide"
-      >
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-      <button
-        class="nav-btn next position-absolute top-50 end-0 translate-middle-y me-4 clickable-icon"
-        @click="nextSlide"
-      >
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
+    <div
+      class="banner-pagination-wrapper position-absolute bottom-0 start-50 translate-middle-x mb-5 z-index-20"
+    >
+      <div class="pagination-circle-window">
+        <div class="dots-track-centered">
+          <button
+            v-for="(_, index) in movieStore.movieList"
+            :key="'dot-' + index"
+            class="dot-btn-circular"
+            :class="{ active: currentIndex === index }"
+            :style="getDotStyle(index)"
+            @click="goToSlide(index)"
+          ></button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -92,20 +94,40 @@ const currentMovie = computed(
   () => movieStore.movieList[currentIndex.value] || {},
 );
 
-const nextSlide = () => {
-  currentIndex.value = (currentIndex.value + 1) % movieStore.movieList.length;
+const goToSlide = (index) => {
+  currentIndex.value = index;
+  // 💡 重設計時器
+  clearInterval(timer);
+  startTimer();
 };
 
-const prevSlide = () => {
-  currentIndex.value =
-    currentIndex.value === 0
-      ? movieStore.movieList.length - 1
-      : currentIndex.value - 1;
+const getDotStyle = (index) => {
+  const total = movieStore.movieList.length;
+  // 計算相對距離（考慮環狀邏輯）
+  let diff = index - currentIndex.value;
+
+  // 核心環狀算法：確保 diff 永遠在 -total/2 到 total/2 之間
+  if (diff > total / 2) diff -= total;
+  if (diff < -total / 2) diff += total;
+
+  const dotWidth = 26; // 間距
+  const opacity = Math.max(0, 1 - Math.abs(diff) * 0.4); // 離中心越遠越透明
+  const scale = Math.max(0.5, 1 - Math.abs(diff) * 0.15); // 離中心越遠越小
+
+  return {
+    transform: `translateX(${diff * dotWidth}px) scale(${scale})`,
+    opacity: opacity,
+    zIndex: 10 - Math.abs(diff),
+    position: "absolute", // 必須絕對定位才能重疊並由計算控制位置
+  };
 };
 
 const startTimer = () => {
   // 對齊組長設定的 5 秒切換
-  timer = setInterval(nextSlide, 5000);
+  timer = setInterval(
+    () => goToSlide((currentIndex.value + 1) % movieStore.movieList.length),
+    5000,
+  );
 };
 
 onMounted(() => {
@@ -165,7 +187,6 @@ const getYouTubeID = (url) => {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-
     }
   }
 
@@ -179,7 +200,7 @@ const getYouTubeID = (url) => {
       180deg,
       rgba(v.$black, 0.3) 0%,
       rgba(v.$black, 0.5) 50%,
-      rgba(v.$black, 0.7) 90%,
+      rgba(v.$black, 0.7) 100%,
       v.$black 100%
     );
     z-index: 1;
@@ -194,19 +215,50 @@ const getYouTubeID = (url) => {
     font-size: var(--app-font-size-base); // 16px / 18px [cite: 60, 144]
   }
 
-  .nav-btn {
-    color: rgba(v.$white, 0.5);
-    transition: all 0.3s ease;
-    z-index: 20; // 確保在遮罩之上
-
-    &:hover {
-      color: v.$white;
-      filter: drop-shadow(0 0 8px rgba(v.$vieshow-primary, 0.8));
+  .banner-pagination-wrapper {
+    .pagination-circle-window {
+      width: 150px; // 顯示範圍
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      // 兩側羽化，更有「轉入後方」的感覺
+      mask-image: linear-gradient(
+        to right,
+        transparent,
+        black 30%,
+        black 70%,
+        transparent
+      );
     }
 
-    i {
-      // 💡 圖示大小對齊地基 [cite: 156]
-      font-size: var(--app-font-size-h4);
+    .dots-track-centered {
+      position: relative;
+      width: 10px;
+      height: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dot-btn-circular {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: none;
+      background-color: v.$white;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); // 帶點彈性的轉動感
+      will-change: transform, opacity;
+
+      &.active {
+        background-color: v.$white;
+        // 藍色核心發光
+        box-shadow:
+          0 0 15px rgba(v.$vieshow-primary, 1),
+          0 0 30px rgba(v.$vieshow-primary, 0.6);
+      }
     }
   }
 }

@@ -1,55 +1,50 @@
 <template>
-  <div class="selectbox container">
-    <div class="insideitem">
-      <FlatSelect
-        :isOpen="isMovieOpen"
-        :isSelected="isMovieSelected"
-        :placeholder="selectedMovie || '選擇電影'"
-        @toggle="isMovieOpen = !isMovieOpen"
-        @clear="
-          selectedMovie = '';
-          isMovieSelected = false;
-        "
-      >
-        <template #options>
-          <li
-            v-for="movie in movieStore.movieList"
-            :key="movie.id"
-            @click="handleMovieSelect(movie)"
-          >
-            <span class="title-zh">{{ movie.titleZh }}</span>
-            <span class="title-en">{{ movie.titleEn }}</span>
-          </li>
-        </template>
-      </FlatSelect>
+  <div class="selectbox container d-flex flex-column flex-md-row align-items-md-center">
+    
+    <div class="title fw-medium text-white me-md-5 fs-5 flex-shrink-0">
+      快速訂票
     </div>
 
-    <div class="insideitem d-flex gap-3">
-      <FlatSelect
-        :isOpen="isCinemaOpen"
-        :isSelected="isCinemaSelected"
-        :placeholder="selectedCinema || '選擇影城'"
-        @toggle="isCinemaOpen = !isCinemaOpen"
-      >
-        <template #options>
-          <template v-if="cinemaStore.cinemaList?.length">
-            <SelectCategory
-              v-for="region in cinemaStore.cinemaList"
-              :key="region.id"
-              :label="region.label"
-            >
-              <li
-                v-for="theater in region.theaters"
-                :key="theater"
-                @click="handleCinemaSelect(theater)"
-              >
-                {{ theater }}
-              </li>
-            </SelectCategory>
+    <div class="selection-wrapper d-flex flex-column flex-md-row gap-3 w-100 align-items-md-end">
+      
+      <div class="insideitem">
+        <FlatSelect
+          :isOpen="isMovieOpen"
+          :isSelected="isMovieSelected"
+          :placeholder="selectedMovie || '選擇電影'"
+          @toggle="isMovieOpen = !isMovieOpen"
+          @clear="selectedMovie = ''; isMovieSelected = false;"
+        >
+          <template #options>
+            <li v-for="movie in movieStore.movieList" :key="movie.id" @click="handleMovieSelect(movie)">
+              <span class="title-zh">{{ movie.titleZh }}</span>
+              <span class="title-en">{{ movie.titleEn }}</span>
+            </li>
           </template>
-        </template>
-      </FlatSelect>
-      <SecondaryButton class="btn">搜尋</SecondaryButton>
+        </FlatSelect>
+      </div>
+
+      <div class="insideitem d-flex gap-3 align-items-end">
+        <FlatSelect
+          :isOpen="isCinemaOpen"
+          :isSelected="isCinemaSelected"
+          :placeholder="selectedCinema || '選擇影城'"
+          @toggle="isCinemaOpen = !isCinemaOpen"
+        >
+          <template #options>
+            <template v-if="cinemaStore.cinemaList?.length">
+              <SelectCategory v-for="region in cinemaStore.cinemaList" :key="region.id" :label="region.label">
+                <li v-for="theater in region.theaters" :key="theater" @click="handleCinemaSelect(theater)">
+                  {{ theater }}
+                </li>
+              </SelectCategory>
+            </template>
+          </template>
+        </FlatSelect>
+        
+        <SecondaryButton class="btn">搜尋</SecondaryButton>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -90,48 +85,63 @@ const handleCinemaSelect = (name) => {
 </script>
 
 <style scoped lang="scss">
+@import "@/assets/scss/variables"; // 💡 確保引入地基
+
 .selectbox {
-  // 💡 移除手寫 flex，改用 Bootstrap Class 或語意化變數
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   width: 100%;
-
-  // 💡 間距：呼叫響應式變數 (手機 16px / 電腦 32px)
   gap: var(--gap-md);
-
-  // 💡 內距：使用響應式變數，並對齊手冊規範的 30px (約 2xl 等級) [cite: 133]
-  padding:var(--gap-xl);
-
-  // 💡 圓角：使用 Normal 等級圓角 (手機 8px / 電腦 16px) [cite: 148]
+  padding: var(--gap-xl);
   border-radius: var(--app-radius-lg);
-
-  // 💡 邊框與背景：改用變數手冊定義之語意化名稱 [cite: 161]
   border: v.$border-width solid rgba(v.$white, 0.2);
   background: rgba(v.$vieshow-dark, 0.6);
-  backdrop-filter: blur(10px); // 維持玻璃質感
-
-  /* Dark-Glass-Card 陰影維持特殊 CSS 寫法 [cite: 127] */
+  backdrop-filter: blur(10px);
   box-shadow: 0 34px 55px -28px rgba(v.$vieshow-primary, 0.5);
+
+  /* 💡 桌機版排版修正 */
+  @include media-breakpoint-up(md) {
+    flex-direction: row; // 橫向排列
+    height: 120px;       // 固定高度符合長條狀視覺
+    padding: 0 var(--gap-xl); // 左右內距
+  }
+}
+
+.selection-wrapper {
+  flex-grow: 1;
 }
 
 .insideitem {
   width: 100%;
+  
+  /* 💡 桌機版微調：移除 Base 組件的預設框線感，改為底線感 (對齊圖一) */
+  @include media-breakpoint-up(md) {
+    :deep(.base-select-container) {
+      .select-display {
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+        background: transparent;
+        border-bottom: 1px solid rgba(v.$white, 0.3); // 輕微底線
+        padding-left: 0;
+      }
+    }
+  }
 
-  // 💡 選單寬度撐開邏輯：維持 deep 穿透以覆蓋 Base 組件限制 [cite: 125]
   :deep(.base-select-container) {
     flex-grow: 1;
     max-width: 100% !important;
   }
 
-  // 💡 按鈕寬度：移除手寫 padding，改用變數手冊定義之按鈕變數 [cite: 115, 116]
   .btn {
     flex-shrink: 0;
     white-space: nowrap;
-    width: auto;
-
-    // 使用等級三 SCSS 變數對齊設計稿 [cite: 35]
     padding: v.$btn-padding-y-lg v.$btn-padding-x-lg;
+    
+    @include media-breakpoint-up(md) {
+      margin-bottom: 8px; // 微調對齊底線高度
+    }
   }
 }
 </style>
