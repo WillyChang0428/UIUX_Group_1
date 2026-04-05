@@ -139,8 +139,8 @@ onUnmounted(() => {
     background: v.$vieshow-dark-section;
     border: 1px solid v.$vieshow-secondary-emp; // 使用變數名 [cite: 161]
     @include media-breakpoint-up(lg) {
-      aspect-ratio: 4 / 3;
-      max-height: 300px;
+      max-height:350px;
+      width:100%;
     }
 
     img {
