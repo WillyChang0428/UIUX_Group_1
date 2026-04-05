@@ -1,40 +1,49 @@
 <template>
   <section class="home-live-concert overflow-hidden py-4 py-md-5">
     <div class="container position-relative">
-
       <div class="concert-window overflow-hidden">
-        <div 
+        <div
           class="concert-track d-flex transition-ease"
           :style="{ transform: `translateX(-${currentPage * 100}%)` }"
         >
-          <div 
-            v-for="(page, pIndex) in paginatedConcerts" 
+          <div
+            v-for="(page, pIndex) in paginatedConcerts"
             :key="pIndex"
             class="concert-page d-flex flex-shrink-0 w-100 gap-3 gap-md-4"
           >
-            <div 
-              v-for="item in page" 
+            <div
+              v-for="item in page"
               :key="item.id"
               class="concert-card-wrapper position-relative"
             >
-              <span v-if="item.tag" class="badge-tag position-absolute" :class="item.tagClass">
+              <span
+                v-if="item.tag"
+                class="badge-tag position-absolute"
+                :class="item.tagClass"
+              >
                 {{ item.tag }}
               </span>
-              
+
               <div class="poster-box rounded overflow-hidden mb-3">
-                <img :src="item.posterUrl" :alt="item.titleZh" class="w-100 h-100 object-fit-cover">
+                <img
+                  :src="item.posterUrl"
+                  :alt="item.titleZh"
+                  class="w-100 h-100 object-fit-cover"
+                />
               </div>
-              
+
               <h5 class="h5 fw-bold text-white mb-3">{{ item.titleZh }}</h5>
-              <SecondaryButton class="btn btn-primary w-100 rounded">立即訂票</SecondaryButton>
+              <SecondaryButton class="btn btn-primary w-100 rounded"
+                >立即訂票</SecondaryButton
+              >
             </div>
           </div>
         </div>
       </div>
 
       <div class="d-flex justify-content-center mt-4 gap-2">
-        <div 
-          v-for="(_, i) in paginatedConcerts" 
+        <div
+          v-for="(_, i) in paginatedConcerts"
           :key="i"
           class="dot"
           :class="{ active: currentPage === i }"
@@ -45,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useConcertStore } from "@/store/liveConcert.js"; // 假設路徑 [cite: 1]
 import SecondaryButton from "@/components/Common/Button/SecondaryButton.vue";
 
@@ -54,17 +63,18 @@ const currentPage = ref(0);
 const windowWidth = ref(window.innerWidth);
 let timer = null;
 
-// 1. 資料處理：排序並加上標籤 
+// 1. 資料處理：排序並加上標籤
 const processedConcerts = computed(() => {
   const list = [...concertStore.concertList];
-  const hotItem = list.find(i => i.id === 1);
-  const newItem = list.find(i => i.id === 3);
-  const others = list.filter(i => i.id !== 1 && i.id !== 3);
+  const hotItem = list.find((i) => i.id === 1);
+  const newItem = list.find((i) => i.id === 3);
+  const others = list.filter((i) => i.id !== 1 && i.id !== 3);
 
   const result = [];
-  if (hotItem) result.push({ ...hotItem, tag: 'HOT', tagClass: 'bg-danger' });
-  if (newItem) result.push({ ...newItem, tag: 'NEW', tagClass: 'bg-warning text-dark' });
-  
+  if (hotItem) result.push({ ...hotItem, tag: "HOT", tagClass: "bg-danger" });
+  if (newItem)
+    result.push({ ...newItem, tag: "NEW", tagClass: "bg-warning text-dark" });
+
   return [...result, ...others];
 });
 
@@ -78,10 +88,11 @@ const paginatedConcerts = computed(() => {
   return pages;
 });
 
-// 3. 自動切換功能 (5秒) 
+// 3. 自動切換功能 (5秒)
 const startTimer = () => {
   timer = setInterval(() => {
-    currentPage.value = (currentPage.value + 1) % paginatedConcerts.value.length;
+    currentPage.value =
+      (currentPage.value + 1) % paginatedConcerts.value.length;
   }, 5000);
 };
 
@@ -92,12 +103,12 @@ const handleResize = () => {
 
 onMounted(() => {
   startTimer();
-  window.addEventListener('resize', handleResize);
+  window.addEventListener("resize", handleResize);
 });
 
 onUnmounted(() => {
   clearInterval(timer);
-  window.removeEventListener('resize', handleResize);
+  window.removeEventListener("resize", handleResize);
 });
 </script>
 
@@ -105,7 +116,6 @@ onUnmounted(() => {
 @import "@/assets/scss/variables";
 
 .home-live-concert {
-
   .concert-track {
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -116,11 +126,11 @@ onUnmounted(() => {
     @include media-breakpoint-up(md) {
       width: calc((100% - (var(--gap-md) * 2)) / 3);
     }
-    h5{
-        -webkit-line-clamp: 2;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+    h5 {
+      -webkit-line-clamp: 2;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
   }
 
@@ -128,7 +138,11 @@ onUnmounted(() => {
     aspect-ratio: 2 / 3;
     background: v.$vieshow-dark-section;
     border: 1px solid v.$vieshow-secondary-emp; // 使用變數名 [cite: 161]
-    
+    @include media-breakpoint-up(lg) {
+      aspect-ratio: 4 / 3;
+      max-height: 300px;
+    }
+
     img {
       transition: transform 0.3s ease;
     }
