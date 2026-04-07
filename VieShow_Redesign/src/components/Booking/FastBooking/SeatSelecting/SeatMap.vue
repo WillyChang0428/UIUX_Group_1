@@ -1,26 +1,241 @@
 <template>
   <div class="seat-map" ref="seatMapRef">
-
-    <!-- 左上相機(FA)，右上放大(FA) -->
-    <div class="seat-map__toolbar">
-      <button class="seat-map__tool-btn" @click="isPanoramaOpen = true" aria-label="開啟實景環景">
-        <i class="fa-solid fa-camera"></i>
+    <div class="seat-map__toolbar" style="position: relative; z-index: 15">
+      <button
+        class="seat-map__tool-btn"
+        @click="isPanoramaOpen = true"
+        aria-label="開啟實景環景"
+        :style="{
+          opacity: isPreviewOpen ? 0 : 1,
+          pointerEvents: isPreviewOpen ? 'none' : 'auto',
+          transition: 'opacity 0.2s',
+        }"
+      >
+        <i class="fa-solid fa-camera fs-4"></i>
       </button>
-      <button class="seat-map__tool-btn" @click="togglePreview" aria-label="放大預覽">
-        <i class="fa-solid fa-expand"></i>
+
+      <button
+        class="seat-map__tool-btn"
+        @click="togglePreview"
+        :aria-label="isPreviewOpen ? '縮回' : '放大預覽'"
+      >
+        <i
+          :class="[
+            'fa-solid',
+            isPreviewOpen ? 'fa-compress' : 'fa-expand',
+            'fs-4',
+          ]"
+        ></i>
       </button>
     </div>
 
-    <!-- 問題三：螢幕，移除分隔線，光暈自然延伸到文字 -->
     <div class="screen-wrapper d-flex flex-column align-items-center mb-2">
       <div class="screen-curve"></div>
-      <div class="screen-text fw-bold">螢幕</div>
+      <div class="screen-text fw-Regular">螢幕</div>
     </div>
 
-    
+    <Transition name="fade">
+      <div v-if="isPanoramaOpen" class="panorama-overlay">
+        <button
+          class="panorama-close"
+          @click="isPanoramaOpen = false"
+          aria-label="關閉實景"
+        >
+          <i class="fa-solid fa-xmark fs-4"></i>
+        </button>
+        <div class="panorama-hint">
+          <i class="fa-solid fa-arrows-up-down-left-right"></i>
+          <span>拖曳移動查看 360° 實景</span>
+        </div>
+        <div
+          class="panorama-viewport"
+          @mousedown="onPanStart"
+          @mousemove="onPanMove"
+          @mouseup="onPanEnd"
+          @mouseleave="onPanEnd"
+          @touchstart.prevent="onTouchStart"
+          @touchmove.prevent="onTouchMove"
+          @touchend="onPanEnd"
+        >
+          <div
+            class="panorama-360-bg"
+            :style="{
+              backgroundImage: `url(${panoramaImage})`,
+              backgroundPosition: `${panX}px center`,
+            }"
+          ></div>
+        </div>
+      </div>
+    </Transition>
 
-    <!-- 圖例 -->
-    <div class="legend-wrapper">
+    <Transition name="fade">
+      <div v-if="isPreviewOpen" class="seat-map__preview-overlay">
+        <div class="seat-map__toolbar">
+          <div></div>
+          <button
+            class="seat-map__tool-btn"
+            @click="togglePreview"
+            aria-label="縮回"
+          >
+            <i class="fa-solid fa-compress fs-4"></i>
+          </button>
+        </div>
+
+        <div class="screen-wrapper d-flex flex-column align-items-center">
+          <div class="screen-curve"></div>
+          <div class="screen-text fw-Regular mb-2">螢幕</div>
+        </div>
+
+        <div class="seat-map__preview-scroll">
+          <div class="seat-map__grid seat-map__grid--lg">
+            <div
+              v-for="(row, rowIndex) in seatLayout"
+              :key="`lg-${rowIndex}`"
+              class="seat-row"
+            >
+              <template
+                v-for="(seatCode, colIndex) in row"
+                :key="`lg-${colIndex}`"
+              >
+                <div
+                  v-if="seatCode === 0"
+                  class="aisle aisle--main aisle--lg"
+                ></div>
+                <div
+                  v-else-if="seatCode === 5"
+                  class="aisle aisle--wheelchair-gap aisle--lg"
+                ></div>
+                <div v-else class="seat-wrap">
+                  <SeatButton
+                    size="lg"
+                    :state="getSeatState(seatCode, rowIndex, colIndex)"
+                    @click="handleSeatClick(rowIndex, colIndex, seatCode)"
+                  />
+                  <Transition name="tooltip-pop">
+                    <div
+                      v-if="tooltip.key === `${rowIndex}-${colIndex}`"
+                      class="seat-tooltip seat-tooltip--lg"
+                      :class="[
+                        rowIndex < 3
+                          ? 'seat-tooltip--below'
+                          : 'seat-tooltip--above',
+                        getTooltipClamp(colIndex, row),
+                      ]"
+                    >
+                      <p class="seat-tooltip__text">
+                        {{ ROW_LABELS[rowIndex] }} 排
+                      </p>
+                      <p class="seat-tooltip__text">
+                        {{ getDisplayCol(row, colIndex) }} 號座位
+                      </p>
+                      <div class="seat-tooltip__arrow"></div>
+                    </div>
+                  </Transition>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-wrapper mt-4">
+          <div class="legend-item">
+            <SeatButton
+              size="sm"
+              state="available"
+              class="pointer-events-none"
+            />
+            <span>空位</span>
+          </div>
+          <div class="legend-item">
+            <SeatButton
+              size="sm"
+              state="selected"
+              class="pointer-events-none"
+            />
+            <span>已選</span>
+          </div>
+          <div class="legend-item">
+            <SeatButton size="sm" state="sold" class="pointer-events-none" />
+            <span>佔位</span>
+          </div>
+          <div class="legend-item">
+            <SeatButton
+              size="sm"
+              state="wheelchair"
+              class="pointer-events-none"
+            />
+            <span>輪椅位須至影城購買</span>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <div
+      class="seat-map__grid-wrap mb-4"
+      :style="{
+        opacity: isPreviewOpen ? 0 : 1,
+        pointerEvents: isPreviewOpen ? 'none' : 'auto',
+        transition: 'opacity 0.2s ease',
+      }"
+    >
+      <div class="seat-map__grid">
+        <div
+          v-for="(row, rowIndex) in seatLayout"
+          :key="rowIndex"
+          class="seat-row"
+        >
+          <template v-for="(seatCode, colIndex) in row" :key="colIndex">
+            <div v-if="seatCode === 0" class="aisle aisle--main"></div>
+            <div
+              v-else-if="seatCode === 5"
+              class="aisle aisle--wheelchair-gap"
+            ></div>
+
+            <div
+              v-else
+              class="seat-wrap"
+              :data-col-index="colIndex"
+              :data-row-index="rowIndex"
+            >
+              <SeatButton
+                size="md"
+                :state="getSeatState(seatCode, rowIndex, colIndex)"
+                @click="handleSeatClick(rowIndex, colIndex, seatCode)"
+              />
+              <Transition name="tooltip-pop">
+                <div
+                  v-if="tooltip.key === `${rowIndex}-${colIndex}`"
+                  class="seat-tooltip"
+                  :class="[
+                    rowIndex < 3
+                      ? 'seat-tooltip--below'
+                      : 'seat-tooltip--above',
+                    getTooltipClamp(colIndex, row),
+                  ]"
+                >
+                  <p class="seat-tooltip__text">
+                    {{ ROW_LABELS[rowIndex] }} 排
+                  </p>
+                  <p class="seat-tooltip__text">
+                    {{ getDisplayCol(row, colIndex) }} 號座位
+                  </p>
+                  <div class="seat-tooltip__arrow"></div>
+                </div>
+              </Transition>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="legend-wrapper"
+      :style="{
+        opacity: isPreviewOpen ? 0 : 1,
+        pointerEvents: isPreviewOpen ? 'none' : 'auto',
+        transition: 'opacity 0.2s ease',
+      }"
+    >
       <div class="legend-item">
         <SeatButton size="sm" state="available" class="pointer-events-none" />
         <span>空位</span>
@@ -38,174 +253,21 @@
         <span>輪椅位須至影城購買</span>
       </div>
     </div>
-
-    <!-- 實景環景 overlay -->
-    <Transition name="fade">
-      <div v-if="isPanoramaOpen" class="panorama-overlay">
-        <!-- 關閉按鈕 -->
-        <button class="panorama-close" @click="isPanoramaOpen = false" aria-label="關閉實景">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-        <!-- 提示文字 -->
-        <div class="panorama-hint">
-          <i class="fa-solid fa-arrows-up-down-left-right"></i>
-          <span>拖曳移動查看實景</span>
-        </div>
-        <!-- 可拖拉的圖片容器 -->
-        <div
-          class="panorama-viewport"
-          ref="panoramaViewport"
-          @mousedown="onPanStart"
-          @mousemove="onPanMove"
-          @mouseup="onPanEnd"
-          @mouseleave="onPanEnd"
-          @touchstart.prevent="onTouchStart"
-          @touchmove.prevent="onTouchMove"
-          @touchend="onPanEnd"
-        >
-          <img
-            class="panorama-img"
-            src="@/assets/images/panorama-cinema.jpg"
-            alt="影廳實景"
-            :style="{ transform: `translate(${panX}px, ${panY}px)` }"
-            draggable="false"
-          />
-        </div>
-      </div>
-    </Transition>
-
-    <!-- 放大預覽 overlay -->
-    <Transition name="fade">
-      <div v-if="isPreviewOpen" class="seat-map__preview-overlay">
-
-        <div class="seat-map__toolbar">
-          <div></div>
-          <button class="seat-map__tool-btn" @click="togglePreview" aria-label="縮回">
-            <i class="fa-solid fa-compress"></i>
-          </button>
-        </div>
-
-        <!-- 問題三：放大版螢幕，同樣移除分隔線 -->
-        <div class="screen-wrapper d-flex flex-column align-items-center">
-          <div class="screen-curve"></div>
-          <div class="screen-text fw-bold mb-2">螢幕</div>
-        </div>
-
-        <!-- 放大座位，可左右拖拉 -->
-        <div class="seat-map__preview-scroll">
-          <div class="seat-map__grid seat-map__grid--lg">
-            <div
-              v-for="(row, rowIndex) in seatLayout"
-              :key="`lg-${rowIndex}`"
-              class="seat-row"
-            >
-              <template v-for="(seatCode, colIndex) in row" :key="`lg-${colIndex}`">
-                <!-- 問題二：放大版也拆分走道寬度 -->
-                <div v-if="seatCode === 0" class="aisle aisle--main aisle--lg"></div>
-                <div v-else-if="seatCode === 5" class="aisle aisle--wheelchair-gap aisle--lg"></div>
-                <div v-else class="seat-wrap">
-                  <SeatButton
-                    size="lg"
-                    :state="getSeatState(seatCode, rowIndex, colIndex)"
-                    @click="handleSeatClick(rowIndex, colIndex, seatCode)"
-                  />
-                  <!-- 問題一：放大版 Tooltip 也加箭頭 -->
-                  <Transition name="tooltip-pop">
-                    <div
-                      v-if="tooltip.key === `${rowIndex}-${colIndex}`"
-                      class="seat-tooltip seat-tooltip--lg"
-                      :class="[
-                        rowIndex < 3 ? 'seat-tooltip--below' : 'seat-tooltip--above',
-                        getTooltipClamp(colIndex, row)
-                      ]"
-                    >
-                      <p class="seat-tooltip__text">{{ ROW_LABELS[rowIndex] }} 排</p>
-                      <p class="seat-tooltip__text">{{ getDisplayCol(row, colIndex) }} 號座位</p>
-                      <div class="seat-tooltip__arrow"></div>
-                    </div>
-                  </Transition>
-                </div>
-              </template>
-            </div>
-          </div>
-        </div>
-
-        <div class="legend-wrapper mt-4">
-          <div class="legend-item">
-            <SeatButton size="sm" state="available" class="pointer-events-none" />
-            <span>空位</span>
-          </div>
-          <div class="legend-item">
-            <SeatButton size="sm" state="selected" class="pointer-events-none" />
-            <span>已選</span>
-          </div>
-          <div class="legend-item">
-            <SeatButton size="sm" state="sold" class="pointer-events-none" />
-            <span>佔位</span>
-          </div>
-          <div class="legend-item">
-            <SeatButton size="sm" state="wheelchair" class="pointer-events-none" />
-            <span>輪椅位須至影城購買</span>
-          </div>
-        </div>
-
-      </div>
-      <div v-else class="seat-map__grid-wrap mb-4">
-        <div class="seat-map__grid">
-        <div
-          v-for="(row, rowIndex) in seatLayout"
-          :key="rowIndex"
-          class="seat-row"
-        >
-          <template v-for="(seatCode, colIndex) in row" :key="colIndex">
-            <!-- 問題二：走道 vs 輪椅間距 分開 class -->
-            <div v-if="seatCode === 0" class="aisle aisle--main"></div>
-            <div v-else-if="seatCode === 5" class="aisle aisle--wheelchair-gap"></div>
-
-            <!-- 座位 + Tooltip -->
-            <div v-else class="seat-wrap" :data-col-index="colIndex" :data-row-index="rowIndex">
-              <SeatButton
-                size="md"
-                :state="getSeatState(seatCode, rowIndex, colIndex)"
-                @click="handleSeatClick(rowIndex, colIndex, seatCode)"
-              />
-
-              <!-- 問題一：Tooltip 加回箭頭 -->
-              <Transition name="tooltip-pop">
-                <div
-                  v-if="tooltip.key === `${rowIndex}-${colIndex}`"
-                  class="seat-tooltip"
-                  :class="[
-                    rowIndex < 3 ? 'seat-tooltip--below' : 'seat-tooltip--above',
-                    getTooltipClamp(colIndex, row)
-                  ]"
-                >
-                  <p class="seat-tooltip__text">{{ ROW_LABELS[rowIndex] }} 排</p>
-                  <p class="seat-tooltip__text">{{ getDisplayCol(row, colIndex) }} 號座位</p>
-                  <div class="seat-tooltip__arrow"></div>
-                </div>
-              </Transition>
-            </div>
-          </template>
-        </div>
-      </div>
-      </div>
-    </Transition>
-
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import SeatButton from '@/components/Booking/Button/SeatButton.vue'
+import { ref } from "vue";
+import SeatButton from "@/components/Booking/Button/SeatButton.vue";
+import panoramaImage from "@/assets/images/panorama-cinema.jpg";
 
 const props = defineProps({
   ticketCount: { type: Number, default: 2 },
-})
+});
 
-const emit = defineEmits(['open-panorama', 'seats-selected'])
+const emit = defineEmits(["open-panorama", "seats-selected"]);
 
-const ROW_LABELS = ['A','B','C','D','E','F','G','H','I']
+const ROW_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 
 // 0 = 主走道, 1 = 空位, 2 = 售出, 3 = 輪椅
 // 5 = 輪椅間保留空格（不顯示座位，視覺寬度等於一個座位位置）
@@ -219,109 +281,115 @@ const seatLayout = ref([
   [2, 1, 0, 1, 2, 2, 1, 1, 1, 0, 1, 2],
   [1, 2, 0, 1, 1, 1, 1, 2, 1, 0, 2, 1],
   [2, 2, 0, 2, 2, 2, 2, 2, 2, 0, 2, 2],
-])
+]);
 
-const selectedSeats = ref([])
-const tooltip = ref({ key: '' })
+const selectedSeats = ref([]);
+const tooltip = ref({ key: "" });
 
 const getSeatState = (code, rowIndex, colIndex) => {
-  const key = `${rowIndex}-${colIndex}`
-  if (selectedSeats.value.includes(key)) return 'selected'
-  if (code === 3) return 'wheelchair'
-  if (code === 2) return 'sold'
-  return 'available'
-}
+  const key = `${rowIndex}-${colIndex}`;
+  if (selectedSeats.value.includes(key)) return "selected";
+  if (code === 3) return "wheelchair";
+  if (code === 2) return "sold";
+  return "available";
+};
 
 const getDisplayCol = (row, colIndex) => {
-  let count = 0
+  let count = 0;
   for (let i = 0; i <= colIndex; i++) {
-    if (row[i] !== 0 && row[i] !== 5) count++
+    if (row[i] !== 0 && row[i] !== 5) count++;
   }
-  return count
-}
+  return count;
+};
 
 const getTooltipClamp = (colIndex, row) => {
   const validIndices = row.reduce((acc, v, i) => {
-    if (v !== 0 && v !== 5) acc.push(i)
-    return acc
-  }, [])
-  const firstReal = validIndices[0]
-  const lastReal = validIndices[validIndices.length - 1]
-  if (colIndex <= firstReal + 1) return 'seat-tooltip--clamp-left'
-  if (colIndex >= lastReal - 1) return 'seat-tooltip--clamp-right'
-  return ''
-}
+    if (v !== 0 && v !== 5) acc.push(i);
+    return acc;
+  }, []);
+  const firstReal = validIndices[0];
+  const lastReal = validIndices[validIndices.length - 1];
+  if (colIndex <= firstReal + 1) return "seat-tooltip--clamp-left";
+  if (colIndex >= lastReal - 1) return "seat-tooltip--clamp-right";
+  return "";
+};
 
 const handleSeatClick = (rowIndex, colIndex, seatCode) => {
-  if (seatCode === 0 || seatCode === 2 || seatCode === 3 || seatCode === 5) return
-  const key = `${rowIndex}-${colIndex}`
-  const idx = selectedSeats.value.indexOf(key)
+  // 排除無法點擊的座位狀態 (走道、佔位、輪椅、輪椅間距)
+  if (seatCode === 0 || seatCode === 2 || seatCode === 3 || seatCode === 5)
+    return;
+
+  const key = `${rowIndex}-${colIndex}`;
+  const idx = selectedSeats.value.indexOf(key);
+
   if (idx >= 0) {
-    selectedSeats.value.splice(idx, 1)
-    tooltip.value.key = ''
+    // 💡 邏輯 1：如果已經選過，再次點擊一樣是「取消選取」
+    selectedSeats.value.splice(idx, 1);
+    tooltip.value.key = "";
   } else {
-    if (selectedSeats.value.length >= props.ticketCount) return
-    selectedSeats.value.push(key)
-    tooltip.value.key = key
+    // 💡 邏輯 2：如果還沒選過，準備加入新座位
+    // 【核心修改】：判斷是否大於等於限制數量，若超過則移除最舊的紀錄 (shift)
+    while (selectedSeats.value.length >= props.ticketCount) {
+      selectedSeats.value.shift(); // shift() 會移除陣列的第 0 項 (最先被選的座位)
+    }
+
+    // 加入最新的座位
+    selectedSeats.value.push(key);
+    tooltip.value.key = key;
   }
-  emit('seats-selected', selectedSeats.value.map(k => {
-    const [r, c] = k.split('-').map(Number)
-    return { row: ROW_LABELS[r], col: getDisplayCol(seatLayout.value[r], c) }
-  }))
-}
 
-const isPreviewOpen = ref(false)
-const togglePreview = () => { isPreviewOpen.value = !isPreviewOpen.value }
+  // 發送更新後的結果給父元件
+  emit(
+    "seats-selected",
+    selectedSeats.value.map((k) => {
+      const [r, c] = k.split("-").map(Number);
+      return { row: ROW_LABELS[r], col: getDisplayCol(seatLayout.value[r], c) };
+    }),
+  );
+};
 
-// ── 實景環景 ───────────────────────────────────────────────────
-const isPanoramaOpen = ref(false)
-const panoramaViewport = ref(null)
-const panX = ref(-200)             // 初始偏移讓圖片置中顯示
-const panY = ref(0)
-let isPanning = false
-let startX = 0
-let startY = 0
-let startPanX = 0
-let startPanY = 0
+const isPreviewOpen = ref(false);
+const togglePreview = () => {
+  isPreviewOpen.value = !isPreviewOpen.value;
+};
 
-const CLAMP_X = 400               // 水平最大拖移量
-const CLAMP_Y = 150               // 垂直最大拖移量
+// ── 實景環景 (360° 水平無縫版) ───────────────────────────────────────────
+const isPanoramaOpen = ref(false);
+const panX = ref(0); // 只需要水平位移 (無限)
+let isPanning = false;
+let startX = 0;
+let startPanX = 0;
+
+// 統一取得觸控與滑鼠的座標
+const getPointerPos = (e) => {
+  return e.touches ? e.touches[0] : e;
+};
 
 const onPanStart = (e) => {
-  isPanning = true
-  startX = e.clientX
-  startY = e.clientY
-  startPanX = panX.value
-  startPanY = panY.value
-}
+  isPanning = true;
+  const pointer = getPointerPos(e);
+  startX = pointer.clientX;
+  startPanX = panX.value;
+};
 
 const onPanMove = (e) => {
-  if (!isPanning) return
-  const dx = e.clientX - startX
-  const dy = e.clientY - startY
-  panX.value = Math.max(-CLAMP_X, Math.min(CLAMP_X, startPanX + dx))
-  panY.value = Math.max(-CLAMP_Y, Math.min(CLAMP_Y, startPanY + dy))
-}
+  if (!isPanning) return;
+  const pointer = getPointerPos(e);
 
-const onPanEnd = () => { isPanning = false }
+  // 水平滑動的靈敏度
+  const speedX = 1.5;
+  const dx = (pointer.clientX - startX) * speedX;
 
-const onTouchStart = (e) => {
-  const touch = e.touches[0]
-  isPanning = true
-  startX = touch.clientX
-  startY = touch.clientY
-  startPanX = panX.value
-  startPanY = panY.value
-}
+  // 💡 水平方向：完全不設限，無限旋轉 (移除了 panY 的計算)
+  panX.value = startPanX + dx;
+};
 
-const onTouchMove = (e) => {
-  if (!isPanning) return
-  const touch = e.touches[0]
-  const dx = touch.clientX - startX
-  const dy = touch.clientY - startY
-  panX.value = Math.max(-CLAMP_X, Math.min(CLAMP_X, startPanX + dx))
-  panY.value = Math.max(-CLAMP_Y, Math.min(CLAMP_Y, startPanY + dy))
-}
+const onPanEnd = () => {
+  isPanning = false;
+};
+
+const onTouchStart = onPanStart;
+const onTouchMove = onPanMove;
 </script>
 
 <style lang="scss" scoped>
@@ -330,12 +398,12 @@ const onTouchMove = (e) => {
 .seat-map {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xs-mobile;
+  gap: v.$spacing-xs-mobile;
   background: transparent;
-  padding: $spacing-xs-mobile;
+  padding: v.$spacing-xs-mobile;
   position: relative;
   width: 100%;
-  overflow: hidden;                           // 放大預覽時蓋住底層，防止透出
+  overflow: hidden; // 放大預覽時蓋住底層，防止透出
 }
 
 // ── 工具列 ─────────────────────────────────────────────────────
@@ -345,19 +413,21 @@ const onTouchMove = (e) => {
 }
 
 .seat-map__tool-btn {
-  width: 36px;
-  height: 36px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  border: 1px solid rgba($white, 0.25);
-  background: rgba($white, 0.08);
-  color: $light;
+  border: 1px solid rgba(v.$white, 0.25);
+  background: rgba(v.$white, 0.08);
+  color: v.$light;
   font-size: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background 0.2s;
-  &:hover { background: rgba($white, 0.18); }
+  &:hover {
+    background: rgba(v.$white, 0.18);
+  }
 }
 
 // ── 問題三：螢幕，移除分隔線 ──────────────────────────────────
@@ -366,23 +436,38 @@ const onTouchMove = (e) => {
 
 .screen-curve {
   width: 80%;
-  height: 16px;
-  border-top: 3px solid $vieshow-warning;
-  border-radius: 50% / 100% 100% 0 0;
-  // 光暈只在曲線上
-  filter: drop-shadow(0px 0px 8px rgba($vieshow-warning, 0.7))
-          drop-shadow(0px 4px 14px rgba($vieshow-warning, 0.4));
+
+  // 💡 1. 將高度加倍 (原本 16px -> 32px)，讓它成為一個完整的對稱橢圓
+  height: 32px;
+
+  // 💡 2. 四周都給邊框，但設為透明 (這能消除任何數學上的平滑直線邊緣)
+  border: 3px solid transparent;
+
+  // 💡 3. 只讓上方的邊框顯示顏色，這樣左右兩端就會有非常漂亮、銳利的漸隱收尾
+  border-top-color: v.$vieshow-warning;
+
+  // 💡 4. 使用完美的對稱橢圓
+  border-radius: 50%;
+
+  // 💡 5. 利用負間距把下半部多出來的透明高度扣掉，確保下方的「螢幕」文字位置不變
+  margin-bottom: -16px;
+
+  // 光暈維持原本的高級多層次設定
+  filter: drop-shadow(0px 0px 3px rgba(v.$vieshow-warning, 0.9))
+    drop-shadow(0px 4px 12px rgba(v.$vieshow-warning, 0.6))
+    drop-shadow(0px 8px 24px rgba(v.$vieshow-warning, 0.3));
+
   display: block;
   line-height: 0;
   font-size: 0;
 }
 
 .screen-text {
-  color: $vieshow-warning;
+  color: v.$vieshow-warning;
   margin-top: 4px;
   margin-bottom: 0;
   letter-spacing: 2px;
-  font-size: $font-size-mini-mobile;
+  font-size: var(--app-font-size-base);
   line-height: 1.2;
   // 問題二：不加任何光暈，純文字
 }
@@ -412,19 +497,23 @@ const onTouchMove = (e) => {
 
   // 主走道（左右兩側）
   &--main {
-    width: 20px;                              // 較寬，明顯走道感
+    width: 20px; // 較寬，明顯走道感
   }
 
   // 輪椅間空格（保留一個座位的位置，視覺等於一個座位寬）
   // md SeatButton = 30px
   &--wheelchair-gap {
-    width: 30px;                              // 與 md 座位同寬，視覺保留一個空位
+    width: 30px; // 與 md 座位同寬，視覺保留一個空位
   }
 
   // 放大版
   &--lg {
-    &.aisle--main { width: 28px; }
-    &.aisle--wheelchair-gap { width: 50px; } // 與 lg SeatButton(50px) 同寬
+    &.aisle--main {
+      width: 28px;
+    }
+    &.aisle--wheelchair-gap {
+      width: 50px;
+    } // 與 lg SeatButton(50px) 同寬
   }
 }
 
@@ -441,14 +530,14 @@ const onTouchMove = (e) => {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  background: #0D2A4A;
-  border: 2.5px solid $vieshow-primary;
-  border-radius: $border-radius-mobile;
-  padding: $spacing-sm-mobile $spacing-md-mobile;
+  background: #0d2a4a;
+  border: 2.5px solid v.$vieshow-primary;
+  border-radius: v.$border-radius-mobile;
+  padding: v.$spacing-sm-mobile v.$spacing-md-mobile;
   text-align: center;
   white-space: nowrap;
   pointer-events: none;
-  z-index: 30;
+  z-index: 19;
 
   // 向上顯示（第4排以後）→ 箭頭在下方
   &--above {
@@ -459,17 +548,17 @@ const onTouchMove = (e) => {
       top: 100%;
       border-left: 9px solid transparent;
       border-right: 9px solid transparent;
-      border-top: 9px solid $vieshow-primary;
+      border-top: 9px solid v.$vieshow-primary;
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         top: -11px;
         left: 50%;
         transform: translateX(-50%);
         border-left: 7px solid transparent;
         border-right: 7px solid transparent;
-        border-top: 8px solid #0D2A4A;
+        border-top: 8px solid #0d2a4a;
       }
     }
   }
@@ -483,17 +572,17 @@ const onTouchMove = (e) => {
       bottom: 100%;
       border-left: 9px solid transparent;
       border-right: 9px solid transparent;
-      border-bottom: 9px solid $vieshow-primary;
+      border-bottom: 9px solid v.$vieshow-primary;
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         bottom: -11px;
         left: 50%;
         transform: translateX(-50%);
         border-left: 7px solid transparent;
         border-right: 7px solid transparent;
-        border-bottom: 8px solid #0D2A4A;
+        border-bottom: 8px solid #0d2a4a;
       }
     }
   }
@@ -502,31 +591,40 @@ const onTouchMove = (e) => {
   &--clamp-left {
     left: 0;
     transform: translateX(0);
-    .seat-tooltip__arrow { left: 15px; transform: translateX(0); }
+    .seat-tooltip__arrow {
+      left: 15px;
+      transform: translateX(0);
+    }
   }
 
   &--clamp-right {
     left: auto;
     right: 0;
     transform: translateX(0);
-    .seat-tooltip__arrow { left: auto; right: 15px; transform: translateX(0); }
+    .seat-tooltip__arrow {
+      left: auto;
+      right: 15px;
+      transform: translateX(0);
+    }
   }
 
   &--lg {
-    padding: $spacing-sm-mobile $spacing-lg-mobile;
-    border-radius: $border-radius-lg-mobile;
+    padding: v.$spacing-sm-mobile v.$spacing-lg-mobile;
+    border-radius: v.$border-radius-lg-mobile;
     border-width: 3px;
   }
 }
 
 .seat-tooltip__text {
   margin: 0;
-  font-size: $h5-font-size-mobile;
+  font-size: v.$h5-font-size-mobile;
   font-weight: 700;
-  color: $light;
+  color: v.$light;
   line-height: 1.4;
 
-  .seat-tooltip--lg & { font-size: $h4-font-size-mobile; }
+  .seat-tooltip--lg & {
+    font-size: v.$h4-font-size-mobile;
+  }
 }
 
 // 箭頭共用樣式
@@ -544,52 +642,57 @@ const onTouchMove = (e) => {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: $spacing-sm-mobile;
-  border-top: 1px solid rgba($white, 0.08);
-  padding-top: $spacing-lg-mobile;
-  margin-top: $spacing-xs-mobile;
+  gap: var(--gap-sm);
+  border-top: 1px solid rgba(v.$white, 0.08);
+  padding-top: v.$spacing-lg-mobile;
+  margin-top: v.$spacing-xs-mobile;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: $light;
-  font-size: $font-size-mini-mobile;
+  color: v.$light;
+  font-size: var(--app-font-size-sm);
 }
 
-.pointer-events-none { pointer-events: none; }
+.pointer-events-none {
+  pointer-events: none;
+}
 
 // ── 放大預覽：absolute 填滿 .seat-map，overflow hidden 蓋住底層 ──
 .seat-map__preview-overlay {
   position: absolute;
   inset: 0;
-  background: $vieshow-gradient-dark;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  gap: $spacing-xs-mobile;
-  padding: $spacing-xs-mobile;
-  overflow: hidden;                           // 確保底層完全被蓋住
+  gap: v.$spacing-xs-mobile;
+  padding: v.$spacing-xs-mobile;
+  overflow: hidden; // 確保底層完全被蓋住
 }
 
 .seat-map__preview-scroll {
-  overflow: auto;                             // 上下左右都可滾動
+  overflow: auto; // 上下左右都可滾動
   scrollbar-width: thin;
-  scrollbar-color: rgba($white, 0.2) transparent;
+  scrollbar-color: rgba(v.$white, 0.2) transparent;
   cursor: grab;
   flex: 1;
   // 讓 touch 裝置也能拖拉
   -webkit-overflow-scrolling: touch;
 
-  &:active { cursor: grabbing; }
+  &:active {
+    cursor: grabbing;
+  }
 
   .seat-map__grid--lg {
     width: max-content;
     min-width: 100%;
     margin: 0 auto;
-    padding: $spacing-sm-mobile;
-    .seat-row { gap: 6px; }
+    padding: v.$spacing-sm-mobile;
+    .seat-row {
+      gap: 6px;
+    }
   }
 }
 
@@ -597,12 +700,22 @@ const onTouchMove = (e) => {
 .panorama-overlay {
   position: absolute;
   inset: 0;
-  background: $black;
+  background: v.$black;
   z-index: 20;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.panorama-360-bg {
+  width: 100%;
+  height: 100%;
+  // 💡 關鍵：高度設為 100%，讓它完美貼合容器上下邊緣，絕對不會漏出黑邊
+  background-size: auto 100%;
+  background-repeat: repeat-x;
+  will-change: background-position;
+  transition: background-position 0.05s linear;
 }
 
 .panorama-viewport {
@@ -615,29 +728,25 @@ const onTouchMove = (e) => {
   justify-content: center;
   user-select: none;
 
-  &:active { cursor: grabbing; }
-}
-
-.panorama-img {
-  // 寬度遠大於容器，營造環景可拖動感
-  width: 100%;
-  min-width: 600px;
-  height: auto;
-  object-fit: cover;
-  transition: transform 0.05s linear;
-  pointer-events: none;
+  &:active {
+    cursor: grabbing;
+    // 💡 拖曳當下取消過渡動畫，達到「完美跟手」的即時效果
+    .panorama-360-bg {
+      transition: none;
+    }
+  }
 }
 
 .panorama-close {
   position: absolute;
-  top: $spacing-sm-mobile;
-  right: $spacing-sm-mobile;
-  width: 36px;
-  height: 36px;
+  top: v.$spacing-sm-mobile;
+  right: v.$spacing-sm-mobile;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  border: 1px solid rgba($white, 0.3);
-  background: rgba($black, 0.6);
-  color: $light;
+  border: 1px solid rgba(v.$white, 0.3);
+  background: rgba(v.$black, 0.6);
+  color: v.$light;
   font-size: 16px;
   display: inline-flex;
   align-items: center;
@@ -645,36 +754,52 @@ const onTouchMove = (e) => {
   cursor: pointer;
   z-index: 21;
   transition: background 0.2s;
-  &:hover { background: rgba($black, 0.85); }
+  &:hover {
+    background: rgba(v.$black, 0.85);
+  }
 }
 
 .panorama-hint {
   position: absolute;
-  bottom: $spacing-md-mobile;
+  bottom: v.$spacing-md-mobile;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba($black, 0.55);
-  border-radius: $border-radius-pill;
-  padding: $spacing-xs-mobile $spacing-sm-mobile;
-  color: rgba($white, 0.75);
-  font-size: $font-size-mini-mobile;
+  background: rgba(v.$black, 0.55);
+  border-radius: v.$border-radius-pill;
+  padding: v.$spacing-xs-mobile v.$spacing-sm-mobile;
+  color: rgba(v.$white, 0.75);
+  font-size: var(--app-font-size-mini);
   z-index: 21;
   pointer-events: none;
   white-space: nowrap;
 }
 
 // ── Transitions ────────────────────────────────────────────────
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 
-.tooltip-pop-enter-active { transition: opacity 0.2s ease, transform 0.2s ease; }
-.tooltip-pop-leave-active { transition: opacity 0.15s ease; }
+.tooltip-pop-enter-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.tooltip-pop-leave-active {
+  transition: opacity 0.15s ease;
+}
 .tooltip-pop-enter-from {
   opacity: 0;
   transform: translateX(-50%) translateY(6px);
 }
-.tooltip-pop-leave-to { opacity: 0; }
+.tooltip-pop-leave-to {
+  opacity: 0;
+}
 </style>
