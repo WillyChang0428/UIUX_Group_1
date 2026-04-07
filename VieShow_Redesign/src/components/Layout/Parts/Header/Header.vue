@@ -16,9 +16,9 @@
         ></i>
       </div>
 
-      <div class="logo-wrapper order-2 order-lg-1">
+      <a class="logo-wrapper order-2 order-lg-1" href="/">
         <img src="@/assets/images/LOGO.png" alt="Logo" class="img-fluid" />
-      </div>
+      </a>
 
       <nav
         class="desktop-nav d-none d-lg-flex align-items-center gap-4 order-lg-2"

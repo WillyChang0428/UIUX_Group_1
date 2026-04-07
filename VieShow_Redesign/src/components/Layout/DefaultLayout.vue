@@ -1,13 +1,13 @@
 <script setup>
-import Header from './Header.vue';
-import Footer from './Footer.vue';
+import Header from './Parts/Header/Header.vue';
+import Footer from './Parts/Footer/Footer.vue';
 
 </script>
 <template>
-  <div class="default-layout">
+  <div class="default-layout ">
     <Header />
 
-    <main class="layout-main">
+    <main class="layout-main main-wrapper">
       <router-view />
     </main>
 
@@ -20,10 +20,10 @@ import Footer from './Footer.vue';
   display: flex;
   flex-direction: column;
   min-height: 100vh; // 確保佈局至少跟螢幕一樣高
+  background: v.$vieshow-gradient-dark;
 }
 
 .layout-main {
   flex: 1; // 讓中間內容區自動撐開，把 Footer 推到底部
-  padding-top: 80px; // 假設 Header 高度是 80px，防止內容被遮住
 }
 </style>

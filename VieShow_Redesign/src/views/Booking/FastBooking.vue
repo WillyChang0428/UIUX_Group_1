@@ -1,5 +1,5 @@
 <template>
-    <div class="fast-booking-page main-wrapper">
+    <div class="fast-booking-page py-5">
         <div class="container">
 
             <div class="selector-wrapper mb-4">
@@ -86,7 +86,7 @@ const handleSeatPreview = (previewData) => {
     /* 💡 修正處：設定相對定位與高層級，強制下拉選單浮在最上層 */
     .selector-wrapper {
         position: relative;
-        z-index: 1500; // Bootstrap 處理下拉選單通常使用 1000 以上的層級，這裡設為 1500 確保萬無一失
+        z-index: 200; // Bootstrap 處理下拉選單通常使用 1000 以上的層級，這裡設為 1500 確保萬無一失
     }
 
     .theater-title {

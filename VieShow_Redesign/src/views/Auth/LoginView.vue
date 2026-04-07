@@ -29,14 +29,14 @@
           </span>
         </div>
 
-        <div class="error-text text-danger">
+        <div class="error-text text-danger mt-1">
           <span v-if="errorMessage">
             <i class="fa-solid fa-circle-exclamation me-1"></i
             >{{ errorMessage }}
           </span>
         </div>
 
-        <div class="d-flex justify-content-end mb-4">
+        <div class="d-flex justify-content-end mb-3">
           <a
             href="#"
             class="text-secondary text-decoration-none forgot-pwd-link"
@@ -96,6 +96,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/authStore";
 import BaseModal from "@/components/Common/Button/BaseModal.vue";
 import SecondaryButton from "@/components/Common/Button/SecondaryButton.vue";
+
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -196,7 +197,6 @@ const handleClose = () => {
   .error-text {
     font-size: var(--app-font-size-mini); // 對應 12px/14px
     letter-spacing: v.$letter-spacing-wide;
-    min-height: var(--gap-lg); // 💡 取代固定的 20px
   }
 
   .forgot-pwd-link {

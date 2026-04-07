@@ -38,7 +38,7 @@
               </template>
 
             </FlatSelect>
-            <SecondaryButton>搜尋</SecondaryButton>
+            <SecondaryButton @click="handleSearch">搜尋</SecondaryButton>
           </div>
         </div>
       </div>
@@ -64,6 +64,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router"; // 💡 1. 引入 useRouter
 import { useMovieStore } from "@/store/movieStore";
 import { useCinemaStore } from "@/store/cinema";
 import FlatSelect from "./FlatSelect.vue";
@@ -77,6 +78,8 @@ const props = defineProps({
     default: 'page' // 允許的值: 'page' 或 'home'
   }
 });
+
+const router = useRouter(); // 💡 2. 初始化 router
 
 const movieStore = useMovieStore();
 const cinemaStore = useCinemaStore();
@@ -132,6 +135,17 @@ const handleCinemaSelect = (name) => {
 const clearCinema = () => {
   selectedCinema.value = "";
   isCinemaSelected.value = false;
+};
+
+// 💡 3. 新增點擊搜尋的處理函式
+const handleSearch = () => {
+  // 您也可以在這裡加入判斷，例如：必須先選電影或影城才能跳轉
+  // if (!isMovieSelected.value) {
+  //   alert("請先選擇電影");
+  //   return;
+  // }
+  
+  router.push('/fastbooking'); // 執行跳轉至快速訂票頁面
 };
 </script>
 

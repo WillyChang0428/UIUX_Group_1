@@ -1,6 +1,4 @@
 <script setup>
-import Header from "@/components/Layout/Parts/Header/Header.vue";
-import Footer from "@/components/Layout/Parts/Footer/Footer.vue";
 import HomeBanner from "@/components/Home/HomeBanner.vue";
 import HomeHotMovie from "@/components/Home/HomeHotMovie.vue";
 import HomeLiveConcert from "@/components/Home/HomeLiveConcert.vue";
@@ -12,8 +10,7 @@ import GoOnTop from "@/components/Common/Button/GoOnTop.vue";
 </script>
 
 <template>
-  <div class="main-wrapper">
-    <Header />
+  <div>
     <HomeBanner />
     <div class="select-box container my-5">
       <SelectBox mode="home" />
@@ -30,7 +27,6 @@ import GoOnTop from "@/components/Common/Button/GoOnTop.vue";
       <HomeSectionTitle title="最新消息" link="/news" />
     </div>
     <HomeNewsSection />
-    <Footer />
     <HomeVideo />
     <GoOnTop />
   </div>
@@ -38,10 +34,6 @@ import GoOnTop from "@/components/Common/Button/GoOnTop.vue";
 
 <style lang="scss">
 @import "@/assets/scss/variables"; // 💡 確保引入地基
-body {
-  height: fit-content;
-  background: v.$vieshow-gradient-dark;
-}
 
 .select-box {
   position: absolute;
