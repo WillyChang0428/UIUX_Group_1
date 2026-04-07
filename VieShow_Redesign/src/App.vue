@@ -1,155 +1,95 @@
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router'; // 準備用來跳轉下一頁
-
-import MetadataInput from '@/components/Common/InputBox/MetadataInput.vue';
-import Calendar from '@/components/Common/InputBox/Calendar.vue';
-import SecondaryButton from '@/components/Common/Button/SecondaryButton.vue';
-// import PrimaryButton from '@/components/Common/Button/PrimaryButton.vue';
-
-const router = useRouter();
-
-// --- 1. 定義輸入資料 ---
-const userName = ref('');
-const myBirthday = ref(null);
-const userPhone = ref('');
-const verifyCode = ref('');
-
-// --- 2. 全局錯誤狀態 ---
-const showGlobalError = ref(false);
-const isVerifying = ref(false);
-const isCodeSent = ref(false);
-
-// --- 3. 統整驗證邏輯 ---
-// 這個函式會檢查「目前畫面上顯示的所有欄位」是否有空值
-const validateCurrentFields = () => {
-  let isValid = true;
-
-  if (!userName.value) isValid = false;
-  if (!myBirthday.value) isValid = false;
-  if (!userPhone.value) isValid = false;
-  // 如果驗證碼欄位已經出現了，才需要檢查它
-  if (isCodeSent.value && !verifyCode.value) isValid = false;
-
-  // 根據檢查結果決定是否顯示全局紅字
-  showGlobalError.value = !isValid;
-  return isValid;
-};
-
-// --- 4. 發送驗證碼邏輯 ---
-const handleVerify = async () => {
-  // 按下驗證前，先檢查當前欄位
-  if (!validateCurrentFields()) return;
-  
-  isVerifying.value = true;
-  console.log("正在發送驗證碼到:", userPhone.value);
-  
-  setTimeout(() => {
-    isVerifying.value = false; 
-    isCodeSent.value = true;
-  }, 2000);
-}
-
-// --- 5. 註冊與下一步邏輯 ---
-const handleRegister = () => {
-  // 點擊下一步前，再次檢查所有欄位
-  if (!validateCurrentFields()) return;
-
-  console.log("資料填寫完整，準備前往下一步！");
-  
-  // 🌟 在這裡放入跳轉邏輯
-  // router.push('/next-step-url'); 
-}
-</script>
-
 <template>
-  <form @submit.prevent="handleRegister">
-    <ul class="container list-unstyled d-flex flex-column gap-4">
-      <li><h5 class="text-light mb-1">填寫會員資料</h5></li>
-      <li>
-        <MetadataInput
-          label="您的姓名"
-          placeholder="請輸入文字"
-          v-model="userName"
-          @blur="validateCurrentFields"
-        />
-      </li>
-      <li>
-        <Calendar 
-          v-model="myBirthday" 
-          @focusout="validateCurrentFields"
-        />
-      </li>
-      <li>
-        <div class="d-flex gap-3 w-100">
-          <div class="flex-grow-1" style="min-width: 0;">
-            <MetadataInput
-              label="手機號碼"
-              placeholder="請輸入號碼"
-              type="tel"
-              inputmode="numeric"
-              v-model="userPhone"
-              @blur="validateCurrentFields"
-            />
-          </div>
-          <div class="d-flex justify-content-end">
-            <SecondaryButton 
-              type="button"
-              @click="handleVerify" 
-              :is-disabled="isVerifying"
-              :status="isVerifying ? 'secondary' : 'default'"
-              class="flex-shrink-0 text-nowrap"
-              style="height: 48px; min-width: 90px;"
-            >
-              {{ isVerifying ? '傳送中' : '傳送' }}
-            </SecondaryButton>
-        </div>
-        </div>
-        
-        
-      </li>
+  <div class="fast-booking-page main-wrapper">
+    <div class="container">
 
-      <li v-if="isCodeSent" class="animate-fade">
-        <MetadataInput 
-          label="驗證碼" 
-          placeholder="請輸入簡訊驗證碼" 
-          v-model="verifyCode"
-          @blur="validateCurrentFields"
-        />
-      </li>
-      <li v-if="isCodeSent" class="d-flex justify-content-end">
-        <SecondaryButton type="submit" class="px-5 py-2">
-          下一步
-        </SecondaryButton>
-      </li>
+      <div class="selector-wrapper mb-4">
+        <SelectBox mode="page" />
+      </div>
 
-      <li v-if="showGlobalError" class="text-danger text-start fs-7 animate-fade mt-1">
-        <i class="fa-solid fa-circle-exclamation me-1"></i>有欄位尚未填寫
-      </li>
-        
-    </ul>
-  </form>
+      <SelectedInfoCard class="mb-4" v-if="movieStore.selectedMovieId" />
+
+      <TheaterFilter v-model="currentTheater" class="mb-4" />
+
+      <DateFilter v-model="currentDate" @change-day="handleDayChange" class="mb-5" />
+
+      <h3 class="theater-title text-white fw-bold mb-4">
+        {{ currentTheater }}
+      </h3>
+
+      <Sessions :theaterName="currentTheater" :dayOfWeek="currentDayOfWeek" @select-session="handleSessionSelect"
+        @open-preview="handleSeatPreview" />
+
+      <SeatPreview v-model="isPreviewOpen" :theaterName="previewTheater" />
+
+    </div>
+  </div>
 </template>
 
-<style lang="scss" scoped>
-@import "@/assets/scss/variables"; // 💡 確保引入地基
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useMovieStore } from '@/store/movieStore';
+import SelectBox from '@/components/Common/Selecter/SelectBox.vue';
+import SelectedInfoCard from '@/components/Booking/SelectedInfoCard.vue';
+import TheaterFilter from '@/components/Booking/FastBooking/TheaterFilter.vue';
+import DateFilter from '@/components/Booking/FastBooking/DateFilter.vue';
+import Sessions from '@/components/Booking/FastBooking/Sessions.vue';
+import SeatPreview from '@/components/Booking/FastBooking/SeatPreview.vue';
 
-html, body , #app {
-  height: 100vh;
-  /* 使用專案定義的深色漸層 [cite: 1] */
+const router = useRouter();
+const movieStore = useMovieStore();
+
+// 💡 父層統一管理的核心篩選狀態
+const currentTheater = ref('台北信義');
+const currentDate = ref('');
+const currentDayOfWeek = ref('星期一'); // 預設傳給 Sessions 的星期
+
+// 接收 DateFilter 傳來的完整星期字串 (如 '星期一')
+const handleDayChange = (dayString) => {
+  currentDayOfWeek.value = dayString;
+};
+
+// 處理最終的訂票跳轉
+const handleSessionSelect = (sessionData) => {
+  movieStore.updateSession({
+    format: sessionData.format,
+    time: sessionData.time,
+    venue: sessionData.venue,
+    date: currentDate.value
+  });
+
+  // 導向選位頁面 (請依據您的路由設定調整)
+  router.push({ name: 'booking-seats' });
+};
+
+// 控制彈窗開關與影城名稱
+const isPreviewOpen = ref(false);
+const previewTheater = ref('');
+
+// 當使用者點擊 Sessions.vue 裡面的小沙發 Icon 時觸發
+const handleSeatPreview = (previewData) => {
+  // 將影城名稱存入，並打開彈窗
+  previewTheater.value = currentTheater.value;
+  isPreviewOpen.value = true;
+};
+</script>
+
+<style scoped lang="scss">
+@import "@/assets/scss/variables";
+
+.fast-booking-page {
+  min-height: 100vh;
   background: v.$vieshow-gradient-dark;
-}
 
-.fs-7 {
-  font-size: 0.85rem;
-}
+  /* 💡 修正處：設定相對定位與高層級，強制下拉選單浮在最上層 */
+  .selector-wrapper {
+    position: relative;
+    z-index: 1050; // Bootstrap 處理下拉選單通常使用 1000 以上的層級，這裡設為 1050 確保萬無一失
+  }
 
-.animate-fade {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+  .theater-title {
+    font-size: var(--app-font-size-h4);
+    letter-spacing: 2px;
+  }
 }
 </style>

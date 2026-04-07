@@ -16,7 +16,7 @@ import GoOnTop from "@/components/Common/Button/GoOnTop.vue";
     <Header />
     <HomeBanner />
     <div class="select-box container my-5">
-      <SelectBox />
+      <SelectBox mode="home" />
     </div>
     <div class="hot-movie container">
       <HomeSectionTitle title="熱門電影" link="/movie" />
