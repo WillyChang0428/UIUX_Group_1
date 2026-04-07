@@ -1,28 +1,26 @@
 <script setup>
-import SecondaryButton from '@/components/Common/Button/SecondaryButton.vue'
 </script>
 
 <template>
-    <div class="container text-light">
-        <ul class="list-unstyled">
+    <div class="container text-secondary">
+        <ul>
             <li>
                 <h6 class="fw-bold">一、iShow會員相關權益</h6>
-                <ol>
+                <ol class="ps-1 d-flex flex-column gap-1">
                     <li>1. 申請資格：需持有本國身分證或居留證者方可申請，且一人僅可申請一個帳號。</li>
                     <li>2. 票價及餐飲折扣、販賣部特殊商品、NT Live、特殊映演搶先購及兌點規則請依各影城公告為主。</li>
                     <li>3. 官網與APP訂票：需另支付手續費。</li>
                 </ol>
             </li>
-
             <li class="mt-4">
                 <h6 class="fw-bold">二、iShow會員分級</h6>
-                <ol>
+                <ol class="ps-1 d-flex flex-column gap-1">
                     <li>1. 統計周期：每年01/01-12/31，依會員當年度有效消費金額進行會員等級調整，並給予不同分級優惠回饋。有效消費金額不含團體電影優惠券、經濟餐飲兌換券、豪華餐飲兌換券及包廳之購買金額。有效消費金額定義：係指會員於本影城官方通路（含官網、APP、售票處、自動取購票機）消費，且實際支付予影城之交易金額（包含電影票價與餐飲商品）。</li>
-                    <li>不列入累積金額之項目包括：
-                        <ol type="a" class="mt-2">
-                            <li>非影城直接銷售之票券：片商交換券/預售券、外部網站代銷之票券。</li>
-                            <li>優惠票券類：團體電影優惠券、經濟餐飲兌換券與豪華餐飲兌換券之金額。</li>
-                            <li>特殊活動：包廳/包場之金額。</li>
+                    <li class="text-danger">不列入累積金額之項目包括：
+                        <ol type="a" class="mb-2 mx-2">
+                            <li>＊非影城直接銷售之票券：片商交換券/預售券、外部網站代銷之票券。</li>
+                            <li>＊優惠票券類：團體電影優惠券、經濟餐飲兌換券與豪華餐飲兌換券之金額。</li>
+                            <li>＊特殊活動：包廳/包場之金額。</li>
                         </ol>
                     </li>
                     <li>2. 會員等級有效期間：12個月。升級提醒以E-MAIL通知。</li>
