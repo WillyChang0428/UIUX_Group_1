@@ -7,10 +7,11 @@ $black: #000;
 // 由 #0F1115 與 #1E2025 交錯組成，營造深邃感
 $vieshow-gradient-dark: linear-gradient(
   180deg,
-  #0f1115 0%,
-  #1e2025 31%,
-  #0f1115 65%,
-  #1e2025 100%
+  #000000 0%,
+  #000000 10%,
+  #1e2025 50%,
+  #0f1115 80%,
+  #0f1115 100%,
 );
 
 // 品牌藍漸層 (適用於 Primary 按鈕、標題強調)
@@ -213,7 +214,7 @@ $container-max-widths: (
   sm: 540px,
   md: 720px,
   lg: 960px,
-  xl: 1140px,
+  xl: 1400px,
   xxl: 1800px, // 留一點 margin 給 1980px 螢幕
 );
 
