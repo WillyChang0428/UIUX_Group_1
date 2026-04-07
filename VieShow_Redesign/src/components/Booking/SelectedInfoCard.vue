@@ -68,15 +68,15 @@ const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
   -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.05);
 
   // 半透明深色底（讓文字可讀）
-  background: rgba($vieshow-dark, 0.6);
+  background: rgba(v.$vieshow-dark, 0.6);
 
-  // 下邊框
-  border-bottom: 1px solid rgba($white, 0.1);
+  // 下邊框 
+  border-bottom: 1px solid rgba(v.$white, 0.1);
 
-  // 陰影
+  // 陰影 
   box-shadow:
-    0 8px 32px rgba($black, 0.45),
-    0 1px 0 rgba($white, 0.06) inset;
+    0 8px 32px rgba(v.$black, 0.45),
+    0 1px 0 rgba(v.$white, 0.06) inset;
 
   // ── 光源高光層（Light -38deg 80%）──────────────────────────
   //  ::before / ::after 掛在 .glass-card，position: relative 才有效
@@ -86,8 +86,8 @@ const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
     inset: 0;
     background: linear-gradient(
       -38deg,
-      rgba($white, 0.14) 0%,
-      rgba($white, 0.05) 30%,
+      rgba(v.$white, 0.14) 0%,
+      rgba(v.$white, 0.05) 30%,
       transparent 60%
     );
     pointer-events: none;
@@ -105,8 +105,8 @@ const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
     background: linear-gradient(
       90deg,
       transparent,
-      rgba($white, 0.22) 30%,
-      rgba($white, 0.22) 70%,
+      rgba(v.$white, 0.22) 30%,
+      rgba(v.$white, 0.22) 70%,
       transparent
     );
     pointer-events: none;
@@ -120,7 +120,8 @@ const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: $spacer;
+  // 💡 使用指南的變數 [cite: 123, 126]
+  gap: var(--gap-md); 
   padding: 12px 24px;
   width: 100%;
   box-sizing: border-box;
@@ -134,8 +135,8 @@ const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
   border-radius: 0;
   overflow: hidden;
   box-shadow:
-    0 4px 14px rgba($black, 0.5),
-    0 0 0 1px rgba($white, 0.08);
+    0 4px 14px rgba(v.$black, 0.5),
+    0 0 0 1px rgba(v.$white, 0.08);
     border-radius: 12px;
 }
 
@@ -161,43 +162,52 @@ const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
   align-items: baseline;
   gap: 0.625rem;
   flex-wrap: nowrap;
-  min-width: 0;
+  min-width: 0; // 💡 Flex 子層裁切必備
 }
 
 .title-zh {
   font-size: 32px;
   font-weight: 700;
-  color: $light;
+  color: v.$light;
   letter-spacing: 0.04em;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  
+  // 💡 核心修正 1：中文優先，絕對不被壓縮
+  flex-shrink: 0; 
+  max-width: 100%; // 確保即使中文超級長，也不會超出父容器
 }
 
 .title-en {
-  font-size: $font-size-mini-mobile;
+  font-size: var(--app-font-size-mini);
   font-weight: 500;
-  color: $light;
+  color: v.$light;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
-  flex-shrink: 0;
+  
+  // 💡 核心修正 2：允許英文被壓縮，空間不夠時顯示刪節號 (...)
+  flex-shrink: 1; 
+  min-width: 0; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 .meta-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  font-size: $font-size-mini-mobile;
+  font-size: var(--app-font-size-mini);
   font-weight: 200;
-  color: $light;
+  color: v.$light;
   line-height: 1.4;
   letter-spacing: 0.01em;
 }
 
 .sep {
-  color: $white;
+  color: v.$white;
   margin: 0 0.125rem;
 }
 </style>

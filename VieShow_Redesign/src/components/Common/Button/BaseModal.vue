@@ -111,7 +111,7 @@ watch(() => props.modelValue, (newVal) => {
 }
 
 .modal-container {
-  width: 277px;
+  width: fit-content;
   background: rgba($white, 0.1); 
   border: 2px solid rgba($white, 0.2); 
   border-radius: $border-radius-pc;
