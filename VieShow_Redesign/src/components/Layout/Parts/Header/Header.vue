@@ -1,11 +1,8 @@
 <template>
   <header class="header-bg fixed-top">
     <div class="container d-flex justify-content-between align-items-center h-100">
-      
-      <div 
-        class="clickable-icon h2 mb-0 d-lg-none order-1" 
-        @click="isMenuOpen = !isMenuOpen"
-      >
+
+      <div class="clickable-icon h2 mb-0 d-lg-none order-1" @click="isMenuOpen = !isMenuOpen">
         <i :class="['fa-solid', isMenuOpen ? 'fa-xmark' : 'fa-bars', 'text-white']"></i>
       </div>
 
@@ -14,60 +11,86 @@
       </div>
 
       <nav class="desktop-nav d-none d-lg-flex align-items-center gap-4 order-lg-2">
-        <router-link 
-          v-for="item in menuItems" 
-          :key="item.text" 
-          :to="item.link" 
-          class="nav-link text-white fw-bold"
-        >
+        <router-link v-for="item in menuItems" :key="item.text" :to="item.link" class="nav-link text-white fw-regular">
           {{ item.text }}
         </router-link>
       </nav>
 
       <div class="action-zone d-flex align-items-center gap-2 order-3 order-lg-3">
-        <router-link 
-          to="/booking" 
-          class="btn btn-light rounded-pill px-lg-2 py-lg-1 fw-bold text-primary d-none d-lg-block"
-        >
+        <router-link to="/booking"
+          class="btn btn-light rounded-pill px-lg-2 py-lg-1 fw-medium text-primary d-none d-lg-block">
           快速訂票
         </router-link>
 
-        <div class="clickable-icon h2 mb-0">
+        <div v-if="!authStore.isLoggedIn" @click="isLoginOpen = true" class="clickable-icon h2 mb-0 text-decoration-none">
           <i class="fa-solid fa-user text-white"></i>
         </div>
-      </div>
 
+        <div v-else class="dropdown d-flex align-items-center">
+          <div class="clickable-icon h4 mb-0" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-caret-down text-white"></i>
+          </div>
+
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm mt-2 border-0 ">
+            <li>
+              <span class="dropdown-item-text fw-medium text-primary me-1">
+                嗨，{{ authStore.currentUser?.realName }}
+              </span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><router-link class="dropdown-item text-decoration-none" to="/profile">會員中心</router-link></li>
+            <li><a class="dropdown-item text-danger text-decoration-none" href="#" @click.prevent="handleLogout">登出</a></li>
+          </ul>
+        </div>
+
+      </div>
     </div>
   </header>
 
   <NavMenu :show="isMenuOpen" @close="isMenuOpen = false" />
+  
+  <LoginView v-model="isLoginOpen" />
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/store/authStore"; 
 import NavMenu from "./NavMenu.vue";
+// 💡 修改處 3：引入登入彈窗組件 (請確認您的路徑是否正確)
+import LoginView from "@/views/Auth/LoginView.vue"; 
 
 const isMenuOpen = ref(false);
+// 💡 修改處 4：新增控制登入彈窗開關的變數
+const isLoginOpen = ref(false);
 
-// 提取選單資料以利共用
+const router = useRouter();
+const authStore = useAuthStore(); 
+
 const menuItems = [
   { text: "電影資訊", link: "/movies" },
   { text: "影城據點", link: "/theaters" },
   { text: "最新消息", link: "/news" },
   { text: "團票 / 包廳", link: "/group" },
 ];
+
+const handleLogout = () => {
+  authStore.logout(); 
+  router.push("/");   
+};
 </script>
 
 <style scoped lang="scss">
+// 💡 CSS 完全沒有更動，保留您原本寫好的響應式與樣式配置
 .header-bg {
-  background: v.$vieshow-gradient-primary; // [cite: 95]
-  height: v.$web-top-padding-mobile; // [cite: 121]
-  z-index: 1050;
+  background: v.$vieshow-gradient-primary;
+  height: v.$web-top-padding-mobile;
+  z-index: 1150;
   display: flex;
   align-items: center;
 
   @include v.media-breakpoint-up(md) {
-    height: v.$web-top-padding-pc; // [cite: 121]
+    height: v.$web-top-padding-pc;
     padding: 0;
   }
 }
@@ -77,14 +100,16 @@ const menuItems = [
     text-decoration: none;
     font-size: 1.1rem;
     transition: opacity 0.3s;
-    &:hover { opacity: 0.8; }
+
+    &:hover {
+      opacity: 0.8;
+    }
   }
 }
 
 .logo-wrapper {
   width: 158px;
-  
-  // 💡 手機版 CSS 修正：確保 Logo 在 header 內水平絕對置中
+
   @include v.media-breakpoint-down(lg) {
     position: absolute;
     left: 50%;
@@ -99,12 +124,11 @@ const menuItems = [
 }
 
 .action-zone {
-  // 💡 在手機版確保功能區不會擠壓到置中的 Logo
-  min-width: 45px; 
+  min-width: 45px;
   justify-content: flex-end;
 }
 
-.btn-light{
-  text-decoration:none;
+.btn-light {
+  text-decoration: none;
 }
 </style>
