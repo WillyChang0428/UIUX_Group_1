@@ -10,7 +10,7 @@
                         @keyup.enter="handleLogin" />
                 </div>
 
-                <div class="input-group position-relative mb-2">
+                <div class="input-group position-relative">
                     <input :type="showPassword ? 'text' : 'password'" class="form-control custom-input" placeholder="密碼"
                         v-model="password" @keyup.enter="handleLogin" />
                     <span class="password-toggle" @click="showPassword = !showPassword">
@@ -18,16 +18,17 @@
                     </span>
                 </div>
 
-                <div class="error-text text-danger mb-2" style="min-height: 20px;">
-                    <span v-if="errorMessage"><i class="fa-solid fa-circle-exclamation me-1"></i>{{ errorMessage
-                        }}</span>
+                <div class="error-text text-danger">
+                    <span v-if="errorMessage">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i>{{ errorMessage }}
+                    </span>
                 </div>
 
                 <div class="d-flex justify-content-end mb-4">
-                    <a href="#" class="text-secondary text-decoration-none" style="font-size: 14px;">忘記密碼？</a>
+                    <a href="#" class="text-secondary text-decoration-none forgot-pwd-link">忘記密碼？</a>
                 </div>
 
-                <div class="recaptcha-box d-flex justify-content-between align-items-center mb-4"
+                <div class="recaptcha-box d-flex justify-content-between align-items-center mb-4 mb-lg-3"
                     @click="isRobotChecked = !isRobotChecked">
                     <div class="d-flex align-items-center gap-3">
                         <i class="fa-solid fa-check text-success fs-4" v-if="isRobotChecked"></i>
@@ -36,18 +37,17 @@
                     </div>
                     <div class="recaptcha-logo d-flex flex-column align-items-center">
                         <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" width="28">
-                        <span class="text-muted mt-1" style="font-size: 9px;">Privacy - Terms</span>
+                        <span class="text-muted mt-1 recaptcha-terms">Privacy - Terms</span>
                     </div>
                 </div>
 
-                <SecondaryButton class="w-100 fw-bold mb-3 login-btn" @click="handleLogin">
+                <SecondaryButton class="w-100 fw-bold mb-3 mb-lg-2 login-btn" @click="handleLogin">
                     登入
                 </SecondaryButton>
 
                 <GoogleLogin :callback="handleLogin" class="google-btn w-100 mb-3" />
 
-
-                <div class="text-center text-secondary" style="font-size: 14px;">
+                <div class="text-center text-secondary register-hint">
                     還不是會員？
                     <router-link to="/register" class="text-primary text-decoration-none fw-bold">立即註冊</router-link>
                 </div>
@@ -60,26 +60,27 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/store/authStore'; // 引入我們寫好的 Store
-import BaseModal from '@/components/Common/Button/BaseModal.vue'; // 請確認路徑是否正確
+import { useAuthStore } from '@/store/authStore'; 
+import BaseModal from '@/components/Common/Button/BaseModal.vue'; 
 import SecondaryButton from '@/components/Common/Button/SecondaryButton.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 
-// 狀態管理
-const isOpen = ref(true);
+// 💡 核心修正 1：使用 defineModel 來接收 Header 傳來的 v-model="isLoginOpen"
+// 這樣 isOpen.value = false 時，Header 也會同步知道彈窗關閉了
+const isOpen = defineModel({ type: Boolean, default: false });
+
 const email = ref('');
 const password = ref('');
 const showPassword = ref(false);
 const isRobotChecked = ref(false);
 const errorMessage = ref('');
 
-// 💡 一般帳號密碼登入邏輯
+// 一般帳號密碼登入邏輯
 const handleLogin = () => {
-    errorMessage.value = ''; // 清空之前的錯誤
+    errorMessage.value = ''; 
 
-    // 1. 基礎防呆驗證
     if (!email.value || !password.value) {
         errorMessage.value = '請輸入帳號與密碼';
         return;
@@ -89,33 +90,29 @@ const handleLogin = () => {
         return;
     }
 
-    // 2. 呼叫 Pinia Store 進行驗證
     const isSuccess = authStore.login(email.value, password.value);
 
     if (isSuccess) {
-        // 登入成功：關閉 Modal 並跳轉回首頁
+        // 💡 核心修正 2：登入成功後，單純關閉彈窗即可，不用 router.push 跳轉！
         isOpen.value = false;
-        setTimeout(() => {
-            router.push('/');
-        }, 300); // 稍微延遲讓 Modal 關閉動畫跑完
     } else {
-        // 登入失敗：顯示錯誤提示
         errorMessage.value = '帳號或密碼錯誤，請重新輸入';
     }
 };
 
-
 // 處理點擊 X 關閉視窗的邏輯
 const handleClose = () => {
-    router.push('/'); // 返回首頁或上一頁
+    // 💡 核心修正 3：點擊 X 也是單純關閉彈窗
+    isOpen.value = false; 
 };
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/scss/variables"; // 引入您的設計系統變數
+@import "@/assets/scss/variables";
 
 .login-form-wrapper {
-    padding: 10px 0;
+    padding: 0 ;
+    
 
     /* ==========================================
      1. 自定義無邊框輸入框 (底線樣式)
@@ -123,25 +120,23 @@ const handleClose = () => {
     .custom-input {
         background: transparent !important;
         border: none;
-        border-bottom: 1px solid rgba(v.$white, 0.3); // 預設微透明白線
+        border-bottom: 1px solid rgba(v.$white, 0.3); 
         border-radius: 0;
         color: v.$white;
-        padding: 12px 10px 12px 0; // 左側切齊
+        // 💡 12px 10px 替換為響應式間距
+        padding: var(--gap-sm) var(--gap-sm) var(--gap-sm) 0; 
         font-size: var(--app-font-size-base);
         transition: all 0.3s ease;
         box-shadow: none !important;
 
-        // 聚焦時，底線變為品牌藍
         &:focus {
             border-bottom-color: v.$vieshow-primary;
         }
 
-        // 提示字顏色
         &::placeholder {
             color: rgba(v.$white, 0.5);
         }
 
-        // 修正瀏覽器自動填寫時的黃色/白色背景殘留
         &:-webkit-autofill {
             -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
             -webkit-text-fill-color: v.$white !important;
@@ -158,44 +153,56 @@ const handleClose = () => {
         cursor: pointer;
         color: rgba(v.$white, 0.5);
         z-index: 10;
-        padding: 10px;
+        padding: var(--gap-sm); // 💡 取代 10px
 
         &:hover {
             color: v.$white;
         }
     }
 
+    // 💡 獨立拉出錯誤文字與連結的樣式，取代 inline-style
     .error-text {
-        font-size: 13px;
-        letter-spacing: 0.5px;
+        font-size: var(--app-font-size-mini); // 對應 12px/14px
+        letter-spacing: v.$letter-spacing-wide;
+        min-height: var(--gap-lg); // 💡 取代固定的 20px
+    }
+
+    .forgot-pwd-link {
+        font-size: var(--app-font-size-sm); // 💡 取代 14px
     }
 
     /* ==========================================
      2. 模擬 reCAPTCHA 驗證區塊
      ========================================== */
     .recaptcha-box {
-        background-color: #F9F9F9; // 淺灰底色
-        border: 1px solid #D3D3D3;
-        border-radius: 4px;
-        padding: 12px 16px;
+        background-color: v.$white; // 💡 取代非標準的 #F9F9F9
+        border: 1px solid v.$vieshow-tertiary; // 💡 取代 #D3D3D3
+        border-radius: var(--app-radius-sm); // 💡 取代 4px
+        padding: var(--gap-sm) var(--gap-md); // 💡 取代 12px 16px
         cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 4px rgba(v.$black, 0.05); // 💡 改用 v.$black
         transition: all 0.2s ease;
 
         .check-box {
-            width: 24px;
-            height: 24px;
+            width: var(--app-font-size-h4);
+
+            height: var(--app-font-size-h4); // 💡 取代 24px
+            height: 1.5rem;
             background: v.$white;
-            border: 2px solid #C1C1C1;
-            border-radius: 2px;
+            border: 2px solid v.$vieshow-tertiary; // 💡 取代 #C1C1C1
+            border-radius: 2px; // 極小圓角保留
             transition: all 0.2s ease;
         }
 
+        .recaptcha-terms {
+            font-size: 0.65rem; // 💡 取代 9px
+        }
+
         &:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(v.$black, 0.1);
 
             .check-box {
-                border-color: #A0A0A0;
+                border-color: v.$vieshow-secondary; // 💡 取代 #A0A0A0
             }
         }
     }
@@ -204,22 +211,27 @@ const handleClose = () => {
      3. 按鈕樣式微調
      ========================================== */
     .login-btn {
-        padding: 12px;
-        border-radius: var(--app-radius-lg); // 使用指南中的大圓角
+        padding: var(--gap-sm); // 💡 取代 12px
+        border-radius: var(--app-radius-lg); 
         font-size: var(--app-font-size-base);
+        background-color: v.$vieshow-primary-dark;
     }
 
     .google-btn {
         color: v.$vieshow-primary;
-        border: 1px solid v.$white;
-        padding: 12px;
-        border-radius: var(--app-radius-lg);
+        border-radius: var(--app-radius);
         font-size: var(--app-font-size-base);
         transition: all 0.2s ease;
+        overflow: hidden;
 
         &:hover {
-            background-color: #F0F0F0 !important;
+            // 💡 取代死白的 #F0F0F0，改用具語意化的 rgba 輔助色
+            background-color: rgba(v.$vieshow-secondary, 0.1) !important; 
         }
+    }
+
+    .register-hint {
+        font-size: var(--app-font-size-sm); // 💡 取代 14px
     }
 }
 </style>

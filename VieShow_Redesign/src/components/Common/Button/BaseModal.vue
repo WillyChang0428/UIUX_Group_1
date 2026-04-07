@@ -55,9 +55,7 @@ Slots:
           </h4>
           
           <button type="button" class="close-btn border-0 bg-transparent p-2" @click="close" aria-label="Close">
-            <svg width="24" height="24" fill="none" :stroke="type === 'white' ? '#ED3F20' : 'white'" stroke-width="2">
-              <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
+            <i class="fa-solid fa-xmark icon-md text-white"></i>
           </button>
         </div>
 

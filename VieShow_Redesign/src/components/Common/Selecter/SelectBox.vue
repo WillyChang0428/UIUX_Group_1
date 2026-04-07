@@ -38,7 +38,7 @@
               </template>
 
             </FlatSelect>
-            <button class="btn btn-primary search-btn flex-shrink-0 fw-bold">搜尋</button>
+            <SecondaryButton>搜尋</SecondaryButton>
           </div>
         </div>
       </div>
@@ -68,6 +68,7 @@ import { useMovieStore } from "@/store/movieStore";
 import { useCinemaStore } from "@/store/cinema";
 import FlatSelect from "./FlatSelect.vue";
 import SelectCategory from "./SelectCategory.vue";
+import SecondaryButton from "../Button/SecondaryButton.vue";
 
 // 💡 新增 Prop，讓父層決定要顯示哪一種排版 (預設為訂票頁版)
 const props = defineProps({
@@ -163,7 +164,7 @@ const clearCinema = () => {
       width: 100%;
 
       @include media-breakpoint-up(lg) {
-        width: 450px; // 電腦版固定寬度
+        max-width: 450px; // 電腦版固定寬度
       }
     }
 

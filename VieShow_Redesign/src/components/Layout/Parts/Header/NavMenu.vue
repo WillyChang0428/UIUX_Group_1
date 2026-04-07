@@ -15,7 +15,7 @@
               class="main-link d-flex flex-column py-4 text-decoration-none text-white"
               @click="handleMobileClick(item, $event)"
             >
-              <span class="chinese fw-regular h2 mb-2 ls-wide">{{
+              <span class="chinese fw-medium h2 mb-2 ls-wide">{{
                 item.text
               }}</span>
               <span
