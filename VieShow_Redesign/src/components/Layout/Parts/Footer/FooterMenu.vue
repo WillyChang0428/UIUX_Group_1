@@ -1,18 +1,18 @@
 <template>
   <div class="footer-menu-wrapper w-100">
-    <ul class="footer-main-list list-unstyled m-0 p-0 d-flex flex-column flex-md-row justify-content-between">
+    <ul class="footer-main-list list-unstyled m-0 p-0 d-flex flex-column flex-lg-row justify-content-between">
       <li
         v-for="group in menuData"
         :key="group.title"
-        class="footer-group-item border-bottom border-md-none"
+        class="footer-group-item border-bottom border-lg-none"
       >
         <div
-          class="menu-header d-flex justify-content-between align-items-center py-4 py-md-0 mb-md-4 px-3 px-md-0"
+          class="menu-header d-flex justify-content-between align-items-center py-4 py-lg-0 mb-lg-4 px-3 px-lg-0"
           @click="toggleGroup(group.title)"
         >
           <span class="header-text fw-medium text-white">{{ group.title }}</span>
           <i
-            class="fa-solid d-md-none"
+            class="fa-solid d-lg-none"
             :class="[activeGroups.includes(group.title) ? 'fa-angle-up' : 'fa-angle-down']"
           ></i>
         </div>
@@ -20,7 +20,7 @@
         <Transition name="expand">
           <ul
             v-if="isDesktop || activeGroups.includes(group.title)"
-            class="sub-menu-list list-unstyled pb-3 pb-md-0 px-3 px-md-0"
+            class="sub-menu-list list-unstyled pb-3 pb-lg-0 px-3 px-lg-0"
           >
             <li v-for="link in group.links" :key="link" class="py-2">
               <router-link to="/" class="sub-link text-decoration-none">
@@ -76,7 +76,7 @@ const activeGroups = ref([]);
 const isDesktop = ref(false);
 // 更新視窗寬度判斷
 const updateView = () => {
-  isDesktop.value = window.innerWidth >= 768;
+  isDesktop.value = window.innerWidth >= 1024;
 };
 
 const toggleGroup = (title) => {
@@ -101,7 +101,7 @@ onUnmounted(() => {
 .footer-menu-wrapper {
   .footer-group-item {
     border-color: v.$vieshow-secondary-emp !important;
-    @include v.media-breakpoint-up(md) {
+    @include v.media-breakpoint-up(lg) {
       border-bottom: none !important;
     }
   }

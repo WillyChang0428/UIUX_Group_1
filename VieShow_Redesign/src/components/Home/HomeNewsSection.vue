@@ -55,6 +55,7 @@ const latestNews = computed(() => {
 
   .news-poster {
     aspect-ratio: 16 / 10; // 根據圖二比例設定
+    min-height:150px;
     border: 1px solid v.$vieshow-secondary-emp; // 使用設計稿邊框色 [cite: 131]
     /* 自動縮放圓角：手機 12px / 電腦 24px  */
     border-radius: var(--app-radius-lg) !important;

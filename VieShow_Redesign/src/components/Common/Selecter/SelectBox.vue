@@ -1,11 +1,11 @@
 <template>
-  <div class="selectbox container d-flex flex-column flex-md-row align-items-md-center">
+  <div class="selectbox container d-flex flex-column flex-lg-row align-items-lg-center">
     
-    <div class="title fw-medium text-white me-md-5 fs-5 flex-shrink-0">
+    <div class="title fw-medium text-white me-lg-5 fs-5 flex-shrink-0">
       快速訂票
     </div>
 
-    <div class="selection-wrapper d-flex flex-column flex-md-row gap-3 w-100 align-items-md-end">
+    <div class="selection-wrapper d-flex flex-column flex-lg-row gap-3 w-100 align-items-lg-end">
       
       <div class="insideitem">
         <FlatSelect
@@ -91,7 +91,7 @@ const handleCinemaSelect = (name) => {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: var(--gap-md);
+  gap: var(--gap-lg);
   padding: var(--gap-xl);
   border-radius: var(--app-radius-lg);
   border: v.$border-width solid rgba(v.$white, 0.2);
@@ -100,7 +100,7 @@ const handleCinemaSelect = (name) => {
   box-shadow: 0 34px 55px -28px rgba(v.$vieshow-primary, 0.5);
 
   /* 💡 桌機版排版修正 */
-  @include media-breakpoint-up(md) {
+  @include media-breakpoint-up(lg) {
     flex-direction: row; // 橫向排列
     height: 120px;       // 固定高度符合長條狀視覺
     padding: 0 var(--gap-xl); // 左右內距
@@ -115,7 +115,7 @@ const handleCinemaSelect = (name) => {
   width: 100%;
   
   /* 💡 桌機版微調：移除 Base 組件的預設框線感，改為底線感 (對齊圖一) */
-  @include media-breakpoint-up(md) {
+  @include media-breakpoint-up(lg) {
     :deep(.base-select-container) {
       .select-display {
         border-top: none;
@@ -139,7 +139,7 @@ const handleCinemaSelect = (name) => {
     white-space: nowrap;
     padding: v.$btn-padding-y-lg v.$btn-padding-x-lg;
     
-    @include media-breakpoint-up(md) {
+    @include media-breakpoint-up(lg) {
       margin-bottom: 8px; // 微調對齊底線高度
     }
   }

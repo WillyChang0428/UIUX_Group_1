@@ -103,6 +103,9 @@ const menuItems = [
   @include v.media-breakpoint-up(md) {
     top: v.$web-top-padding-pc;
   }
+  @include v.media-breakpoint-up(lg) {
+    display: none !important;
+  }
 
   left: 0;
   height: fit-content;

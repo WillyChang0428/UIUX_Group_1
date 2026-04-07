@@ -6,9 +6,9 @@ import FooterMenu from "./FooterMenu.vue";
 <template>
   <footer class="footer-section py-5 pb-6">
     <div class="container">
-      <div class="row gy-5 gy-md-0 align-items-md-start">
+      <div class="row gy-5 gy-lg-0 align-items-lg-start">
         <div
-          class="col-12 col-md-4 d-flex flex-column align-items-center align-items-md-start order-3 order-md-1"
+          class="col-12 col-lg-4 d-flex flex-column align-items-center align-items-lg-start order-3 order-lg-1"
         >
           <div class="logo mb-5">
             <img src="../../../../assets/images/LOGO.png" alt="威秀LOGO" />
@@ -16,7 +16,7 @@ import FooterMenu from "./FooterMenu.vue";
           <SocialMediaBtn />
         </div>
 
-        <div class="col-12 col-md-8 order-1 order-md-2">
+        <div class="col-12 col-lg-8 order-1 order-lg-2">
           <FooterMenu />
         </div>
       </div>

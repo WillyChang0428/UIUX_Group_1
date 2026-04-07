@@ -1,6 +1,6 @@
 <template>
   <div class="hot-movie-section position-relative w-100 overflow-hidden py-5">
-    <div class="mobile-carousel d-block d-md-none w-100">
+    <div class="mobile-carousel d-block d-lg-none w-100">
       <div
         class="carousel-container d-flex align-items-center justify-content-center w-100"
         @touchstart="handleTouchStart"
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="desktop-list d-none d-md-block container">
+    <div class="desktop-list d-none d-lg-block container">
       <div class="movie-window overflow-hidden">
         <div
           class="movie-track d-flex transition-ease"
@@ -77,7 +77,7 @@
     </div>
 
     <div
-      class="pagination-controls d-none d-md-flex justify-content-center gap-3 mt-4"
+      class="pagination-controls d-none d-lg-flex justify-content-center gap-3 mt-4"
     >
       <button class="nav-btn-static" @click="prevSlide">
         <i class="fa-solid fa-chevron-left"></i>
@@ -210,7 +210,7 @@ onUnmounted(() => {
   .movie-card-pc {
     flex: 0 0 25%; // 固定四張
     max-width: 25%; // 💡 強制限制最大寬度，防止被內容撐開
-    padding: 0 calc(var(--gap-md) / 2); // [cite: 131]
+    padding: 0 calc(var(--gap-lg) / 2); // [cite: 131]
     box-sizing: border-box;
     transition: transform 0.4s ease; // 平滑過渡
   }
