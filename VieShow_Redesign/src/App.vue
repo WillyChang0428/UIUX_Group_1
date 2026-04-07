@@ -1,95 +1,54 @@
 <template>
-  <div class="fast-booking-page main-wrapper">
-    <div class="container">
+  <div class="app-wrapper">
+    <main class="main-wrapper">
+      <div class="container">
 
-      <div class="selector-wrapper mb-4">
-        <SelectBox mode="page" />
+        <p class="text-white fw-bold mb-3">選位測試（需選 {{ ticketCount }} 個座位）</p>
+
+        <SeatMap
+          :ticket-count="ticketCount"
+          @open-panorama="onPanorama"
+          @seats-selected="onSeatsSelected"
+        />
+
+        <!-- 已選座位顯示 -->
+        <div v-if="selectedSeats.length > 0" class="mt-3">
+          <p class="text-secondary small mb-1">已選座位：</p>
+          <div class="d-flex flex-wrap gap-2">
+            <span
+              v-for="seat in selectedSeats"
+              :key="seat.key"
+              class="badge bg-primary"
+            >
+              {{ seat.row }} 排 {{ seat.col }} 號
+            </span>
+          </div>
+        </div>
+
       </div>
-
-      <SelectedInfoCard class="mb-4" v-if="movieStore.selectedMovieId" />
-
-      <TheaterFilter v-model="currentTheater" class="mb-4" />
-
-      <DateFilter v-model="currentDate" @change-day="handleDayChange" class="mb-5" />
-
-      <h3 class="theater-title text-white fw-bold mb-4">
-        {{ currentTheater }}
-      </h3>
-
-      <Sessions :theaterName="currentTheater" :dayOfWeek="currentDayOfWeek" @select-session="handleSessionSelect"
-        @open-preview="handleSeatPreview" />
-
-      <SeatPreview v-model="isPreviewOpen" :theaterName="previewTheater" />
-
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useMovieStore } from '@/store/movieStore';
-import SelectBox from '@/components/Common/Selecter/SelectBox.vue';
-import SelectedInfoCard from '@/components/Booking/SelectedInfoCard.vue';
-import TheaterFilter from '@/components/Booking/FastBooking/TheaterFilter.vue';
-import DateFilter from '@/components/Booking/FastBooking/DateFilter.vue';
-import Sessions from '@/components/Booking/FastBooking/Sessions.vue';
-import SeatPreview from '@/components/Booking/FastBooking/SeatPreview.vue';
+import { ref } from 'vue'
+import SeatMap from '@/components/Booking/FastBooking/SeatSelecting/SeatMap.vue'
 
-const router = useRouter();
-const movieStore = useMovieStore();
+const ticketCount = ref(2)
+const selectedSeats = ref([])
 
-// 💡 父層統一管理的核心篩選狀態
-const currentTheater = ref('台北信義');
-const currentDate = ref('');
-const currentDayOfWeek = ref('星期一'); // 預設傳給 Sessions 的星期
-
-// 接收 DateFilter 傳來的完整星期字串 (如 '星期一')
-const handleDayChange = (dayString) => {
-  currentDayOfWeek.value = dayString;
-};
-
-// 處理最終的訂票跳轉
-const handleSessionSelect = (sessionData) => {
-  movieStore.updateSession({
-    format: sessionData.format,
-    time: sessionData.time,
-    venue: sessionData.venue,
-    date: currentDate.value
-  });
-
-  // 導向選位頁面 (請依據您的路由設定調整)
-  router.push({ name: 'booking-seats' });
-};
-
-// 控制彈窗開關與影城名稱
-const isPreviewOpen = ref(false);
-const previewTheater = ref('');
-
-// 當使用者點擊 Sessions.vue 裡面的小沙發 Icon 時觸發
-const handleSeatPreview = (previewData) => {
-  // 將影城名稱存入，並打開彈窗
-  previewTheater.value = currentTheater.value;
-  isPreviewOpen.value = true;
-};
+const onPanorama = () => console.log('開啟全景')
+const onSeatsSelected = (seats) => {
+  selectedSeats.value = seats
+  console.log('已選座位：', seats)
+}
 </script>
 
-<style scoped lang="scss">
-@import "@/assets/scss/variables";
+<style lang="scss">
+@import "@/assets/scss/main";
 
-.fast-booking-page {
+.app-wrapper {
   min-height: 100vh;
-  background: v.$vieshow-gradient-dark;
-
-  /* 💡 修正處：設定相對定位與高層級，強制下拉選單浮在最上層 */
-  .selector-wrapper {
-    position: relative;
-    z-index: 1050; // Bootstrap 處理下拉選單通常使用 1000 以上的層級，這裡設為 1050 確保萬無一失
-  }
-
-  .theater-title {
-    font-size: var(--app-font-size-h4);
-    letter-spacing: 2px;
-  }
+  background: $vieshow-gradient-dark;
 }
 </style>
