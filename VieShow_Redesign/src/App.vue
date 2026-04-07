@@ -1,11 +1,15 @@
-<template>
-  <MovieInfoPage />
-</template>
-
 <script setup>
-import MovieInfoPage from '@/views/MovieInfo/MovieInfoPage.vue';
+//null
 </script>
 
-<style scoped lang="scss">
-@import "@/assets/scss/variables";
+<template>
+<!-- null -->
+</template>
+
+
+<style>
+html, body , #app {
+  height: 100vh;
+  background: v.$vieshow-gradient-dark;
+}
 </style>
