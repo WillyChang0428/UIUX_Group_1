@@ -15,7 +15,7 @@
               class="main-link d-flex flex-column py-4 text-decoration-none text-white"
               @click="handleMobileClick(item, $event)"
             >
-              <span class="chinese fw-bold h2 mb-2 ls-wide">{{
+              <span class="chinese fw-regular h2 mb-2 ls-wide">{{
                 item.text
               }}</span>
               <span
@@ -110,7 +110,7 @@ const menuItems = [
   left: 0;
   height: fit-content;
   background-color: v.$vieshow-dark; // [cite: 138]
-  z-index: 1040;
+  z-index: 1100;
   overflow-y: auto;
 
   &::-webkit-scrollbar {

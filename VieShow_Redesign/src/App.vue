@@ -1,6 +1,7 @@
 <template>
     <div class="fast-booking-page main-wrapper">
-        <div class="container">
+        <Header />
+        <div class="container pt-5">
 
             <div class="selector-wrapper mb-4">
                 <SelectBox mode="page" />
@@ -37,6 +38,7 @@ import TheaterFilter from '@/components/Booking/FastBooking/TheaterFilter.vue';
 import DateFilter from '@/components/Booking/FastBooking/DateFilter.vue';
 import Sessions from '@/components/Booking/FastBooking/Sessions.vue';
 import SeatPreview from '@/components/Booking/FastBooking/SeatPreview.vue';
+import Header from '@/components/Layout/Parts/Header/Header.vue';
 
 const router = useRouter();
 const movieStore = useMovieStore();
@@ -86,7 +88,7 @@ const handleSeatPreview = (previewData) => {
     /* 💡 修正處：設定相對定位與高層級，強制下拉選單浮在最上層 */
     .selector-wrapper {
         position: relative;
-        z-index: 1500; // Bootstrap 處理下拉選單通常使用 1000 以上的層級，這裡設為 1500 確保萬無一失
+        z-index: 1050; // Bootstrap 處理下拉選單通常使用 1000 以上的層級，這裡設為 1050 確保萬無一失
     }
 
     .theater-title {
