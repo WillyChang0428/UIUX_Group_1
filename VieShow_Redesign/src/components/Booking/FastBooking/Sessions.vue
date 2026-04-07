@@ -210,9 +210,8 @@ const handlePreview = (movie, format, session) => {
     font-size: var(--app-font-size-h5); 
     margin-bottom: var(--gap-lg);
     
-    // 💡 調整分級圖示大小，與 H5 標題保持視覺平衡
     .rating-icon {
-      height: 28px; 
+      height: var(--app-font-size-h4); 
       width: auto;
       object-fit: contain;
     }
