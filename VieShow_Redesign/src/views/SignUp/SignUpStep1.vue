@@ -16,7 +16,8 @@ const handleNext = () => {
 
 <template>
   <div class="container d-flex flex-column justify-content-center align-items-center gap-3 ">
-    <img src="@/assets/images/hero.png" alt="" >
+    <img src="@/assets/images/Member1.png" class="d-none d-md-block rounded">
+    <img src="@/assets/images/Member2.png" class="d-md-none rounded">
     <div class="outer-wrapper border border-light rounded p-3 w-100">
       <div class="inner-scroll-box">
         <SignUpStart></SignUpStart>
@@ -53,6 +54,12 @@ html, body , #app {
   height: 100vh;
   background: v.$vieshow-gradient-dark;
 }
+
+img{
+  max-width: 100%;
+  height: auto;
+}
+
 
 /* --- 外層容器：只管背景和白線邊框 --- */
 .outer-wrapper {
