@@ -14,7 +14,7 @@ export const useAuthStore = defineStore("auth", () => {
       idNumber: "A123456789",     // 身分證字號
       phone: "0912345678",        // 手機號碼
       isGoogleLinked: true,       // 是否綁定 Google
-      linkedGoogleEmail: "wang.daming.personal@gmail.com" // 已綁定的 Google 信箱
+      linkedGoogleEmail: "a2492257@gmail.com" // 已綁定的 Google 信箱
     },
     {
       id: "U002",
