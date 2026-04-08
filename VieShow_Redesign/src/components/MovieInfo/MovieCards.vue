@@ -148,7 +148,7 @@ const handleBook = () => {
 
 .movie-card__title-en {
   margin: 0;
-  font-size: $font-size-mini;                   // 0.875rem = 14px
+  font-size: $font-size-sm-mobile;                   // 0.875rem = 14px
   font-weight: 400;
   color: $light;                    // #9E9E9E
   letter-spacing: 0.1em;
@@ -159,7 +159,7 @@ const handleBook = () => {
 // ── 上映日期 ───────────────────────────────────────────────────
 .movie-card__release {
   margin: 0;
-  font-size: $font-size-mini;  
+  font-size: $font-size-sm-mobile;  
   font-weight: 200px;                 // 0.875rem = 14px
   color: $light;                    // #9E9E9E
   line-height: 1.5;

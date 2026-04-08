@@ -1,14 +1,12 @@
 <template>
   <div class="switch d-flex w-100 d-flex justify-content-center">
     <div class="container d-flex p-0 d-flex justify-content-center">
-      <div
-        class="toggle-container d-flex justify-content-center align-items-center gap-3 w-100"
-      >
+      <div class="toggle-container d-flex justify-content-center align-items-center gap-3 w-100">
         <button
           type="button"
           class="btn toggle-btn flex-fill"
-          :class="{ active: activeTab === 'now' }"
-          @click="activeTab = 'now'"
+          :class="{ active: modelValue === 'now' }"
+          @click="$emit('update:modelValue', 'now')"
         >
           熱售中
         </button>
@@ -16,8 +14,8 @@
         <button
           type="button"
           class="btn toggle-btn flex-fill"
-          :class="{ active: activeTab === 'upcoming' }"
-          @click="activeTab = 'upcoming'"
+          :class="{ active: modelValue === 'upcoming' }"
+          @click="$emit('update:modelValue', 'upcoming')"
         >
           即將上映
         </button>
@@ -27,10 +25,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+// 定義 props 以接收 v-model 的值
+defineProps({
+  modelValue: {
+    type: String,
+    default: 'now'
+  }
+});
 
-// 定義目前選中的 Tab，預設為 'now' (熱售中)
-const activeTab = ref("now");
+// 定義 emit 以更新父組件的值
+defineEmits(['update:modelValue']);
 </script>
 
 <style lang="scss" scoped>
@@ -38,8 +42,8 @@ const activeTab = ref("now");
 @import "@/assets/scss/variables";
 
 .switch {
-  background: v.$vieshow-gradient-dark;
-  padding: v.$spacing-lg-mobile;
+  // background: v.$vieshow-gradient-dark;
+  padding: v.$spacing-lg-mobile 0;
   height: 104px;
 }
 
