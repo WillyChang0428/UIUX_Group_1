@@ -1,5 +1,3 @@
-<!-- 這份檔案沒用 -->
-
 <script setup>
 import { ref } from 'vue'
 // 引入解密 JWT 的魔術工具
@@ -29,32 +27,24 @@ const handleGoogleSuccess = (response) => {
 </script>
 
 <template>
-  <div class="register-container">
-    <h2>選擇註冊方式</h2>
-
-    <div v-if="!userInfo" class="login-buttons">
-      <GoogleLogin :callback="handleGoogleSuccess" />
-    </div>
-
-    <div v-else class="success-profile">
-      <img :src="userInfo.picture" alt="Google 大頭貼" class="avatar" />
-      <h3>註冊成功！歡迎，{{ userInfo.name }}</h3>
-      <p>已綁定信箱：{{ userInfo.email }}</p>
-    </div>
+  <div>
+    <GoogleLogin :callback="handleGoogleSuccess" class="google-btn" />
   </div>
 </template>
 
-<style scoped>
-/* 稍微裝飾一下大頭貼，讓專題展示時更好看 */
-.success-profile {
-  text-align: center;
-  margin-top: 2rem;
-}
-.avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  border: 3px solid #E50914; /* 影院主題紅 */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
+
+
+<style lang="scss" scoped>
+.google-btn {
+    color: v.$vieshow-primary;
+    border-radius: var(--app-radius);
+    font-size: var(--app-font-size-base);
+    transition: all 0.2s ease;
+    overflow: hidden;
+
+    // &:hover {
+    //   // 💡 取代死白的 #F0F0F0，改用具語意化的 rgba 輔助色
+    //   background-color: rgba(v.$vieshow-secondary, 0.1) !important;
+    // }
+  }
 </style>
