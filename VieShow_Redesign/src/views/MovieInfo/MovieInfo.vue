@@ -41,22 +41,42 @@ const upcoming = "upcoming";
 </template>
 
 <style lang="scss" scoped>
-/* 這裡維持你原本的 Flexbox 樣式即可，那樣寫已經可以達成一行兩個了 */
 .movie-page {
-  // 注意：確保 v 變數有被正確引入，否則會報錯
   padding: v.$spacing-md-mobile;
+
+  // 桌機版增加內距，讓畫面不會太滿
+  @media (min-width: 1024px) {
+    padding: v.$spacing-xl-pc; // 假設你有這個變數
+    max-width: 1440px;
+    margin: 0 auto;
+  }
 }
 
 .movie-flex-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start; // 改為 flex-start 配合 gap 比較穩定
-  gap: v.$spacing-md-mobile;
+  display: grid;
+  // 預設（手機版）：一行 2 張
+  grid-template-columns: repeat(2, 1fr);
+  gap: v.$spacing-sm-pc;
+
+  // 平板版 (例如 768px 以上)：一行 3 張
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  // 桌機版 (1200px 以上)：一行 4 張
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // 大螢幕 (1440px 以上)：一行 5 張
+  @media (min-width: 1440px) {
+    grid-template-columns: repeat(5, 1fr);
+  }
 }
 
 .flex-item {
-  /* 兩張卡片：50% 減去 gap 的一半 */
-  flex: 0 0 calc(50% - 8px);
-  max-width: calc(50% - 8px);
+  width: 100%; // 在 Grid 下，寬度會由 grid-template-columns 自動決定
+  max-width: none; // 移除原本的限制
 }
 </style>
