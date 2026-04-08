@@ -21,11 +21,8 @@ const handleToggle = () => {
 </template> -->
 
 <template>
-  <button
-    class="filter-btn d-inline-flex align-items-center justify-content-center"
-    :class="{ 'is-active': active }"
-    @click="$emit('toggle')"
-  >
+  <button class="filter-btn d-inline-flex align-items-center justify-content-center" :class="{ 'is-active': active }"
+    @click="$emit('toggle')">
     <slot>{{ label }}</slot>
   </button>
 </template>
@@ -78,11 +75,11 @@ defineEmits(["toggle"]);
     font-weight: v.$font-weight-bold; // 700 [cite: 48]
 
     /* 💡 使用品牌色變數製作陰影發光感 [cite: 59] */
-    box-shadow: 0 4px 15px rgba(v.$vieshow-primary, 0.5);
+    box-shadow: 0 var(--gap-sm) 15px rgba(v.$vieshow-primary, 0.5) !important;
   }
 
   /* 💡 桌機版 Hover 預防針：僅在支援滑鼠的裝置觸發 [cite: 130, 131] */
-  @include hover-focus {
+  @include v.hover-focus {
     opacity: 0.8;
   }
 }
