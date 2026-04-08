@@ -45,7 +45,7 @@ defineProps({
 defineEmits(["toggle"]);
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 /* 💡 引入變數地基，確保能使用 v.$ 語法抓取變數 [cite: 62, 140] */
 @import "@/assets/scss/variables";
 

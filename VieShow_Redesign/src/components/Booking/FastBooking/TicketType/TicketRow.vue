@@ -2,11 +2,16 @@
   <div class="ticket-row" :class="{ 'ticket-row--active': ticket.quantity > 0 }">
     <!-- 左側：票種名稱 + 描述 -->
     <div class="ticket-row__info">
+      <div class="ticket-row__title">
       <div class="ticket-row__name-wrap">
         <span class="ticket-row__name">{{ ticket.name }}</span>
         <span v-if="ticket.note" class="ticket-row__note-icon" :title="ticket.note">ⓘ</span>
       </div>
       <p v-if="ticket.desc" class="ticket-row__desc">{{ ticket.desc }}</p>
+      </div>
+      <span class="ticket-row__price" :class="{ 'ticket-row__price--free': ticket.price === 0 }">
+          NT {{ ticket.price.toLocaleString() }}
+        </span>
     </div>
 
     <!-- 右側：團體票顯示兌換框，其他票顯示價格 + 加減器 -->
@@ -39,9 +44,7 @@
 
       <!-- 一般票：價格 + 加減器 -->
       <template v-else>
-        <span class="ticket-row__price" :class="{ 'ticket-row__price--free': ticket.price === 0 }">
-          NT {{ ticket.price.toLocaleString() }}
-        </span>
+        
         <div class="ticket-row__stepper">
           <button
             class="stepper__btn"
@@ -108,12 +111,17 @@ const handleRedeem = () => {
 @import "@/assets/scss/variables";
 
 .ticket-row {
+  height: 90pt;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: $spacing-sm-mobile;
-  padding: $spacing-sm-mobile 0;
+  padding: var(--gap-md) 0;
   border-bottom: 1px solid rgba($white, 0.06);
+  @include media-breakpoint-up(md) {
+    padding: var(--gap-sm) 0;
+    height: 110pt;
+  }
 
   &:last-child {
     border-bottom: none;
@@ -130,9 +138,15 @@ const handleRedeem = () => {
 .ticket-row__info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  justify-content: space-between;
+  height: 100%;
   flex: 1;
   min-width: 0;
+}
+
+.ticket-row__title{
+  display: flex;
+  flex-direction: column;
 }
 
 .ticket-row__name-wrap {
@@ -142,7 +156,7 @@ const handleRedeem = () => {
 }
 
 .ticket-row__name {
-  font-size: $font-size-base-mobile;
+  font-size: var(--app-font-size-h6);
   font-weight: 600;
   color: $light;
   transition: color 0.2s ease;
@@ -156,7 +170,7 @@ const handleRedeem = () => {
 
 .ticket-row__desc {
   margin: 0;
-  font-size: $font-size-mini-mobile;
+  font-size: var(--app-font-size-sm);
   color: $vieshow-secondary;
   line-height: 1.4;
 }
@@ -241,7 +255,9 @@ const handleRedeem = () => {
 
 // ── 價格 ───────────────────────────────────────────────────────
 .ticket-row__price {
-  font-size: $font-size-sm-mobile;
+  display: flex;
+  justify-content: start;
+  font-size: var(--app-font-size-h6);
   font-weight: 700;
   color: $vieshow-danger;
   min-width: 56px;
@@ -266,36 +282,51 @@ const handleRedeem = () => {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: 1.5px solid rgba($white, 0.3);
+  border: 1.5px solid rgba(v.$white, 0.3);
   background: transparent;
-  color: $light;
+  color: v.$white;
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--app-font-size-h4);
   font-weight: 400;
   line-height: 1;
   padding: 0;
   transition: border-color 0.2s ease, opacity 0.2s ease;
 
-  &:hover:not(:disabled) {
-    border-color: $white;
+  @include hover-focus {
+    border-color: v.$white;
+  }
+
+  // 問題二：按下時白框加粗
+  &:active:not(:disabled) {
+    border-color: v.$white;
+    border-width: 2.5px;
   }
 
   &:disabled {
     opacity: 0.25;
     cursor: not-allowed;
   }
+
+  // + 按鈕：有數量時變藍（對齊 TicketRow 選中行為）
+  &--plus {
+    border-color: $white;
+    color: $white;
+
+    &:not(:disabled):active {
+      border-width: 2.5px;
+    }
+  }
 }
 
 .stepper__count {
   min-width: 20px;
   text-align: center;
-  font-size: $font-size-base-mobile;
+  font-size: var(--app-font-size-base);
   font-weight: 700;
-  color: $vieshow-secondary;
+  color: v.$vieshow-secondary;
   transition: color 0.2s ease;
 
-  &--active {
-    color: $light;
-  }
+  &--active { color: v.$white; }
 }
+
 </style>

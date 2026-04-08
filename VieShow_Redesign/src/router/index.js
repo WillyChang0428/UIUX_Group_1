@@ -38,7 +38,7 @@ const router = createRouter({
     },
 
     // ==========================================
-    // 🔵 型態二：訂票佈局 (訂票專用 Header + 無 Footer)
+    // 🔵 型態二：訂票佈局 (訂票專用 Header + 訂票專用Footer)
     // 適用：快速訂票、選位、結帳等
     // ==========================================
     {
@@ -47,13 +47,13 @@ const router = createRouter({
       children: [
         { 
           path: "ticket", 
-          component: () => import("@/views/Booking/TicketBooking.vue") 
-        }
+          component: () => import("@/views/Booking/TicketBooking.vue")  //  /booking/ticket
+        },
       ]
     },
 
     // ==========================================
-    // 🟣 型態三：註冊佈局 (會員專用 Header + 無 Footer)
+    // 🟣 型態三：註冊佈局 (註冊專用 Header + 無 Footer)
     // 適用：註冊流程
     // ==========================================
     {

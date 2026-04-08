@@ -1,5 +1,6 @@
 <script setup>
 import BookingStepHeader from './Parts/BookingStepHeader.vue';
+import BottomBar from '../Booking/BottomBar.vue';
 </script>
 
 <template>
@@ -10,7 +11,7 @@ import BookingStepHeader from './Parts/BookingStepHeader.vue';
       <router-view />
     </main>
 
-    <!-- <BookingFooter /> -->
+    <BottomBar />
   </div>
 </template>
 
