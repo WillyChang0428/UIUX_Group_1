@@ -3,7 +3,7 @@
 
     <!-- ① 一般票種 ──────────────────────────────────────────── -->
     <section class="ticket-section">
-      <h3 class="ticket-section__title">一般票種</h3>
+      <h2 class="ticket-section__title">一般票種</h2>
 
       <div class="ticket-section__list">
         <TicketRow
@@ -17,8 +17,9 @@
 
       <!-- 銀行優惠展開按鈕 -->
       <button class="bank-toggle" @click="showBank = !showBank">
-        <i :class="showBank ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
-        <span>查看銀行優惠</span>
+        <i class="fa-solid fa-arrow-down"></i>
+        <fs-6>查看銀行優惠</fs-6>
+        <i class="fa-solid fa-arrow-down"></i>
       </button>
 
       <!-- 銀行優惠票種（展開） -->
@@ -37,10 +38,10 @@
 
     <!-- ② 其他票種 ──────────────────────────────────────────── -->
     <section class="ticket-section">
-      <h3 class="ticket-section__title">
+      <h2 class="ticket-section__title">
         其他票種
         <span class="ticket-section__subtitle">＊以下票種無法與一般票種同時購買</span>
-      </h3>
+      </h2>
 
       <div class="ticket-section__list">
         <TicketRow
@@ -192,7 +193,7 @@ const handleUpdateQty = (id, delta) => {
 }
 
 .ticket-section__subtitle {
-  font-size: $font-size-mini-mobile;           // 12px
+  font-size: var(--app-font-size-sm);           // 12px
   font-weight: 400;
   color: $vieshow-warning;
 }
@@ -202,9 +203,6 @@ const handleUpdateQty = (id, delta) => {
   flex-direction: column;
 
   &--bank {
-    padding: $spacing-xs-mobile $spacing-sm-mobile;
-    background: rgba($white, 0.03);
-    border-radius: $border-radius-mobile;
     margin-bottom: $spacing-xs-mobile;
   }
 }
@@ -255,7 +253,7 @@ const handleUpdateQty = (id, delta) => {
 
   p {
     margin: 0;
-    font-size: $font-size-mini-mobile;         // 12px
+    font-size: var(--app-font-size-base);         // 12px
     color: $vieshow-secondary;
     line-height: $line-height-relaxed;
     text-align: center;
