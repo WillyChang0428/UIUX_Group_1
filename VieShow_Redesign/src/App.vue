@@ -1,9 +1,9 @@
 <template>
-    <router-view/>
+  <Identification />
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import Identification from './views/SignUp/SignUpStep2.vue';
 
 
 </script>
