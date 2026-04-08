@@ -127,7 +127,7 @@ const updateQty = (item, newVal) => {
   overflow-y: visible;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding-bottom: var(--gap-xs);
+  padding-bottom: var(--gap-md);
   margin-bottom: var(--gap-sm);
   &::-webkit-scrollbar { display: none; }
 }
@@ -197,7 +197,7 @@ const updateQty = (item, newVal) => {
 
 .food-item__name {
   font-size: var(--app-font-size-h6);
-  font-weight: 600;
+  font-weight: 400;
   color: v.$white;
   line-height: 1.5;
   white-space: nowrap;

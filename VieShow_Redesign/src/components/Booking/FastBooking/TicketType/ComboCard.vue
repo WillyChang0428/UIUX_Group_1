@@ -10,35 +10,24 @@
       <h4 class="combo-card__name">{{ item.name }}</h4>
       <p class="combo-card__desc mb-4">{{ item.description }}</p>
 
-      <!-- 價格 + 加減器 -->
+      <!-- 價格 + 計數器（替換為 StepperCounter）-->
       <div class="combo-card__footer">
         <span class="combo-card__price">NT {{ item.price.toLocaleString() }}</span>
 
-        <div class="combo-card__stepper">
-          <button
-            class="stepper__btn"
-            :disabled="item.quantity <= 0"
-            @click="$emit('update-qty', item.id, -1)"
-            aria-label="減少數量"
-          >−</button>
-
-          <span class="stepper__count" :class="{ 'stepper__count--active': item.quantity > 0 }">
-            {{ item.quantity }}
-          </span>
-
-          <button
-            class="stepper__btn"
-            :disabled="item.quantity >= 4"
-            @click="$emit('update-qty', item.id, 1)"
-            aria-label="增加數量"
-          >+</button>
-        </div>
+        <StepperCounter
+          :model-value="item.quantity"
+          :min="0"
+          :max="4"
+          @update:model-value="(val) => $emit('update-qty', item.id, val - item.quantity)"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import StepperCounter from '@/components/Booking/FastBooking/Button/StepperCounter.vue'
+
 defineProps({
   item: {
     type: Object,
@@ -120,7 +109,7 @@ defineEmits(['update-qty'])
   flex: 1;
 }
 
-// ── 底部：價格 + 加減器 ────────────────────────────────────────
+// ── 底部：價格 + 計數器 ────────────────────────────────────────
 .combo-card__footer {
   display: flex;
   align-items: center;
@@ -133,54 +122,5 @@ defineEmits(['update-qty'])
   font-size: $font-size-sm-mobile;             // 14px
   font-weight: 700;
   color: $vieshow-danger;
-}
-
-// ── 加減器 ─────────────────────────────────────────────────────
-.combo-card__stepper {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.stepper__btn {
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  border: 1.5px solid $light;
-  background: transparent;
-  color: $light;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1;
-  padding: 0;
-  transition: background 0.2s ease, opacity 0.2s ease;
-
-  &:hover:not(:disabled) {
-    background: rgba($vieshow-primary, 0.15);
-  }
-
-  &:disabled {
-    opacity: 0.3;
-    border-color: $vieshow-secondary;
-    color: $vieshow-secondary;
-    cursor: not-allowed;
-  }
-}
-
-.stepper__count {
-  min-width: 20px;
-  text-align: center;
-  font-size: $h4-font-size-mobile;           // 16px
-  font-weight: 700;
-  color: $vieshow-secondary;
-  transition: color 0.2s ease;
-
-  &--active {
-    color: $light;
-  }
 }
 </style>
