@@ -117,16 +117,17 @@ const handleRegister = () => {
           @blur="validateCurrentFields"
         />
       </li>
-      <li v-if="isCodeSent" class="d-flex justify-content-end">
-        <SecondaryButton type="submit" class="px-5 py-2">
-          下一步
-        </SecondaryButton>
+      <li class="d-flex justify-content-end">
+        <div v-if="showGlobalError" class="text-danger text-start fs-7 animate-fade mt-1 flex-grow-1">
+          <i class="fa-solid fa-circle-exclamation me-1"></i>有欄位尚未填寫
+        </div>
+        <div v-if="isCodeSent" class="d-flex justify-content-end">
+          <SecondaryButton type="submit" class="px-5 py-2">
+            下一步
+          </SecondaryButton>
+        </div>
       </li>
 
-      <li v-if="showGlobalError" class="text-danger text-start fs-7 animate-fade mt-1">
-        <i class="fa-solid fa-circle-exclamation me-1"></i>有欄位尚未填寫
-      </li>
-        
     </ul>
   </form>
 </template>

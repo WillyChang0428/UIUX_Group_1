@@ -113,10 +113,8 @@ onUnmounted(() => {
 <style scoped lang="scss">
 .base-select-container {
   position: relative;
-  max-width: 500px; // 指南允許的非標準數值固定
 
   .select-header {
-    max-width: 486px;
     background-color: transparent !important;
     // 💡 呼叫響應式圓角與邊框顏色 [cite: 39, 148, 161]
     border: 1px solid v.$vieshow-secondary-emp;

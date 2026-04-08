@@ -43,6 +43,7 @@ defineProps({
     /* 設定 H2 字體大小，隨螢幕自動縮放 (32px / 34px)  */
     .h2 {
       font-size: var(--app-font-size-h2);
+      
       line-height: var(--lh-h2); // 使用響應式行高 [cite: 152]
     }
 

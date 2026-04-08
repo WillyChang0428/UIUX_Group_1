@@ -1,5 +1,6 @@
 <template>
   <div class="theater-filter-container">
+    
     <div class="d-flex align-items-center mb-3">
       <AreaSelector 
         v-model="selectedRegionId" 
@@ -13,46 +14,48 @@
           v-for="theater in currentRegionTheaters"
           :key="theater"
           :label="theater"
-          :active="selectedTheater === theater"
+          :active="modelValue === theater"
           class="filter-item"
           @toggle="selectTheater(theater)"
         />
       </div>
     </div>
+    
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed } from 'vue'; // 💡 補回 ref 的引入
 import { useCinemaStore } from '@/store/cinema';
 import FilterButton from './Button/FilterButton.vue';
-import AreaSelector from './AreaSelector.vue'; // 💡 引入新組件
+import AreaSelector from './AreaSelector.vue'; // 請確認路徑是否正確
+
+// 接收父層 (FastBookingView) 傳來的 v-model 綁定
+const props = defineProps(['modelValue']);
+const emit = defineEmits(['update:modelValue']);
 
 const cinemaStore = useCinemaStore();
 
-// 💡 預設選中區域：'north' (雙北)
+// 預設選中區域：'north' (雙北)
 const selectedRegionId = ref('north');
 
-// 💡 計算屬性：自動過濾出「當前選中區域」的影城清單
+// 計算屬性：自動過濾出「當前選中區域」的影城清單
 const currentRegionTheaters = computed(() => {
   const region = cinemaStore.cinemaList.find(r => r.id === selectedRegionId.value);
   return region ? region.theaters : [];
 });
 
-// 預設選中的影城
-const selectedTheater = ref('台北信義');
-
-// 處理影城點擊
+// 處理影城點擊，發送給父層更新
 const selectTheater = (name) => {
-  selectedTheater.value = name;
+  emit('update:modelValue', name);
 };
 
-// 💡 當使用者切換區域時，自動將預設影城切換為該區域的第一個影城
+// 當使用者切換區域 (例如從雙北切到桃竹苗) 時，自動選中該區域的第一個影城
 const handleRegionChange = () => {
   if (currentRegionTheaters.value.length > 0) {
-    selectedTheater.value = currentRegionTheaters.value[0];
+    emit('update:modelValue', currentRegionTheaters.value[0]);
   } else {
-    selectedTheater.value = '';
+    emit('update:modelValue', '');
   }
 };
 </script>
