@@ -54,7 +54,7 @@ const variant = computed(() => `btn-${props.status}`);
 
   // 💡 字體：自動切換手機 16px / 電腦 18px [cite: 29, 143]
   font-size: var(--app-font-size-base) !important;
-  font-weight: v.$font-weight-semibold !important;
+  font-weight: v.$font-weight-medium !important;
 
   transition: all 0.2s ease;
   border: none;
