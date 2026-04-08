@@ -55,7 +55,7 @@ const variant = computed(() => `btn-${props.status}`);
   padding: v.$btn-padding-y-sm v.$btn-padding-x-sm;
 
   font-size: var(--app-font-size-sm) !important;
-  font-weight: v.$font-weight-semibold !important;
+  font-weight: v.$font-weight-medium !important;
 
   transition: all 0.2s ease;
   border: none;

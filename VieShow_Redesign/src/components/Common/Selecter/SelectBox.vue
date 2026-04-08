@@ -38,7 +38,7 @@
               </template>
 
             </FlatSelect>
-            <SecondaryButton @click="handleSearch">搜尋</SecondaryButton>
+            <SecondaryButton class="search-btn" @click="handleSearch">搜尋</SecondaryButton>
           </div>
         </div>
       </div>
@@ -184,19 +184,8 @@ const handleSearch = () => {
 
     // 搜尋按鈕
     .search-btn {
-      background-color: v.$vieshow-primary;
-      color: v.$white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: var(--app-radius);
-      transition: background 0.3s;
-
       @include media-breakpoint-up(lg) {
         width: 100px; // 電腦版固定寬度
-      }
-
-      &:hover {
-        background-color: v.$vieshow-primary-dark;
       }
     }
   }

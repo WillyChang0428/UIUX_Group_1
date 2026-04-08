@@ -56,7 +56,7 @@ const variant = computed(() => `btn-${props.status}`);
 
   // 💡 字體大小：自動切換手機 18px / 電腦 20px (H6 基準) [cite: 29, 32]
   font-size: var(--app-font-size-h6) !important;
-  font-weight: v.$font-weight-semibold !important;
+  font-weight: v.$font-weight-medium !important;
 
   transition: all 0.2s ease;
   border: none;
