@@ -212,7 +212,11 @@ const getYouTubeID = (url) => {
     -webkit-box-orient: vertical;
     overflow: hidden;
     max-width: 450px;
-    font-size: var(--app-font-size-base); // 16px / 18px [cite: 60, 144]
+    font-size: var(--app-font-size-base);
+    @include v.media-breakpoint-up(md) {
+      max-width: 800px;
+    }
+
   }
 
   .banner-pagination-wrapper {
