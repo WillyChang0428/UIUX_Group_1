@@ -6,7 +6,8 @@ Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://
 
 大家記得裝以下套件
 
-npm install vite@latest vue-router pinia bootstrap -D sass vue3-google-login
+npm install vite@latest vue-router pinia bootstrap -D sass vue3-google-login @vuepic/vue-datepicker
+這個是為了彈窗的日曆套件==> @vuepic/vue-datepicker
 
 vite原先的style.css不要用，直接用_variable.scss和main.scss設定bs
 

@@ -1,13 +1,15 @@
 <script setup>
-import SignUpStepHeader from "./components/Layout/Parts/SignUpStepHeader.vue";
+
 </script>
 
 <template>
-  <SignUpStepHeader />
-  <router-view></router-view>
+  
 </template>
 
-<style lang="scss">
-/* 你的全域樣式 */
 
-</style>
+<style lang="scss">
+html, body , #app {
+  height: 100vh;
+  background: v.$vieshow-gradient-dark;
+}
+

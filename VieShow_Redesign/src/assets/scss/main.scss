@@ -1,16 +1,100 @@
-// 1. 先引入你的變數
-@import "variables";
+// ==========================================
+// 1. 載入順序：地基 -> 框架 -> 重設
+// ==========================================
+@import "variables";               // 引入雙軌變數地基
+@import "bootstrap/scss/bootstrap"; // 讓 BS 吃我們的變數產出 CSS
+@import "reset";                   // 清除多餘的預設樣式
 
-@import "reset";
+// ==========================================
+// 🌟 2. 魔法核心：全域響應式 CSS 變數切換
+// ==========================================
+:root {
+  // --- 預設狀態 (Mobile-First)：手機版數值 ---
+  
+  // 字體
+  --app-font-family: #{$font-family-base};
+  --bs-body-font-family: var(--app-font-family);
+  --app-font-size-mini: #{$font-size-mini-mobile};
+  --app-font-size-sm:   #{$font-size-sm-mobile};
+  --app-font-size-base: #{$font-size-base-mobile};
+  --app-font-size-h2:   #{$h2-font-size-mobile};
+  --app-font-size-h3:   #{$h3-font-size-mobile};
+  --app-font-size-h4:   #{$h4-font-size-mobile};
+  --app-font-size-h5:   #{$h5-font-size-mobile};
+  --app-font-size-h6:   #{$h6-font-size-mobile};
+  
+  // 圓角
+  --app-radius-sm:      #{$border-radius-sm-mobile};
+  --app-radius:         #{$border-radius-mobile};
+  --app-radius-lg:      #{$border-radius-lg-mobile};
+  --app-radius-xl:      #{$border-radius-xl-mobile};
+  
+  // 間距 (配合 Bootstrap Spacers)
+  --gap-xs:  #{$spacing-xs-mobile};
+  --gap-sm:  #{$spacing-sm-mobile};
+  --gap-md:  #{$spacing-md-mobile};
+  --gap-lg:  #{$spacing-lg-mobile};
+  --gap-xl:  #{$spacing-xl-mobile};
+  --gap-2xl: #{$spacing-2xl-mobile};
+  --gap-3xl: #{$spacing-3xl-mobile};
+  --gap-4xl: #{$spacing-4xl-mobile};
 
-// 2. 引入 Bootstrap
-@import "bootstrap/scss/bootstrap";
+  // 連動覆寫 Bootstrap 預設變數，確保原生組件也縮放
+  --bs-body-font-size:   var(--app-font-size-base);
+  --bs-border-radius:    var(--app-radius);
+  --bs-border-radius-sm: var(--app-radius-sm);
+  --bs-border-radius-lg: var(--app-radius-lg);
+}
 
-// 3. 引入其他自定義樣式
-// @import "common";
+// --- 向上加疊：螢幕大於 md (768px) 時，自動變更為 PC 版數值 ---
+@include media-breakpoint-up(md) {
+  :root {
+    --app-font-size-mini: #{$font-size-mini-pc};
+    --app-font-size-sm:   #{$font-size-sm-pc};
+    --app-font-size-base: #{$font-size-base-pc};
+    --app-font-size-h2:   #{$h2-font-size-pc};
+    --app-font-size-h3:   #{$h3-font-size-pc};
+    --app-font-size-h4:   #{$h4-font-size-pc};
+    --app-font-size-h5:   #{$h5-font-size-pc};
+    --app-font-size-h6:   #{$h6-font-size-pc};
+    
+    --app-radius-sm:      #{$border-radius-sm-pc};
+    --app-radius:         #{$border-radius-pc};
+    --app-radius-lg:      #{$border-radius-lg-pc};
+    --app-radius-xl:      #{$border-radius-xl-pc};
+    
+    --gap-xs:  #{$spacing-xs-pc};
+    --gap-sm:  #{$spacing-sm-pc};
+    --gap-md:  #{$spacing-md-pc};
+    --gap-lg:  #{$spacing-lg-pc};
+    --gap-xl:  #{$spacing-xl-pc};
+    --gap-2xl: #{$spacing-2xl-pc};
+    --gap-3xl: #{$spacing-3xl-pc};
+    --gap-4xl: #{$spacing-4xl-pc};
+  }
+}
 
-// 4. 元件級樣式 (新增這一行)
-@import "./components/header";
+body {
+  font-family: var(--app-font-family) !important;
+}
+
+// 針對全站按鈕的優化 (手機端點擊後不保留 hover 背景色)
+.btn {
+  @media (hover: none) {
+    &:hover {
+      background-color: inherit; 
+      color: inherit;
+    }
+  }
+}
+
+// 文字排版組合技
+.lh-relaxed { line-height: $line-height-relaxed !important; }
+.ls-wide { letter-spacing: $letter-spacing-wide !important; }
+.text-spaced {
+  line-height: $line-height-relaxed;
+  letter-spacing: $letter-spacing-wide;
+}
 
 // 讓 Icon 擁有 45x45 的觸控熱區，但不影響視覺對齊
 .clickable-icon {
@@ -22,16 +106,30 @@
   cursor: pointer;
   background: none;
   border: none;
-  padding: 0; // 清除按鈕預設內距
+  padding: 0; 
   color: inherit;
   transition: opacity 0.2s ease;
 
-  &:hover {
-    opacity: 0.7;
+  @include hover-focus {
+    &:hover { opacity: 0.7; }
   }
 }
 
-// 自定義按鈕尺寸擴充
+.icon-lg {
+  font-size: var(--app-font-size-h2);
+}
+
+.icon-md {
+  font-size: var(--app-font-size-h4);
+}
+
+.icon-sm {
+  font-size: var(--app-font-size-base);
+}
+
+
+
+// 自定義按鈕尺寸擴充 (沿用舊的寫死變數，或後續換成 CSS 變數)
 .btn-mini {
   padding: $btn-padding-y-mini $btn-padding-x-mini;
   font-size: 1rem; // 16px
@@ -40,11 +138,12 @@
 .btn-label {
   padding: $btn-padding-y-label $btn-padding-x-label;
   font-size: 0.875rem; // 14px
-  pointer-events: none; // 如果 Label 只是標籤不可點擊
+  pointer-events: none; 
 }
 
 // 強制修正 Bootstrap Container 左右間距
-.container, .container-fluid {
+.container,
+.container-fluid {
   padding-right: $container-padding-mobile;
   padding-left: $container-padding-mobile;
 
@@ -65,10 +164,20 @@
   }
 }
 
-// 放在所有 @import 之後
-@include media-breakpoint-down(md) {
-  :root {
-    --bs-border-radius: 0.5rem; 
-    // 你也可以在這裡放其他行動端的覆寫
-  }
+// ==========================================
+// 💡 自定義響應式圓角類別 (對應 Figma Token)
+// ==========================================
+.rounded-lg {
+  // 直接呼叫你在 :root 定義好的變數
+  // 這樣它在手機就會自動是 12px，電腦自動是 24px！
+  border-radius: var(--app-radius-lg) !important; 
+}
+
+// 如果你有用到 xl 或 sm，也可以一併建立
+.rounded-xl {
+  border-radius: var(--app-radius-xl) !important;
+}
+
+.rounded-sm {
+  border-radius: var(--app-radius-sm) !important;
 }

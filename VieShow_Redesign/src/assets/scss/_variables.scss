@@ -6,147 +6,197 @@ $black: #000;
 // 深色背景漸層 (適用於 Section 背景、卡片底色)
 // 由 #0F1115 與 #1E2025 交錯組成，營造深邃感
 $vieshow-gradient-dark: linear-gradient(
-  180deg, 
-  #0F1115 0%, 
-  #1E2025 31%, 
-  #0F1115 65%, 
-  #1E2025 100%
+  180deg,
+  #000000 0%,
+  #000000 10%,
+  #1e2025 50%,
+  #0f1115 80%,
+  #0f1115 100%,
 );
 
 // 品牌藍漸層 (適用於 Primary 按鈕、標題強調)
 // 由深藍 #2660A9 到亮藍 #2F96EE
-$vieshow-gradient-primary: linear-gradient(
-  180deg, 
-  #2660A9 0%, 
-  #2F96EE 100%
-);
+$vieshow-gradient-primary: linear-gradient(180deg, #2660a9 0%, #2f96ee 100%);
 
 // 1. 基礎色彩變數定義 (從 Figma Tokens 提取)
-$vieshow-primary:       #2F96EE;
-$vieshow-primary-dark:  #2A72CC;
-$vieshow-dark:          #1E2025;
-$vieshow-dark-section:  #2C2C2C;
-$vieshow-secondary-emp: #4A4A4A;
-$vieshow-secondary:     #9E9E9E;
-$vieshow-tertiary:      #C9C9C9;
-$vieshow-warning:       #EEB100;
-$vieshow-danger:        #ED3F20;
-$vieshow-success:       #4BB85B;
-$vieshow-info:          #EE7700; // 對應 Figma 的 Info
+$vieshow-primary: #2f96ee;
+$vieshow-primary-dark: #2a72cc;
+$vieshow-dark: #1e2025;
+$vieshow-dark-section: #2c2c2c;
+$vieshow-secondary-emp: #4a4a4a;
+$vieshow-secondary: #9e9e9e;
+$vieshow-tertiary: #c9c9c9;
+$vieshow-warning: #eeb100;
+$vieshow-danger: #ed3f20;
+$vieshow-success: #4bb85b;
+$vieshow-info: #ee7700; // 對應 Figma 的 Info
 
 // 2. 覆蓋 Bootstrap 核心顏色系統
-$primary:       $vieshow-primary;
-$secondary:     $vieshow-secondary;
-$success:       $vieshow-success;
-$info:          $vieshow-info;
-$warning:       $vieshow-warning;
-$danger:        $vieshow-danger;
-$dark:          $vieshow-dark;
-$light:         #FFFFFF;
+$primary: $vieshow-primary;
+$secondary: $vieshow-secondary;
+$success: $vieshow-success;
+$info: $vieshow-info;
+$warning: $vieshow-warning;
+$danger: $vieshow-danger;
+$dark: $vieshow-dark;
+$light: #ffffff;
 
 // 3. 擴充 Theme Colors (讓團隊可以使用 .text-primary-dark, .bg-dark-section 等)
 // 注意：這部分在引入 bootstrap 之前定義，bootstrap 會自動 merge
 $custom-colors: (
-  "primary-dark":      $vieshow-primary-dark,
-  "dark-section":      $vieshow-dark-section,
+  "primary-dark": $vieshow-primary-dark,
+  "dark-section": $vieshow-dark-section,
   "secondary-emphasis": $vieshow-secondary-emp,
-  "tertiary":          $vieshow-tertiary
+  "tertiary": $vieshow-tertiary,
 );
 
 // 2. 引入 Bootstrap 的必要核心功能 (順序不可調換)
-@import "bootstrap/scss/functions";  // 提供 map-merge 邏輯 [cite: 537]
-@import "bootstrap/scss/variables";  // 提供 BS 預設的 $theme-colors 定義 [cite: 537, 574]
+@import "bootstrap/scss/functions"; // 提供 map-merge 邏輯 [cite: 537]
+@import "bootstrap/scss/variables"; // 提供 BS 預設的 $theme-colors 定義 [cite: 537, 574]
 
 // 3. 現在才能進行合併！(因為上面已經載入了 $theme-colors)
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
-// 4. 圓角設定 (以 Desktop 為基準)
-$border-radius-sm:    0.5rem;   // 8px
-$border-radius:       1rem;     // 16px
-$border-radius-lg:    1.5rem;   // 24px
-$border-radius-xl:    2.5rem;   // 40px (自定義擴充)
-$border-radius-pill:  999px;
+$font-size-mini-mobile: 12px;
+$font-size-mini-pc: 14px;
+$font-size-sm-mobile: 14px;
+$font-size-sm-pc: 16px;
+$font-size-base-mobile: 16px;
+$font-size-base-pc: 18px;
+$h6-font-size-mobile: 18px;
+$h6-font-size-pc: 20px;
+$h5-font-size-mobile: 20px;
+$h5-font-size-pc: 22px;
+$h4-font-size-mobile: 24px;
+$h4-font-size-pc: 26px;
+$h3-font-size-mobile: 28px;
+$h3-font-size-pc: 30px;
+$h2-font-size-mobile: 32px;
+$h2-font-size-pc: 34px;
 
-// 5. 字體大小設定 (以 Desktop 為基準，建議使用 rem)
+$border-radius-sm-mobile: 4px;
+$border-radius-sm-pc: 8px; //
+$border-radius-mobile: 8px;
+$border-radius-pc: 12px;
+$border-radius-lg-mobile: 12px;
+$border-radius-lg-pc: 16px;
+$border-radius-xl-mobile: 20px;
+$border-radius-xl-pc: 24px;
+$border-radius-pill: 999px;
+
+$font-size-base: $font-size-base-mobile;
+$border-radius: $border-radius-mobile;
+$border-radius-sm: $border-radius-sm-mobile;
+$border-radius-lg: $border-radius-lg-mobile;
+
+$h2-font-size: $h2-font-size-mobile;
+$h3-font-size: $h3-font-size-mobile;
+$h4-font-size: $h4-font-size-mobile;
+$h5-font-size: $h5-font-size-mobile;
+$h6-font-size: $h6-font-size-mobile;
+
+// 5. 字體大小設定 (以 Desktop 為基準，建議使用 rem)***********
 $display-font-sizes: (
-  1: 5rem,      // 80px (自定義擴充，適合超大電影標題)
-  2: 3.75rem,   // 60px (對應你的 H2 大標)
-  3: 3rem,      // 48px (對應你的 H4 大標)
-  4: 2.125rem,  // 34px (對應你原始的 h2-font-size) [cite: 202]
-  5: 1.625rem,  // 26px (對應你原始的 h4-font-size) [cite: 202]
-  6: 1.375rem   // 22px (對應你原始的 h5-font-size) [cite: 202]
+  1: 5rem,
+  // 80px
+  2: 3.75rem,
+  // 60px
+  3: 3rem,
+  // 48px
+  4: 2.125rem,
+  // 34px
+  5: 1.625rem,
+  // 26px
+  6: 1.375rem, // 22px
 );
 
 // 確保開啟響應式字體縮放 (預設為 true，建議保留)
 $enable-rfs: true;
 
+// 覆蓋 Bootstrap 預設字體
+$font-family-base: "Roboto", "Noto Sans TC", sans-serif;
+
+// 如果你想要標題也統一（或有特殊設定），也可以覆蓋這個：
+$font-family-sans-serif: $font-family-base;
+
+// 文字行距 (Line Height) - 150% 對應數值為 1.5
+$line-height-relaxed: 1.5;
+
+// 文字字距 (Letter Spacing) - 30% 對應 0.3em
+$letter-spacing-wide: 0.1em;
+
 // 6. 間距系統 (Spacers) - 對應 Figma 的 Gap/spacing
+
+$spacing-xs-mobile: 4px;
+$spacing-xs-pc: 8px;
+$spacing-sm-mobile: 8px;
+$spacing-sm-pc: 16px;
+$spacing-md-mobile: 16px;
+$spacing-md-pc: 32px;
+$spacing-lg-mobile: 24px;
+$spacing-lg-pc: 48px;
+$spacing-xl-mobile: 36px;
+$spacing-xl-pc: 62px;
+$spacing-2xl-mobile: 48px;
+$spacing-2xl-pc: 96px;
+$spacing-3xl-mobile: 64px;
+$spacing-3xl-pc: 128px;
+$spacing-4xl-mobile: 72px;
+$spacing-4xl-pc: 144px;
+
 // Bootstrap 預設使用 $spacer: 1rem (16px)
 $spacer: 1rem;
 $spacers: (
   0: 0,
-  1: 0.5rem,    // xs: 8px
-  2: 1rem,      // sm: 16px
-  3: 2rem,      // md: 32px
-  4: 3rem,      // lg: 48px
-  5: 3.875rem,  // xl: 62px
-  6: 6rem,      // 2xl: 96px
-  7: 8rem,      // 3xl: 128px
-  8: 9rem       // 4xl: 144px
+  1: var(--gap-xs),
+  // 對應 Figma: xs
+  2: var(--gap-sm),
+  // 對應 Figma: sm
+  3: var(--gap-md),
+  // 對應 Figma: md (你的預設基準)
+  4: var(--gap-lg),
+  // 對應 Figma: lg
+  5: var(--gap-xl),
+  // 對應 Figma: xl
+  6: var(--gap-2xl),
+  // 對應 Figma: 2xl
+  7: var(--gap-3xl),
+  // 對應 Figma: 3xl
+  8: var(--gap-4xl), // 對應 Figma: 4xl
 );
 
 // 7. 邊框寬度
-$border-width:        1px;
+$border-width: 1px;
 $border-widths: (
   1: 1px,
-  2: 2px
+  2: 2px,
 );
+
+// 8. 按鈕變數覆寫
+//  Bootstrap 標準尺寸覆寫 [cite: 70-75]
+$btn-padding-y: 0.625rem; // 10px
+$btn-padding-x: 1rem; // 16px
+
+$btn-padding-y-sm: 0.5rem; // 8px
+$btn-padding-x-sm: 0.75rem; // 12px  <-- 補上這行！
+
+$btn-padding-y-lg: 0.75rem; // 12px
+$btn-padding-x-lg: 1.5rem; // 24px
+
+//  自定義擴充尺寸 (供 main.scss 裡的 .btn-mini 使用) [cite: 79-81]
+$btn-padding-y-mini: 0.25rem; // 4px
+$btn-padding-x-mini: 0.75rem; // 12px
+
+$btn-padding-y-label: 0.125rem; // 2px
+$btn-padding-x-label: 0.75rem; // 12px
 
 // --- 觸控範圍設定 (Touch Target) ---
 // 根據設計稿設定 45px 觸控範圍
-$touch-target-size: 45px; 
+$touch-target-size: 45px;
 
 // 計算所需的內距 (假設 Icon 本身是 24px)
 // (45px - 24px) / 2 = 10.5px
 $icon-touch-padding: 0.656rem; // 約 10.5px
-
-// --- 1. 全域元件字體轉換 (px to rem) ---
-// 假設 1rem = 16px (若你之前設定 base 為 18px，請依比例調整)
-
-// --- 2. 按鈕：預設大小 (對應 Secondary.tokens.json) ---
-$btn-font-size:                1rem;          // 16px
-$btn-padding-y:                0.625rem;      // 10px
-$btn-padding-x:                1rem;          // 16px
-$btn-line-height:              1.25;          // (40px - 20px)/16px ≈ 1.25
-
-// --- 3. 按鈕：大尺寸 .btn-lg (對應 Primary.tokens.json) ---
-$btn-font-size-lg:             1.125rem;      // 18px
-$btn-padding-y-lg:             0.75rem;       // 12px
-$btn-padding-x-lg:             1.5rem;        // 24px
-
-// --- 4. 按鈕：小尺寸 .btn-sm (對應 Small.tokens.json) ---
-$btn-font-size-sm:             0.875rem;      // 14px
-$btn-padding-y-sm:             0.5rem;        // 8px
-$btn-padding-x-sm:             0.75rem;       // 12px
-
-// --- 5. 輸入框：Input (對應 Input.tokens.json) ---
-$input-font-size:              1rem;          // 16px
-$input-padding-y:              1rem;          // 16px
-$input-padding-x:              1.5rem;        // 24px
-$input-bg:                     $vieshow-dark-section; // 建議與背景區隔
-$input-color:                  $white;
-$input-border-color:           $vieshow-secondary-emp;
-
-// --- 6. 自定義擴充 (Bootstrap 預設無 Mini 與 Label，建議自訂 Class) ---
-// 這些可以寫在 _variables.scss 供全域使用，或寫在元件 SCSS
-// Mini (16px font, 4px/12px padding)
-$btn-padding-y-mini:           0.25rem;
-$btn-padding-x-mini:           0.75rem;
-
-// Label (14px font, 2px/12px padding)
-$btn-padding-y-label:          0.125rem;
-$btn-padding-x-label:          0.75rem;
-
 
 // 1. 中斷點設定 (Breakpoints)
 // 根據你的需求：Mobile 結束於 767px，PC 起始於 768px
@@ -156,7 +206,7 @@ $grid-breakpoints: (
   md: 768px,
   lg: 992px,
   xl: 1200px,
-  xxl: 1980px
+  xxl: 1980px,
 );
 
 // 2. 容器最大寬度
@@ -164,26 +214,30 @@ $container-max-widths: (
   sm: 540px,
   md: 720px,
   lg: 960px,
-  xl: 1140px,
-  xxl: 1800px // 留一點 margin 給 1980px 螢幕
+  xl: 1400px,
+  xxl: 1800px, // 留一點 margin 給 1980px 螢幕
 );
 
 // 3. 容器內距 (Container Padding)
 // Bootstrap 預設使用 $grid-gutter-width 的一半作為容器左右 padding
 $container-padding-mobile: 24px;
-$container-padding-pc:     48px;
+$container-padding-pc: 48px;
 
 // 4. 頁面全域間距 (Web Padding)
-$web-top-padding-mobile:    134px;
+$web-top-padding-mobile: 134px;
 $web-bottom-padding-mobile: 36px;
 
-$web-top-padding-pc:        86px;
-$web-bottom-padding-pc:     96px;
+$web-top-padding-pc: 86px;
+$web-bottom-padding-pc: 96px;
 
-
-
-//設定手機版最大寬度
-$mobile-max-width: 576px;
+// 定義只在桌機（有滑鼠游標）才觸發的 hover 預防針
+@mixin hover-focus {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @content;
+    }
+  }
+}
 // =============================================================================
 // ⚠️ 注意：此檔案結尾不需 import bootstrap，
 // =============================================================================
@@ -194,4 +248,3 @@ $mobile-max-width: 576px;
 
 // 7. 載入 Bootstrap 的工具 (它會拿著上面的數據來生成工具)
 @import "bootstrap/scss/mixins";
-
