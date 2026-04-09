@@ -22,7 +22,7 @@ const router = createRouter({
         },
         { 
           path: "moviesinfo", 
-          component: () => import("@/views/MovieInfo/MovieInfoPage.vue") 
+          component: () => import("@/views/MovieInfo/MovieInfo.vue") 
         },
         { 
           path: "fastbooking", 

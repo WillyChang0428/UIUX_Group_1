@@ -1,23 +1,23 @@
 <template>
-  <div class="switch d-flex w-100 d-flex justify-content-center">
-    <div class="container d-flex p-0 d-flex justify-content-center">
+  <div class="switch d-flex justify-content-center align-items-center">
+    <div class="container p-0">
       <div
         class="toggle-container d-flex justify-content-center align-items-center gap-3 w-100"
       >
         <button
           type="button"
-          class="btn toggle-btn flex-fill"
-          :class="{ active: activeTab === 'now' }"
-          @click="activeTab = 'now'"
+          class="toggle-btn flex-fill"
+          :class="{ active: modelValue === 'now' }"
+          @click="$emit('update:modelValue', 'now')"
         >
           熱售中
         </button>
 
         <button
           type="button"
-          class="btn toggle-btn flex-fill"
-          :class="{ active: activeTab === 'upcoming' }"
-          @click="activeTab = 'upcoming'"
+          class="toggle-btn flex-fill"
+          :class="{ active: modelValue === 'upcoming' }"
+          @click="$emit('update:modelValue', 'upcoming')"
         >
           即將上映
         </button>
@@ -27,10 +27,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+// 定義 props 以接收 v-model 的值
+defineProps({
+  modelValue: {
+    type: String,
+    default: "now",
+  },
+});
 
-// 定義目前選中的 Tab，預設為 'now' (熱售中)
-const activeTab = ref("now");
+// 定義 emit 以更新父組件的值
+defineEmits(["update:modelValue"]);
 </script>
 
 <style lang="scss" scoped>
@@ -38,19 +44,28 @@ const activeTab = ref("now");
 @import "@/assets/scss/variables";
 
 .switch {
-  background: v.$vieshow-gradient-dark;
-  padding: v.$spacing-lg-mobile;
+  // background: v.$vieshow-gradient-dark;
+  padding: v.$spacing-lg-mobile 0;
   height: 104px;
 }
 
 .toggle-btn {
+  // --- 關鍵修改：強迫兩顆按鈕平分寬度 ---
+  flex: 1 1 0px !important; // 強制分配比例 1:1，無視內容長度
+  width: 0; // 配合 flex-basis: 0 使用
   border: none;
   border-radius: v.$border-radius-lg-mobile;
   color: v.$light;
   background: rgba(v.$light, 0.1);
   cursor: pointer;
-  // padding: v.$btn-padding-x-lg v.$btn-padding-y-lg;
+  height: v.$spacing-2xl-mobile; // 統一高度
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   font-size: v.$h6-font-size-mobile;
+  transition: all 0.3s ease;
+  white-space: nowrap;
   transition: all 0.3s ease; // 平滑的轉換效果
 
   // 當 Vue 綁定的 .active 成立時的樣式

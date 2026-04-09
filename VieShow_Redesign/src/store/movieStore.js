@@ -148,6 +148,146 @@ export const useMovieStore = defineStore("movie", () => {
     },
   ]);
 
+  //即將上映
+  const upComingMovie = ref([
+    {
+      id: 1,
+      titleZh: "科學新娘！",
+      titleEn: "The Bride!",
+      posterUrl:
+        "https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20260223019.jpg",
+      releaseDate: "2026/04/18",
+      duration: "139分",
+      rating: "輔12級",
+      language: "英語",
+      genre: "科幻、劇情",
+      director: "奉俊昊",
+      cast: "羅伯·派汀森、東妮·克莉蒂、馬克·魯法洛",
+      synopsis:
+        "一名被稱為「消耗品」的複製人被派往冰凍星球進行殖民任務。每當他死去，新的身體就會帶著之前的記憶重生，直到他發現自己被捲入了一場關於生存本質的道德危機。",
+      trailerUrl: "https://www.youtube.com/watch?v=A_v_F_V_Example1",
+    },
+    {
+      id: 2,
+      titleZh: "鬼娃娃",
+      titleEn: "Doll House",
+      posterUrl:
+        "https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20260225022.jpg",
+      releaseDate: "2026/06/12",
+      duration: "118分",
+      rating: "輔15級",
+      language: "英語",
+      genre: "驚悚、恐怖",
+      director: "溫子仁",
+      cast: "派翠克·威爾森、維拉·法梅加",
+      synopsis:
+        "一支深海探測隊在馬里亞納海溝最深處發現了一座古老的祭壇。隨著潛水艇電力受損，黑暗中不明的獵殺者開始悄悄逼近，他們必須在氧氣耗盡前回到地表。",
+      trailerUrl: "https://www.youtube.com/watch?v=B_v_F_V_Example2",
+    },
+    {
+      id: 3,
+      titleZh: "忌念日：極權元年",
+      titleEn: "Anniversary",
+      posterUrl:
+        "https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20260225008.jpg",
+      releaseDate: "2026/08/05",
+      duration: "125分",
+      rating: "保護級",
+      language: "日語",
+      genre: "動畫、動作",
+      director: "新海誠",
+      cast: "神木隆之介、上白石萌音",
+      synopsis:
+        "在 2088 年的科技都市，一名天才駭客意外解開了城市中央 AI 的禁忌編碼。隨著霓虹燈光開始閃爍異常，整個城市的命運與一位神秘少女的夢境連在了一起。",
+      trailerUrl: "https://www.youtube.com/watch?v=C_v_F_V_Example3",
+    },
+    {
+      id: 4,
+      titleZh: "F1電影 重映",
+      titleEn: "F1",
+      posterUrl:
+        "https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20250603001.jpg",
+      releaseDate: "2026/09/22",
+      duration: "142分",
+      rating: "輔12級",
+      language: "英語",
+      genre: "動作、懸疑",
+      director: "克里斯多福·諾蘭",
+      cast: "席尼·墨菲、湯姆·哈迪",
+      synopsis:
+        "當未來政府發現有人試圖竄改 1945 年的歷史時，一名經驗老道的「時空警探」被派回過去，但他很快發現，真正威脅人類未來的並非歷史變更，而是他即將面對的另一個自己。",
+      trailerUrl: "https://www.youtube.com/watch?v=D_v_F_V_Example4",
+    },
+    {
+      id: 5,
+      titleZh: "阿凡達：火與燼",
+      titleEn: "Avatar: Fire and Ash",
+      posterUrl:
+        "https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20251110013.jpg",
+      releaseDate: "2026/07/11",
+      duration: "134分",
+      rating: "普遍級",
+      language: "法語",
+      genre: "冒險、家庭",
+      director: "呂克·貝松",
+      cast: "蕾雅·瑟杜、讓·雷諾",
+      synopsis:
+        "在一片荒蕪、水源枯竭的世界裡，一位小女孩與她的機器人保鏢展開了橫跨沙漠的旅程。他們手中握著最後一顆綠色種子，那是恢復大地的唯一希望。",
+      trailerUrl: "https://www.youtube.com/watch?v=E_v_F_V_Example5",
+    },
+    {
+      id: 6,
+      titleZh: "雙囍 ",
+      titleEn: "Double Happiness",
+      posterUrl:
+        "https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20260122001.jpg",
+      releaseDate: "2026/05/01",
+      duration: "105分",
+      rating: "普遍級",
+      language: "英語",
+      genre: "音樂、浪漫",
+      director: "達米恩·查澤雷",
+      cast: "艾瑪·史東、安雅·泰勒-喬伊",
+      synopsis:
+        "一位落魄的鋼琴師與一名極具天賦的小提琴家在維也納的街頭相遇。他們試圖共同創作出一首能療癒世人痛苦的完美交響樂，卻也必須面對成名背後的痛苦代價。",
+      trailerUrl: "https://www.youtube.com/watch?v=F_v_F_V_Example6",
+    },
+    {
+      id: 7,
+      titleZh: "驚聲尖叫 7",
+      titleEn: "SCREAM 7",
+      posterUrl:
+        "https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20260122022.jpg",
+      releaseDate: "2026/04/18",
+      duration: "128分",
+      rating: "輔12級",
+      language: "華語",
+      genre: "犯罪、懸疑",
+      director: "程偉豪",
+      cast: "許光漢、林柏宏",
+      synopsis:
+        "虛擬世界「綠洲」發生了一起不可能發生的謀殺案。現實世界的刑警必須戴上裝置，進入充滿陷阱與虛假資訊的數位空間，追緝那個能隨時變換身分的連環殺手。",
+      trailerUrl: "https://www.youtube.com/watch?v=G_v_F_V_Example7",
+    },
+    {
+      id: 8,
+      titleZh: "動物方城市2",
+      titleEn: "Zootopia 2",
+      posterUrl:
+        "https://www.unicornpopcorn.com.tw/ForVsWeb/upload/film/film_20251103043.jpg",
+      releaseDate: "2026/02/10",
+      duration: "115分",
+      rating: "保護級",
+      language: "英語",
+      genre: "冒險、奇幻",
+      director: "史蒂芬·史匹柏",
+      cast: "湯姆·霍蘭德、贊達亞",
+      synopsis:
+        "年輕的考古學者在埃及金字塔下方發現了一個未知的密室。這不是墳墓，而是一座保存外星文明科技的博物館。當封印被解開，世界各地的古文明遺跡竟開始同時發出訊號。",
+      trailerUrl: "https://www.youtube.com/watch?v=H_v_F_V_Example8",
+    },
+  ]);
+
   // ══════════════════════════════════════════════════════════════
   // 目前選中的電影 ID
   // ══════════════════════════════════════════════════════════════
@@ -223,6 +363,7 @@ export const useMovieStore = defineStore("movie", () => {
   return {
     // State
     movieList,
+    upComingMovie,
     selectedMovieId,
     selectedSession,
     // Computed
