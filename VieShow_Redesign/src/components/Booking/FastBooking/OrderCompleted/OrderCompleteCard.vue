@@ -1,23 +1,28 @@
 <template>
   <div v-if="movieInfo" class="order-card">
 
-    <!-- ── 共用頂部：完全對齊 SelectedInfoCard 排版 ── -->
-    <div class="glass-card">
+    <!-- ── 共用頂部 ── -->
+    <div class="glass-card pb-3">
+
+      <!-- 第一列：TicketStatusTag 靠右 -->
+      <div class="d-flex justify-content-end mb-2">
+        <TicketStatusTag :status="ticketStatus" />
+      </div>
+
+      <!-- 第二列：海報 + 電影資訊 -->
       <div class="glass-card__inner">
 
-        <!-- 左：海報縮圖（同 SelectedInfoCard .poster-wrapper）-->
+        <!-- 左：海報縮圖 -->
         <div class="poster-wrapper">
           <img :src="movieInfo.posterUrl" :alt="movieInfo.titleZh" class="poster-img" />
         </div>
 
-        <!-- 中：電影資訊（同 SelectedInfoCard .movie-details）-->
+        <!-- 右：電影資訊 -->
         <div class="movie-details">
-          <!-- 中英文標題 -->
           <div class="title-row">
             <span class="title-zh">{{ movieInfo.titleZh }}</span>
             <span class="title-en">{{ movieInfo.titleEn }}</span>
           </div>
-          <!-- meta 資訊 -->
           <div class="meta-row">
             <span>{{ movieInfo.duration }}</span>
             <span class="sep">｜</span>
@@ -35,17 +40,14 @@
           </div>
         </div>
 
-        <!-- 右上角：TicketStatusTag -->
-        <div class="status-wrap">
-          <TicketStatusTag :status="ticketStatus" />
-        </div>
-
       </div>
     </div>
 
     <!-- ── 模板一：其他票種 ── -->
     <template v-if="variant === 'other'">
       <div class="order-card__body order-card__body--other">
+
+        <hr class="order-card__divider" />
 
         <p class="order-card__expire-notice">
           有效期限至 {{ movieInfo.expireDate }}<br />
@@ -62,6 +64,8 @@
     <!-- ── 模板二：一般購票流程 ── -->
     <template v-else-if="variant === 'standard'">
       <div class="order-card__body order-card__body--standard">
+
+        <hr class="order-card__divider" />
 
         <!-- 條碼區 -->
         <div class="order-card__barcode-wrap">
@@ -88,7 +92,7 @@
               @click="$emit('share-ticket', ticket.id)"
               aria-label="分享票券"
             >
-              <i class="fa-solid fa-share-from-square"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
             </button>
           </div>
         </div>
@@ -108,28 +112,24 @@
 </template>
 
 <script setup>
-import { useMovieStore } from '@/store/movieStore'
+import { useMovieStore } from '@/store/movieStore.js'
 import { storeToRefs } from 'pinia'
-import TicketStatusTag from '@/components/Booking/TicketStatusTag.vue'
+import TicketStatusTag from '@/components/Booking/Fastbooking/Button/TicketStatusTag.vue'
 
-// ── 從 movieStore 取電影資訊（與 SelectedInfoCard 完全相同）────
 const movieStore = useMovieStore()
 const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
 
 defineProps({
-  // 模板切換：'standard'（一般購票）| 'other'（其他票種）
   variant: {
     type: String,
     default: 'standard',
     validator: (v) => ['standard', 'other'].includes(v),
   },
-  // 票券狀態：'active' 有效 | 'pending' 待處理 | 'expired' 已失效
   ticketStatus: {
     type: String,
     default: 'active',
     validator: (v) => ['active', 'pending', 'expired'].includes(v),
   },
-  // 票種列表（標準模板用）[{ id, name, quantity }]
   tickets: {
     type: Array,
     default: () => [
@@ -139,16 +139,14 @@ defineProps({
       { id: 't4', name: '星展一般卡假日優惠 PLUS20', quantity: 1 },
     ],
   },
-  // 條碼（標準模板用）
   barcodeUrl: {
     type: String,
-    default: 'https://barcodeapi.org/api/128/12345678',
+    default: 'https://sw168.com.tw/wp-content/uploads/2019/04/code39.gif',
   },
   barcodeNumber: {
     type: String,
     default: '12345678',
   },
-  // 取餐代碼（標準模板用）
   pickupCode: {
     type: String,
     default: '#FS-3076',
@@ -165,67 +163,23 @@ defineEmits(['share-ticket'])
 .order-card {
   border-radius: var(--app-radius-lg);
   overflow: hidden;
-  border: 1px solid rgba(v.$white, 0.1);
-  background: v.$vieshow-dark-section;
+  border: 2px solid $white;
+  padding: var(--gap-lg);
 }
 
-// ────────────────────────────────────────────────────────────────
-// 頂部：完全複製 SelectedInfoCard 的 .glass-card 樣式
-// ────────────────────────────────────────────────────────────────
+// ── 頂部區塊 ──────────────────────────────────────────────────
 .glass-card {
-  position: relative;
   width: 100%;
-  border-radius: 0;
-  overflow: hidden;
-  backdrop-filter: blur(24px) saturate(180%) brightness(1.05);
-  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.05);
-  background: rgba(v.$vieshow-dark, 0.6);
-  border-bottom: 1px solid rgba(v.$white, 0.1);
-  box-shadow:
-    0 8px 32px rgba(v.$black, 0.45),
-    0 1px 0 rgba(v.$white, 0.06) inset;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(-38deg,
-        rgba(v.$white, 0.14) 0%,
-        rgba(v.$white, 0.05) 30%,
-        transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(v.$white, 0.22) 30%,
-        rgba(v.$white, 0.22) 70%,
-        transparent);
-    pointer-events: none;
-    z-index: 1;
-  }
 }
 
 .glass-card__inner {
-  position: relative;
-  z-index: 2;
   display: flex;
   align-items: center;
   gap: var(--gap-md);
-  padding: var(--gap-sm) var(--gap-md);
   width: 100%;
-  box-sizing: border-box;
 }
 
-// ── 海報（同 SelectedInfoCard）────────────────────────────────
+// ── 海報 ───────────────────────────────────────────────────────
 .poster-wrapper {
   flex-shrink: 0;
   width: 56px;
@@ -245,7 +199,7 @@ defineEmits(['share-ticket'])
   border-radius: var(--app-radius-lg);
 }
 
-// ── 文字區（同 SelectedInfoCard）─────────────────────────────
+// ── 文字區 ─────────────────────────────────────────────────────
 .movie-details {
   flex: 1;
   display: flex;
@@ -263,7 +217,7 @@ defineEmits(['share-ticket'])
 }
 
 .title-zh {
-  font-size: var(--app-font-size-h6);          // 手機 18px / PC 20px
+  font-size: var(--app-font-size-h5);
   font-weight: 700;
   color: v.$light;
   letter-spacing: 0.04em;
@@ -276,8 +230,7 @@ defineEmits(['share-ticket'])
 }
 
 .title-en {
-  font-size: var(--app-font-size-mini);        // 手機 12px / PC 14px
-  font-weight: 500;
+  font-size: var(--app-font-size-mini);
   color: v.$light;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -304,46 +257,38 @@ defineEmits(['share-ticket'])
   margin: 0 0.125rem;
 }
 
-// ── 右上角 TicketStatusTag ────────────────────────────────────
-.status-wrap {
-  flex-shrink: 0;
-  align-self: flex-start;
-}
-
-// ────────────────────────────────────────────────────────────────
-// body 共用
-// ────────────────────────────────────────────────────────────────
+// ── body 共用 ──────────────────────────────────────────────────
 .order-card__body {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-sm);
-  padding: var(--gap-sm) var(--gap-md);
+  gap: var(--gap-md);
 }
 
 .order-card__divider {
   margin: 0;
   border: none;
-  border-top: 1px solid rgba(v.$white, 0.08);
+  border-top: 1px dashed $white;
 }
 
-// ── 模板一：其他票種 ───────────────────────────────────────────
+// ── 模板一 ─────────────────────────────────────────────────────
 .order-card__expire-notice {
   margin: 0;
   font-size: var(--app-font-size-h6);
   font-weight: 700;
-  color: v.$vieshow-success;
+  color: v.$vieshow-warning;
   line-height: 1.6;
+  text-align: center;
 }
 
 .order-card__note {
   margin: 0;
   font-size: var(--app-font-size-sm);
-  color: v.$vieshow-secondary;
+  color: $white;
   text-align: center;
   padding: var(--gap-xs) 0;
 }
 
-// ── 模板二：一般購票 ───────────────────────────────────────────
+// ── 模板二 ─────────────────────────────────────────────────────
 .order-card__barcode-wrap {
   display: flex;
   flex-direction: column;
@@ -371,8 +316,8 @@ defineEmits(['share-ticket'])
 
 .order-card__expire-small {
   margin: 0;
-  font-size: var(--app-font-size-mini);
-  color: v.$vieshow-secondary;
+  font-size: var(--app-font-size-sm);
+  color: $white;
   text-align: center;
 }
 
@@ -424,7 +369,7 @@ defineEmits(['share-ticket'])
 }
 
 .order-card__pickup-code {
-  font-size: var(--app-font-size-h6);
+  font-size: var(--app-font-size-h5);
   font-weight: 700;
   color: v.$vieshow-primary;
   letter-spacing: 0.05em;
