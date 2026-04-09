@@ -21,8 +21,8 @@ const router = createRouter({
           component: () => import("@/views/HomePage.vue") 
         },
         { 
-          path: "moviesinfo", 
-          component: () => import("@/views/MovieInfo/MovieInfoPage.vue") 
+          path: "moviesdetail", 
+          component: () => import("@/views/MovieInfo/MovieDetail.vue") 
         },
         { 
           path: "fastbooking", 
