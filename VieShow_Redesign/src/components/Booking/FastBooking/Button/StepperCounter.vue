@@ -12,16 +12,27 @@
 
   狀態一（票種）：max=4，不能少於 0
   狀態二（餐點）：max=9，不能少於 0
+
+  特殊邏輯：
+    數量為 1 時，減少按鈕顯示垃圾桶 icon（fa-trash），提示使用者即將清除
+    數量為 0 時，減少按鈕 disabled
+    數量 > 1 時，顯示一般 − 符號
 -->
 
 <template>
   <div class="stepper">
-    <!-- 減少按鈕 -->
+
+    <!-- 減少按鈕：數量為 1 時顯示垃圾桶，否則顯示 − -->
     <button
       class="stepper__btn"
+      :class="{ 'stepper__btn--trash': modelValue === 1 }"
       :disabled="modelValue <= min"
       @click="decrement"
-    >−</button>
+      :aria-label="modelValue === 1 ? '清除' : '減少數量'"
+    >
+      <i v-if="modelValue === 1" class="fa-solid fa-trash"></i>
+      <span v-else>−</span>
+    </button>
 
     <!-- 數量顯示 -->
     <span
@@ -35,7 +46,9 @@
       :class="{ 'stepper__btn--active': modelValue > 0 }"
       :disabled="modelValue >= max"
       @click="increment"
+      aria-label="增加數量"
     >+</button>
+
   </div>
 </template>
 
@@ -66,29 +79,22 @@ const increment = () => {
 .stepper {
   display: flex;
   align-items: center;
-  // 手冊規範：gap 用 CSS 變數，手機 4px / PC 8px
   gap: var(--gap-md);
   flex-shrink: 0;
 }
 
 // ── 按鈕 ───────────────────────────────────────────────────────
-// 手冊 icon 尺寸系統：
-//   icon-sm → 手機 16px / PC 32px（太小，不適合按鈕）
-//   icon-md → 手機 24px / PC 48px（按鈕本體）
-// 按鈕寬高用 CSS 變數自動縮放
 .stepper__btn {
-  // 手機版 28px（接近 icon-md 24px）/ PC 版 40px
   width: 28px;
   height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;                        // 永遠圓形
+  border-radius: 50%;
   border: 1.5px solid rgba(v.$white, 0.3);
   background: transparent;
   color: v.$white;
   cursor: pointer;
-  // 圖示文字大小：手機 base(16px) / PC h6(18px~20px) 自動切換
   font-size: var(--app-font-size-base);
   font-weight: 400;
   line-height: 1;
@@ -98,30 +104,45 @@ const increment = () => {
               color 0.2s ease,
               opacity 0.2s ease;
 
-  // PC 版放大按鈕
   @include media-breakpoint-up(md) {
     width: 36px;
     height: 36px;
-    font-size: var(--app-font-size-h6);      // PC 18px~20px
+    font-size: var(--app-font-size-h6);
   }
 
-  // 桌機 hover（手冊 hover-focus mixin）
   @include hover-focus {
     border-color: v.$white;
   }
 
-  // 按下瞬間：白框加粗（border-bold = 2px）
+  // 按下瞬間：白框加粗
   &:active:not(:disabled) {
     border-color: v.$white;
-    border-width: 2px;                       // 手冊 border-bold
+    border-width: 2px;
   }
 
-  // + 按鈕：有數量時變白（表示可繼續加）
+  // + 按鈕：有數量時變白
   &--active {
     border-color: v.$white;
     color: v.$white;
 
     &:active:not(:disabled) {
+      border-width: 2px;
+    }
+  }
+
+  // 垃圾桶狀態（數量為 1 時）：變 danger 紅色提示
+  &--trash {
+    border-color: rgba(v.$vieshow-danger, 0.6);
+    color: v.$vieshow-danger;
+    font-size: var(--app-font-size-mini);      // icon 小一點比較好看
+
+    @include hover-focus {
+      border-color: v.$vieshow-danger;
+      color: v.$vieshow-danger;
+    }
+
+    &:active:not(:disabled) {
+      border-color: v.$vieshow-danger;
       border-width: 2px;
     }
   }
@@ -135,16 +156,13 @@ const increment = () => {
 
 // ── 數量文字 ───────────────────────────────────────────────────
 .stepper__count {
-  // 手冊：min-width 用間距變數，手機 16px / PC 32px
   min-width: var(--gap-md);
   text-align: center;
-  // 手冊字體：Base 手機 16px / PC 18px 自動縮放
   font-size: var(--app-font-size-h4);
   font-weight: 700;
-  color: v.$vieshow-secondary;              // 預設灰色
+  color: v.$vieshow-secondary;
   transition: color 0.2s ease;
 
-  // 有數量：變白
   &--active {
     color: v.$white;
   }
