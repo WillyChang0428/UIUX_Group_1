@@ -1,11 +1,10 @@
 <script setup>
-import Header from './components/Layout/Parts/Header.vue'
+import SignUpStepHeader from "./components/Layout/Parts/SignUpStepHeader.vue";
 </script>
 
 <template>
-  <div id="app">
-    <router-view></router-view>
-    </div>
+  <SignUpStepHeader />
+  <router-view></router-view>
 </template>
 
 <style lang="scss">
