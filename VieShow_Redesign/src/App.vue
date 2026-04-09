@@ -1,9 +1,13 @@
+<template>
+
+</template>
+
 <script setup>
-import MovieInfo from "./views/MovieInfo/MovieInfo.vue";
+
 </script>
 
 <template>
-  <MovieInfo />
+
 </template>
 
 <style lang="scss">
