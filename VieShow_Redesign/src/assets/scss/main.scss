@@ -164,6 +164,16 @@ body {
   }
 }
 
+.other-wrapper {
+  padding-top: $web-top-padding-mobile-other;
+  padding-bottom: $web-bottom-padding-mobile-other;
+
+  @include media-breakpoint-up(md) {
+    padding-top: $web-top-padding-pc-other;
+    padding-bottom: $web-bottom-padding-pc-other;
+  }
+}
+
 // ==========================================
 // 💡 自定義響應式圓角類別 (對應 Figma Token)
 // ==========================================

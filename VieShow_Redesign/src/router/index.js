@@ -47,7 +47,19 @@ const router = createRouter({
       children: [
         { 
           path: "ticket", 
-          component: () => import("@/views/Booking/TicketBooking.vue")  //  /booking/ticket
+          component: () => import("@/views/Booking/Step/TicketBooking.vue")  //  /booking/ticket
+        },
+        { 
+          path: "receipt", 
+          component: () => import("@/views/Booking/Step/Receipt.vue")  //  /booking/ticket
+        },
+        { 
+          path: "paying", 
+          component: () => import("@/views/Booking/Step/Paying.vue")  //  /booking/ticket
+        },
+        { 
+          path: "seatselect", 
+          component: () => import("@/views/Booking/Step/SeatSelecter.vue")  //  /booking/ticket
         },
       ]
     },

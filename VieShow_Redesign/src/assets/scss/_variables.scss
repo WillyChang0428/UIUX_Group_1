@@ -230,6 +230,13 @@ $web-bottom-padding-mobile: 36px;
 $web-top-padding-pc: 86px;
 $web-bottom-padding-pc: 96px;
 
+
+$web-top-padding-mobile-other: 223px;
+$web-bottom-padding-mobile-other: 111px;
+
+$web-top-padding-pc-other: 175px;
+$web-bottom-padding-pc-other: 94px;
+
 // 定義只在桌機（有滑鼠游標）才觸發的 hover 預防針
 @mixin hover-focus {
   @media (hover: hover) and (pointer: fine) {

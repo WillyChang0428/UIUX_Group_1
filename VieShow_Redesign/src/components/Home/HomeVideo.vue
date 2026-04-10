@@ -72,7 +72,7 @@ const closeVideo = () => {
   top: 10px;
   right: 10px;
   align-self: flex-end;
-  color: v.$white;
+  color:rgba(v.$white, 0.5);
   border-radius: 50%;
   width: var(--icon-sm); // 對齊響應式圖示尺寸 [cite: 156]
   height: var(--icon-sm);
