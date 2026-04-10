@@ -10,7 +10,7 @@ import { createPinia } from 'pinia'
 const app = createApp(App)
 const pinia = createPinia()  
 
-app.use(pinia)    
+  
 // 2. 裝備一：掛載 Router (導航地圖)
 app.use(router).use(pinia)
 
