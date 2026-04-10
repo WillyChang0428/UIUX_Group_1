@@ -3,7 +3,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { useMovieStore } from '@/store/movieStore'
+import BookingLayoutPC from '@/components/Booking/BookingLayoutPC.vue'
 
 </script>
 
@@ -15,4 +16,5 @@ body,
   height: fit-content;
   background: v.$vieshow-gradient-dark;
 }
+
 </style>
