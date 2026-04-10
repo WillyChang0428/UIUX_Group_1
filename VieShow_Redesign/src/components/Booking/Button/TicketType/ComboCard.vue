@@ -11,7 +11,7 @@
       <p class="combo-card__desc mb-4">{{ item.description }}</p>
 
       <!-- 價格 + 計數器（替換為 StepperCounter）-->
-      <div class="combo-card__footer d-flex flex-column">
+      <div class="combo-card__footer d-flex flex-column gap-3">
         <div class="combo-price d-flex justify-content-start w-100">
           <span class="combo-card__price">NT {{ item.price.toLocaleString() }}</span>
         </div>

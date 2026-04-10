@@ -1,7 +1,5 @@
 <template>
-  <div class="app-wrapper">
-    <main class="main-wrapper">
-      <div class="container">
+      <div class="container py-5">
 
         <!-- 限定套票 -->
         <ComboSlider />
@@ -13,8 +11,6 @@
         <TicketSelector />
 
       </div>
-    </main>
-  </div>
 </template>
 
 <script setup>

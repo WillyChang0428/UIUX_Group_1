@@ -29,7 +29,7 @@
       <!-- 團體票：兌換碼輸入框 -->
       <template v-if="ticket.needCode">
         <div class="ticket-row__code-group">
-          <div class="ticket-row__code-wrap" :class="{ 'is-error': showError, 'is-redeemed': isRedeemed }">
+          <div class="ticket-row__code-wrap " :class="{ 'is-error': showError, 'is-redeemed': isRedeemed }">
             <input
               :value="codeInput"
               class="ticket-row__code-input"
