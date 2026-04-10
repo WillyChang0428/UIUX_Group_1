@@ -1,5 +1,5 @@
 <template>
-    <div class="container pt-3  d-flex flex-column gap-3 pb-5">
+    <div class="container  d-flex flex-column gap-3 py-5">
         <OrderSummary />
         <iShowCash :checkoutTotal="finalTotal" @select="handlePaymentSelect" @topup-success="handleTopUpSuccess" />
         <CreditCard @select="handlePaymentSelect" @card-saved="handleCardSaved" />

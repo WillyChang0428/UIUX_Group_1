@@ -97,7 +97,6 @@ onUnmounted(() => { clearInterval(timer); });
 // ── 💡 新增：固定在頂部的外層容器 ────────────────────────────────
 .booking-header {
   position: fixed;
-  top: v.$web-top-padding-mobile;
   left: 0;
   right: 0;
   height: fit-content;
@@ -117,9 +116,9 @@ onUnmounted(() => { clearInterval(timer); });
   width: 100%;
   list-style: none;
   margin: 0;
-  padding: 36pt 0 var(--gap-lg);
+  padding: 48px 0 var(--gap-lg);
   @include v.media-breakpoint-up(md) {
-    padding: 16pt var(--gap-lg);
+    padding: 16px var(--gap-lg);
   }
 }
 

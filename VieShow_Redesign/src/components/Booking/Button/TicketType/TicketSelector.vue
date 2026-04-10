@@ -64,7 +64,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import TicketRow from '@/components/Booking/FastBooking/TicketType/TicketRow.vue'
+import TicketRow from '@/components/Booking/Button/TicketType/TicketRow.vue'
 
 // ── 銀行優惠展開狀態 ───────────────────────────────────────────
 const showBank = ref(false)

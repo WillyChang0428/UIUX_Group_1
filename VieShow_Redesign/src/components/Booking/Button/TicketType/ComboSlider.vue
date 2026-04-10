@@ -25,7 +25,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import ComboCard from '@/components/Booking/FastBooking/TicketType/ComboCard.vue'
+import ComboCard from '@/components/Booking/Button/TicketType/ComboCard.vue'
 
 // ── 套票假資料 ─────────────────────────────────────────────────
 const comboList = ref([

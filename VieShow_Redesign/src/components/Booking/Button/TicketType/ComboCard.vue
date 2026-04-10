@@ -11,22 +11,21 @@
       <p class="combo-card__desc mb-4">{{ item.description }}</p>
 
       <!-- 價格 + 計數器（替換為 StepperCounter）-->
-      <div class="combo-card__footer">
-        <span class="combo-card__price">NT {{ item.price.toLocaleString() }}</span>
-
-        <StepperCounter
-          :model-value="item.quantity"
-          :min="0"
-          :max="4"
-          @update:model-value="(val) => $emit('update-qty', item.id, val - item.quantity)"
-        />
+      <div class="combo-card__footer d-flex flex-column">
+        <div class="combo-price d-flex justify-content-start w-100">
+          <span class="combo-card__price">NT {{ item.price.toLocaleString() }}</span>
+        </div>
+        <div class="counter d-flex justify-content-end w-100">
+          <StepperCounter :model-value="item.quantity" :min="0" :max="4"
+            @update:model-value="(val) => $emit('update-qty', item.id, val - item.quantity)" />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import StepperCounter from '@/components/Booking/FastBooking/Button/StepperCounter.vue'
+import StepperCounter from '@/components/Booking/Button/StepperCounter.vue'
 
 defineProps({
   item: {
@@ -45,11 +44,11 @@ defineEmits(['update-qty'])
   display: flex;
   flex-direction: column;
   width: 245px;
-  padding: $container-padding-mobile;
+  padding: var(--gap-md);
   flex-shrink: 0;
   background: rgba($white, 0.05);
   border: 1px solid rgba($white, 0.1);
-  border-radius: $border-radius-lg-mobile;     // 12px
+  border-radius: var(--app-radius-lg); // 12px
   overflow: hidden;
   transition: border-color 0.25s ease, background 0.25s ease;
 
@@ -57,13 +56,16 @@ defineEmits(['update-qty'])
     background: rgba($vieshow-primary, 0.08);
     border-color: rgba($vieshow-primary, 0.6);
   }
+  @include media-breakpoint-up(md) {
+  width: 320px;
+  }
 }
 
 // ── 圖片縮圖（小正方形）──────────────────────────────────────
 .combo-card__img-wrapper {
   width: 80px;
   height: 80px;
-  border-radius: $border-radius-mobile;        // 8px
+  border-radius: var(--app-radius);
   overflow: hidden;
   background: rgba($white, 0.06);
   flex-shrink: 0;
@@ -80,15 +82,14 @@ defineEmits(['update-qty'])
 .combo-card__body {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xs-mobile;                     // 4px
-  padding-top: $spacing-sm-mobile;
+  gap: var(--gap-sm); // 4px
+  padding-top: var(--gap-lg);
   flex: 1;
 }
 
 .combo-card__name {
   margin: 0;
-  font-size: $font-size-base-mobile;           // 16px
-  font-weight: 700;
+  font-size: var(--app-font-size-h6);
   color: $light;
   line-height: 1.3;
   display: -webkit-box;
@@ -99,7 +100,7 @@ defineEmits(['update-qty'])
 
 .combo-card__desc {
   margin: 0;
-  font-size: $font-size-mini-mobile;           // 12px
+  font-size: var(--app-font-size-sm);
   color: $vieshow-tertiary;
   line-height: $line-height-relaxed;
   display: -webkit-box;
@@ -115,11 +116,10 @@ defineEmits(['update-qty'])
   align-items: center;
   justify-content: space-between;
   margin-top: auto;
-  padding-top: $spacing-xs-mobile;
 }
 
 .combo-card__price {
-  font-size: $font-size-sm-mobile;             // 14px
+  font-size: var(--app-font-size-h6);
   font-weight: 700;
   color: $vieshow-danger;
 }

@@ -18,8 +18,8 @@
 </template>
 
 <script setup>
-import ComboSlider from '@/components/Booking/FastBooking/TicketType/ComboSlider.vue'
-import TicketSelector from '@/components/Booking/FastBooking/TicketType/TicketSelector.vue'
+import ComboSlider from '@/components/Booking/Button/TicketType/ComboSlider.vue'
+import TicketSelector from '@/components/Booking/Button/TicketType/TicketSelector.vue'
 </script>
 
 <style lang="scss">

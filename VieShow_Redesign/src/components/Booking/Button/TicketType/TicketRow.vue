@@ -85,7 +85,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import StepperCounter from '@/components/Booking/FastBooking/Button/StepperCounter.vue'
+import StepperCounter from '@/components/Booking/Button/StepperCounter.vue'
 
 const props = defineProps({
   ticket: {
