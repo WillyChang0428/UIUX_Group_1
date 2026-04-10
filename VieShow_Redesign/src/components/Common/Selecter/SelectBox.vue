@@ -1,5 +1,3 @@
-<!-- 使用方式: <SelectBox mode="home" /> 或 <SelectBox mode="page" /> -->
-
 <template>
   <div class="booking-selector w-100" :class="`mode-${mode}`">
 
@@ -32,11 +30,8 @@
                       {{ theater }}
                     </li>
                   </SelectCategory>
-
                 </template>
-
               </template>
-
             </FlatSelect>
             <SecondaryButton class="search-btn" @click="handleSearch">搜尋</SecondaryButton>
           </div>
@@ -64,14 +59,13 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router"; // 💡 1. 引入 useRouter
+import { useRouter } from "vue-router";
 import { useMovieStore } from "@/store/movieStore";
 import { useCinemaStore } from "@/store/cinema";
 import FlatSelect from "./FlatSelect.vue";
 import SelectCategory from "./SelectCategory.vue";
 import SecondaryButton from "../Button/SecondaryButton.vue";
 
-// 💡 新增 Prop，讓父層決定要顯示哪一種排版 (預設為訂票頁版)
 const props = defineProps({
   mode: {
     type: String,
@@ -79,7 +73,7 @@ const props = defineProps({
   }
 });
 
-const router = useRouter(); // 💡 2. 初始化 router
+const router = useRouter();
 
 const movieStore = useMovieStore();
 const cinemaStore = useCinemaStore();
@@ -96,13 +90,22 @@ const selectedCinema = ref("");
 
 // 初始化同步 Pinia
 onMounted(() => {
+  // 💡 關鍵優化 1：如果是「首頁」的搜尋框，就不自動帶入舊資料，確保回到首頁時永遠是乾淨空白的！
+  if (props.mode === 'home') return;
+
+  // 1. 同步電影資料 (僅限訂票頁)
   if (movieStore.selectedMovieId && movieStore.selectedMovieId !== 'all') {
     const movie = movieStore.movieList.find(m => m.id === movieStore.selectedMovieId);
     if (movie) {
-      // 💡 修改處：拔除判斷式，統一顯示「中文 + 英文」
       selectedMovie.value = `${movie.titleZh} ${movie.titleEn}`;
       isMovieSelected.value = true;
     }
+  }
+
+  // 2. 同步影城資料 (僅限訂票頁)
+  if (cinemaStore.selectedCinema) {
+    selectedCinema.value = cinemaStore.selectedCinema;
+    isCinemaSelected.value = true;
   }
 });
 
@@ -111,7 +114,6 @@ const handleMovieSelect = (movie) => {
   if (movie === 'all') {
     clearMovie();
   } else {
-    // 💡 修改處：拔除判斷式，統一顯示「中文 + 英文」
     selectedMovie.value = `${movie.titleZh} ${movie.titleEn}`;
     isMovieSelected.value = true;
     movieStore.selectMovie(movie.id);
@@ -130,22 +132,30 @@ const handleCinemaSelect = (name) => {
   selectedCinema.value = name;
   isCinemaSelected.value = true;
   isCinemaOpen.value = false;
+  
+  // 💡 改用 Action，這樣才會順便觸發「自動辨識區域」的功能
+  cinemaStore.setCinema(name); 
 };
 
 const clearCinema = () => {
   selectedCinema.value = "";
   isCinemaSelected.value = false;
+  
+  // 💡 清除 Store 資料
+  cinemaStore.clearCinema(); 
 };
 
-// 💡 3. 新增點擊搜尋的處理函式
+// 點擊搜尋
 const handleSearch = () => {
-  // 您也可以在這裡加入判斷，例如：必須先選電影或影城才能跳轉
-  // if (!isMovieSelected.value) {
-  //   alert("請先選擇電影");
-  //   return;
-  // }
+  // 1. 先執行跳轉，把目前 Store 裡的資料帶去快速訂票頁
+  router.push('/fastbooking'); 
   
-  router.push('/fastbooking'); // 執行跳轉至快速訂票頁面
+  // 💡 關鍵優化 2：單純清空首頁視覺上的文字欄位
+  // ⚠️ 絕對不要呼叫 clearMovie()，否則會連 Pinia 一起洗掉，讓下一頁變成空白！
+  selectedMovie.value = "";
+  isMovieSelected.value = false;
+  selectedCinema.value = "";
+  isCinemaSelected.value = false;
 };
 </script>
 
@@ -156,19 +166,15 @@ const handleSearch = () => {
   width: 100%;
 }
 
-/* ====================================================
-   🎨 模式 A：首頁版樣式 (.mode-home) - 圖二、圖三
-   ==================================================== */
 .mode-home {
   .home-widget {
-    background: rgba(v.$vieshow-dark, 0.6);
+    background: rgba($vieshow-dark, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(v.$white, 0.2);
-    border-radius: var(--app-radius-lg); // 12px~24px
-    padding: var(--gap-lg) var(--gap-xl); // 對齊您的 SelectBox 設定
+    border: 1px solid rgba($white, 0.2);
+    border-radius: var(--app-radius-lg); 
+    padding: var(--gap-lg) var(--gap-xl); 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 
-    // 電腦版排版 (圖三)
     @include media-breakpoint-up(lg) {
       height: 100px;
       padding: 0 var(--gap-xl);
@@ -178,38 +184,32 @@ const handleSearch = () => {
       width: 100%;
 
       @include media-breakpoint-up(lg) {
-        max-width: 450px; // 電腦版固定寬度
+        max-width: 450px; 
       }
     }
 
-    // 搜尋按鈕
     .search-btn {
       @include media-breakpoint-up(lg) {
-        width: 100px; // 電腦版固定寬度
+        width: 100px; 
       }
     }
   }
 
-  // 確保 FlatSelect 在首頁模式維持其「全圓角框線」的預設外觀
   :deep(.base-select-container .select-header) {
-    background: rgba(v.$white, 0.05) !important; // 微微的底色
+    background: rgba($white, 0.05) !important; 
   }
 }
 
-/* ====================================================
-   🎨 模式 B：訂票頁版樣式 (.mode-page) - 圖一
-   ==================================================== */
 .mode-page {
   .page-widget {
-    background: rgba(v.$vieshow-dark, 0.6);
+    background: rgba($vieshow-dark, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(v.$white, 0.15);
+    border: 1px solid rgba($white, 0.15);
     border-radius: 12px;
     padding: 24px 30px;
-    box-shadow: 0 34px 55px -28px rgba(v.$vieshow-primary, 0.4);
+    box-shadow: 0 34px 55px -28px rgba($vieshow-primary, 0.4);
     transition: all 0.3s ease;
 
-    // 解除死板的深層綁定，直接覆寫基礎樣式
     :deep(.base-select-container) {
       .select-header {
         border-top: none;
@@ -217,28 +217,27 @@ const handleSearch = () => {
         border-right: none;
         border-radius: 0;
         background: transparent !important;
-        border-bottom: 1px solid rgba(v.$white, 0.3);
-        padding: 0 0 12px 0; // 只留底部間距
+        border-bottom: 1px solid rgba($white, 0.3);
+        padding: 0 0 12px 0; 
         min-height: auto;
 
         &:hover {
-          border-bottom-color: v.$vieshow-primary;
+          border-bottom-color: $vieshow-primary;
         }
       }
     }
 
-    // 選中狀態的藍色變換
     &.has-selection {
       :deep(.base-select-container .select-header) {
-        border-bottom-color: v.$vieshow-primary;
+        border-bottom-color: $vieshow-primary;
 
         .placeholder {
-          color: v.$vieshow-primary !important;
-          font-size: var(--app-font-size-h6); // 稍微放大字體對齊圖一
+          color: $vieshow-primary !important;
+          font-size: var(--app-font-size-h6); 
         }
 
         .icon-wrapper i {
-          color: rgba(v.$white, 0.8) !important;
+          color: rgba($white, 0.8) !important;
         }
       }
     }

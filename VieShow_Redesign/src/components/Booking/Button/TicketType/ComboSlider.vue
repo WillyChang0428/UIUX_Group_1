@@ -14,18 +14,15 @@
         />
       </div>
     </div>
-
-    <!-- 已選購摘要（有選購才顯示） -->
-    <div v-if="totalCount > 0" class="combo-slider__summary">
-      <span class="summary__label">已選 {{ totalCount }} 項</span>
-      <span class="summary__total">小計 NT {{ totalPrice }}</span>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue' // 💡 引入 watch
+import { useBookingStore } from '@/store/bookingStore' // 💡 引入 Store
 import ComboCard from '@/components/Booking/Button/TicketType/ComboCard.vue'
+
+const bookingStore = useBookingStore();
 
 // ── 套票假資料 ─────────────────────────────────────────────────
 const comboList = ref([
@@ -80,6 +77,12 @@ const totalCount = computed(() =>
 const totalPrice = computed(() =>
   comboList.value.reduce((sum, c) => sum + c.price * c.quantity, 0).toLocaleString()
 )
+
+// 💡 新增：深度監聽陣列，只要數量改變，就把有選購的套票存入 Pinia
+watch(comboList, (newVal) => {
+  const selectedCombos = newVal.filter(c => c.quantity > 0);
+  bookingStore.updateCombos(selectedCombos);
+}, { deep: true });
 </script>
 
 <style lang="scss" scoped>

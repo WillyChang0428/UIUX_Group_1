@@ -1,9 +1,7 @@
 <template>
   <div v-if="movieInfo" class="order-card">
-
     <!-- ── 共用頂部 ── -->
     <div class="glass-card pb-3">
-
       <!-- 第一列：TicketStatusTag 靠右 -->
       <div class="d-flex justify-content-end mb-2">
         <TicketStatusTag :status="ticketStatus" />
@@ -11,10 +9,13 @@
 
       <!-- 第二列：海報 + 電影資訊 -->
       <div class="glass-card__inner">
-
         <!-- 左：海報縮圖 -->
         <div class="poster-wrapper">
-          <img :src="movieInfo.posterUrl" :alt="movieInfo.titleZh" class="poster-img" />
+          <img
+            :src="movieInfo.posterUrl"
+            :alt="movieInfo.titleZh"
+            class="poster-img"
+          />
         </div>
 
         <!-- 右：電影資訊 -->
@@ -39,14 +40,12 @@
             <span>{{ movieInfo.time }}</span>
           </div>
         </div>
-
       </div>
     </div>
 
     <!-- ── 模板一：其他票種 ── -->
     <template v-if="variant === 'other'">
       <div class="order-card__body order-card__body--other">
-
         <hr class="order-card__divider" />
 
         <p class="order-card__expire-notice">
@@ -57,14 +56,12 @@
         <hr class="order-card__divider" />
 
         <p class="order-card__note">如欲加購餐點請至售票口加購</p>
-
       </div>
     </template>
 
     <!-- ── 模板二：一般購票流程 ── -->
     <template v-else-if="variant === 'standard'">
       <div class="order-card__body order-card__body--standard">
-
         <hr class="order-card__divider" />
 
         <!-- 條碼區 -->
@@ -74,7 +71,9 @@
         </div>
 
         <!-- 有效期限小字 -->
-        <p class="order-card__expire-small">有效期限至 {{ movieInfo.expireDate }}</p>
+        <p class="order-card__expire-small"> 
+          有效期限至 <span class="text-primary">{{ movieInfo.date }}</span> 當天有效
+        </p>
 
         <hr class="order-card__divider" />
 
@@ -92,7 +91,7 @@
               @click="$emit('share-ticket', ticket.id)"
               aria-label="分享票券"
             >
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <i class="fa-solid fa-arrow-up-from-bracket"></i>
             </button>
           </div>
         </div>
@@ -104,56 +103,74 @@
           <span class="order-card__pickup-label">取餐代碼</span>
           <span class="order-card__pickup-code">{{ pickupCode }}</span>
         </div>
-
       </div>
     </template>
-
   </div>
 </template>
 
 <script setup>
-import { useMovieStore } from '@/store/movieStore.js'
-import { storeToRefs } from 'pinia'
-import TicketStatusTag from '@/components/Booking/Fastbooking/Button/TicketStatusTag.vue'
+import { computed } from "vue"; // 💡 1. 記得引入 computed
+import { useMovieStore } from "@/store/movieStore.js";
+import TicketStatusTag from "@/components/Booking/Button/TicketStatusTag.vue";
 
-const movieStore = useMovieStore()
-const { selectedInfoCard: movieInfo } = storeToRefs(movieStore)
+const movieStore = useMovieStore();
+
+// 💡 2. 使用 computed 搭配「短路求值 (||)」，給予強大的假資料備案
+const movieInfo = computed(() => {
+  return (
+    movieStore.selectedInfoCard || {
+      // 當 Pinia 沒資料時，預設顯示這組假資料供切版預覽
+      titleZh: "沙丘：第二部",
+      titleEn: "DUNE: PART TWO",
+      duration: "166 分鐘",
+      rating: "保護級",
+      language: "英文",
+      format: "IMAX 2D",
+      venue: "台北京站威秀影城",
+      date: "2026/04/15",
+      time: "19:30",
+      expireDate: "2026/04/15 19:30",
+      payDeadline: "2026/04/15 19:00",
+      posterUrl: "https://picsum.photos/seed/dune/200/300",
+    }
+  );
+});
 
 defineProps({
   variant: {
     type: String,
-    default: 'standard',
-    validator: (v) => ['standard', 'other'].includes(v),
+    default: "standard",
+    validator: (v) => ["standard", "other"].includes(v),
   },
   ticketStatus: {
     type: String,
-    default: 'active',
-    validator: (v) => ['active', 'pending', 'expired'].includes(v),
+    default: "active",
+    validator: (v) => ["active", "pending", "expired"].includes(v),
   },
   tickets: {
     type: Array,
     default: () => [
-      { id: 't1', name: '全票',                      quantity: 1 },
-      { id: 't2', name: '全票',                      quantity: 1 },
-      { id: 't3', name: '優待票',                    quantity: 1 },
-      { id: 't4', name: '星展一般卡假日優惠 PLUS20', quantity: 1 },
+      { id: "t1", name: "全票", quantity: 1 },
+      { id: "t2", name: "全票", quantity: 1 },
+      { id: "t3", name: "優待票", quantity: 1 },
+      { id: "t4", name: "星展一般卡假日優惠 PLUS20", quantity: 1 },
     ],
   },
   barcodeUrl: {
     type: String,
-    default: 'https://sw168.com.tw/wp-content/uploads/2019/04/code39.gif',
+    default: "https://sw168.com.tw/wp-content/uploads/2019/04/code39.gif",
   },
   barcodeNumber: {
     type: String,
-    default: '12345678',
+    default: "12345678",
   },
   pickupCode: {
     type: String,
-    default: '#FS-3076',
+    default: "#FS-3076",
   },
-})
+});
 
-defineEmits(['share-ticket'])
+defineEmits(["share-ticket"]);
 </script>
 
 <style lang="scss" scoped>

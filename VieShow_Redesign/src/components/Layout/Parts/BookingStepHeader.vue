@@ -4,15 +4,9 @@
       <ul class="d-flex justify-content-between align-items-center booking-header__bar container-md">
 
         <li class="booking-header__side">
-          <template v-if="step !== 5">
-            <router-link v-if="backTo" :to="backTo" class="clickable-icon">
-              <i class="fa-solid fa-angle-left text-secondary"></i>
-            </router-link>
-            <button v-else class="clickable-icon" @click="$emit('back')">
-              <i class="fa-solid fa-angle-left text-secondary"></i>
-            </button>
-          </template>
-          <span v-else class="clickable-icon"></span>
+          <button v-if="step !== 5" class="clickable-icon" @click="handleBack">
+            <i class="fa-solid fa-angle-left text-secondary"></i>
+          </button>
         </li>
 
         <li class="d-flex justify-content-center align-items-center flex-grow-1 position-relative">
@@ -24,10 +18,7 @@
         </li>
 
         <li class="booking-header__side">
-          <router-link v-if="closeTo" :to="closeTo" class="clickable-icon">
-            <i class="fa-solid fa-xmark text-secondary"></i>
-          </router-link>
-          <button v-else class="clickable-icon" @click="$emit('close')">
+          <button class="clickable-icon" @click="handleClose">
             <i class="fa-solid fa-xmark text-secondary"></i>
           </button>
         </li>
@@ -39,6 +30,8 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useBookingStore } from '@/store/bookingStore'; // 💡 引入您的訂票 Store
 
 const props = defineProps({
   // 目前步驟：1=選擇票種 2=選擇座位 3=加購餐點 4=發票選擇 5=訂單完成
@@ -47,12 +40,24 @@ const props = defineProps({
     default: 1,
     validator: (v) => [1, 2, 3, 4, 5].includes(v),
   },
-  backTo: { type: String, default: null },
-  closeTo: { type: String, default: null },
   totalSeconds: { type: Number, default: 600 },
 });
 
-defineEmits(['back', 'close', 'timeout']);
+const router = useRouter();
+const bookingStore = useBookingStore();
+
+// ── 💡 導覽與狀態控制邏輯 ───────────────────────────────────────
+
+// 點擊左側箭頭：返回瀏覽器的上一頁
+const handleBack = () => {
+  router.back();
+};
+
+// 點擊右側叉叉：清空購物車資料，並跳轉回首頁
+const handleClose = () => {
+  bookingStore.resetBooking(); // 呼叫您在 Store 中寫好的清空方法
+  router.push('/');            // 回到首頁
+};
 
 // ── 步驟標題 ───────────────────────────────────────────────────
 const stepTitles = {
@@ -82,6 +87,7 @@ onMounted(() => {
   timer = setInterval(() => {
     if (secondsLeft.value <= 0) {
       clearInterval(timer);
+      // 若倒數結束，也可以在這裡觸發 handleClose() 強制回首頁
       return;
     }
     secondsLeft.value--;
@@ -92,9 +98,9 @@ onUnmounted(() => { clearInterval(timer); });
 </script>
 
 <style lang="scss" scoped>
+/* 💡 拔除下方所有 v. 前綴，確保變數正確編譯 */
 @import "@/assets/scss/variables";
 
-// ── 💡 新增：固定在頂部的外層容器 ────────────────────────────────
 .booking-header {
   position: fixed;
   left: 0;
@@ -102,43 +108,40 @@ onUnmounted(() => { clearInterval(timer); });
   height: fit-content;
   display: flex;
   align-items: center;
-  z-index: 1030; // Bootstrap 標準 top header 的 z-index
-  background-color: v.$vieshow-dark;
+  z-index: 1030; 
+  background-color: $vieshow-dark; // 💡 修正
   border-bottom: 1px solid rgba($white, 0.05);
-  @include v.media-breakpoint-up(md) {
-    top: v.$web-top-padding-pc;
+
+  @include media-breakpoint-up(md) { // 💡 修正
+    top: $web-top-padding-pc; // 💡 修正
   }
 }
 
-
-// ── Header bar ─────────────────────────────────────────────────
 .booking-header__bar {
   width: 100%;
   list-style: none;
   margin: 0;
   padding: 48px 0 var(--gap-lg);
-  @include v.media-breakpoint-up(md) {
+  
+  @include media-breakpoint-up(md) { // 💡 修正
     padding: 16px var(--gap-lg);
   }
 }
 
-// ── 左右側按鈕容器（固定寬，讓標題真正置中）──────────────────
 .booking-header__side {
   flex-shrink: 0;
-  width: $touch-target-size; // 45px，與 main.scss .clickable-icon 一致
+  width: $touch-target-size; 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-// ── 標題 ─────────────────────────
 .booking-header__title {
   font-size: var(--app-font-size-base);
   font-weight: $font-weight-bold;
   letter-spacing: $letter-spacing-wide;
 }
 
-// ── 計時器 ─────────────────────────────────────────────────────
 .booking-header__timer {
   font-weight: $font-weight-bold;
   color: $vieshow-danger;
@@ -150,12 +153,10 @@ onUnmounted(() => { clearInterval(timer); });
 }
 
 @keyframes blink {
-
   0%,
   100% {
     opacity: 1;
   }
-
   50% {
     opacity: 0.3;
   }

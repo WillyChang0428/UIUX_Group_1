@@ -136,37 +136,6 @@
             </div>
           </div>
         </div>
-
-        <div class="legend-wrapper mt-4">
-          <div class="legend-item">
-            <SeatButton
-              size="sm"
-              state="available"
-              class="pointer-events-none"
-            />
-            <span>空位</span>
-          </div>
-          <div class="legend-item">
-            <SeatButton
-              size="sm"
-              state="selected"
-              class="pointer-events-none"
-            />
-            <span>已選</span>
-          </div>
-          <div class="legend-item">
-            <SeatButton size="sm" state="sold" class="pointer-events-none" />
-            <span>佔位</span>
-          </div>
-          <div class="legend-item">
-            <SeatButton
-              size="sm"
-              state="wheelchair"
-              class="pointer-events-none"
-            />
-            <span>輪椅位須至影城購買</span>
-          </div>
-        </div>
       </div>
     </Transition>
 
@@ -253,11 +222,31 @@
         <span>輪椅位須至影城購買</span>
       </div>
     </div>
+
+    <div
+      class="text-center mt-4 mb-2"
+      :style="{
+        opacity: isPreviewOpen ? 0 : 1,
+        transition: 'opacity 0.2s ease',
+      }"
+    >
+      <p v-if="remainingSeats > 0" class="mb-0 fw-bold text-white">
+        尚需選 {{ remainingSeats }} 個座位
+      </p>
+      <p v-else-if="remainingSeats === 0" class="mb-0 fw-bold text-success">
+        座位已選滿，請點擊下一步！
+      </p>
+      <p v-else class="mb-0 fw-bold text-danger">
+        您多選了 {{ Math.abs(remainingSeats) }} 個座位，請取消多餘的位子。
+      </p>
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useBookingStore } from "@/store/bookingStore";
 import SeatButton from "@/components/Booking/Button/SeatButton.vue";
 import panoramaImage from "@/assets/images/panorama-cinema.jpg";
 
@@ -266,6 +255,13 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["open-panorama", "seats-selected"]);
+
+const bookingStore = useBookingStore();
+
+// 💡 修改：改用 props.ticketCount 與本地的 selectedSeats 陣列來計算，反應最即時！
+const remainingSeats = computed(() => {
+  return props.ticketCount - selectedSeats.value.length;
+});
 
 const ROW_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 

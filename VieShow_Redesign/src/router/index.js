@@ -25,12 +25,16 @@ const router = createRouter({
           component: () => import("@/views/MovieInfo/MovieDetail.vue") 
         },
         { 
-          path: "MovieInfo", 
+          path: "movieinfo", 
           component: () => import("@/views/MovieInfo/MovieInfo.vue") 
         },
         { 
           path: "fastbooking", 
           component: () => import("@/views/Booking/FastBooking.vue") 
+        },
+        { 
+          path: "final", 
+          component: () => import("@/views/Booking/Step/Final.vue")  //  /booking/ticket
         },
         // // 💡 假設「某個特定頁面」用這個 Layout 但【不要 Footer】，可以加上 meta
         // {
@@ -62,9 +66,14 @@ const router = createRouter({
           component: () => import("@/views/Booking/Step/Paying.vue")  //  /booking/ticket
         },
         { 
-          path: "seatselect", 
+          path: "seat", 
           component: () => import("@/views/Booking/Step/SeatSelecter.vue")  //  /booking/ticket
         },
+        { 
+          path: "food", 
+          component: () => import("@/views/Booking/Step/FoodAddOn.vue")  //  /booking/ticket
+        },
+        
       ]
     },
 

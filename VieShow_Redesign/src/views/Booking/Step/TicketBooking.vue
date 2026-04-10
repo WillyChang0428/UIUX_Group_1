@@ -13,12 +13,12 @@
       </div>
 </template>
 
-<script setup>
+<script setup >
 import ComboSlider from '@/components/Booking/Button/TicketType/ComboSlider.vue'
 import TicketSelector from '@/components/Booking/Button/TicketType/TicketSelector.vue'
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/assets/scss/main";
 
 .app-wrapper {

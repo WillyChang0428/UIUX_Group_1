@@ -1,11 +1,7 @@
 <template>
   <div class="theater-filter-container">
-    
     <div class="d-flex align-items-center mb-3">
-      <AreaSelector 
-        v-model="selectedRegionId" 
-        @change="handleRegionChange"
-      />
+      <AreaSelector v-model="selectedRegionId" @change="handleRegionChange" />
     </div>
 
     <div class="filter-scroll-container">
@@ -14,48 +10,66 @@
           v-for="theater in currentRegionTheaters"
           :key="theater"
           :label="theater"
-          :active="modelValue === theater"
           class="filter-item"
-          @toggle="selectTheater(theater)"
+          
+
+          :active="modelValue === theater"
+          
+          @click="selectTheater(theater)"
         />
       </div>
     </div>
-    
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'; // 💡 補回 ref 的引入
-import { useCinemaStore } from '@/store/cinema';
-import FilterButton from './Button/FilterButton.vue';
-import AreaSelector from './AreaSelector.vue'; // 請確認路徑是否正確
-
-// 接收父層 (FastBookingView) 傳來的 v-model 綁定
-const props = defineProps(['modelValue']);
-const emit = defineEmits(['update:modelValue']);
+import { ref, computed, watch } from "vue";
+import { useCinemaStore } from "@/store/cinema";
+import FilterButton from "./Button/FilterButton.vue";
+import AreaSelector from "./AreaSelector.vue"; 
+// 💡 修正致命錯誤：將兩次宣告合併為一次，並賦值給 props 與 emit 變數以供後續使用
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: "",
+  },
+});
 
 const cinemaStore = useCinemaStore();
 
-// 預設選中區域：'north' (雙北)
-const selectedRegionId = ref('north');
+// 💡 1. 預設選中區域：改為優先從 Store 讀取，否則預設雙北
+const selectedRegionId = ref(cinemaStore.selectedRegion || "north");
+
+// 💡 2. 核心魔法：監聽父層傳來的影城名稱，自動反推並切換「區域頁籤」
+watch(() => props.modelValue, (newVal) => {
+  if (!newVal) return;
+  // 找出這個影城屬於哪個區域
+  const region = cinemaStore.cinemaList.find(r => r.theaters.includes(newVal));
+  if (region) {
+    selectedRegionId.value = region.id; // 讓畫面上的 AreaSelector 跳過去
+    cinemaStore.selectedRegion = region.id; // 同步回 Store
+  }
+}, { immediate: true });
 
 // 計算屬性：自動過濾出「當前選中區域」的影城清單
 const currentRegionTheaters = computed(() => {
-  const region = cinemaStore.cinemaList.find(r => r.id === selectedRegionId.value);
+  const region = cinemaStore.cinemaList.find(
+    (r) => r.id === selectedRegionId.value,
+  );
   return region ? region.theaters : [];
 });
 
-// 處理影城點擊，發送給父層更新
+// 處理影城點擊，發送給父層更新 (觸發 v-model)
 const selectTheater = (name) => {
-  emit('update:modelValue', name);
+  emit("update:modelValue", name);
 };
 
 // 當使用者切換區域 (例如從雙北切到桃竹苗) 時，自動選中該區域的第一個影城
 const handleRegionChange = () => {
   if (currentRegionTheaters.value.length > 0) {
-    emit('update:modelValue', currentRegionTheaters.value[0]);
+    emit("update:modelValue", currentRegionTheaters.value[0]);
   } else {
-    emit('update:modelValue', '');
+    emit("update:modelValue", "");
   }
 };
 </script>
@@ -70,11 +84,11 @@ const handleRegionChange = () => {
   /* --- 捲動容器設定 --- */
   .filter-scroll-container {
     width: 100%;
-    
+
     // 📱 預設 (手機版)：開啟橫向捲動
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    
+
     &::-webkit-scrollbar {
       display: none;
     }
@@ -97,16 +111,16 @@ const handleRegionChange = () => {
     // 💻 桌機版 (md 768px 以上)：恢復折行，縮小間距
     @include media-breakpoint-up(md) {
       flex-wrap: wrap;
-      gap: var(--gap-sm); 
+      gap: var(--gap-sm);
       padding-bottom: 0;
     }
   }
 
   /* --- 單一按鈕防變形設定 --- */
   .filter-item {
-    flex-shrink: 0; 
+    flex-shrink: 0;
     white-space: nowrap;
-    
+
     @include media-breakpoint-up(md) {
       flex-shrink: 1;
     }

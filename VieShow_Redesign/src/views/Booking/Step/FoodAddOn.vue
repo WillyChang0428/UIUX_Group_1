@@ -1,6 +1,5 @@
 <template>
-  <div class="food-addon">
-
+  <div class="food-addon container w-100 py-5">
     <!-- 頁籤列：橫向滾動不換行 -->
     <div class="food-addon__tabs-wrap">
       <div class="d-flex gap-2 food-addon__tabs">
@@ -22,7 +21,7 @@
         class="food-item d-flex align-items-start justify-content-between"
         :class="[
           index % 2 === 0 ? 'food-item--even' : 'food-item--odd',
-          { 'food-item--active': item.quantity > 0 }
+          { 'food-item--active': item.quantity > 0 },
         ]"
       >
         <!-- 左：圖片 -->
@@ -35,7 +34,9 @@
           <p
             class="food-item__name mb-0"
             :class="{ 'food-item__name--active': item.quantity > 0 }"
-          >{{ item.name }}</p>
+          >
+            {{ item.name }}
+          </p>
           <div class="d-flex flex-column align-items-baseline">
             <span v-if="item.originalPrice" class="food-item__price-original">
               NT {{ item.originalPrice }}
@@ -45,9 +46,9 @@
         </div>
 
         <!-- 右：價格 + StepperCounter（每品項上限 9，最少 0）-->
-        <div class="food-item__right d-flex flex-column justify-content-end align-items-end">
-          
-
+        <div
+          class="food-item__right d-flex flex-column justify-content-end align-items-end"
+        >
           <StepperCounter
             :model-value="item.quantity"
             :min="0"
@@ -57,16 +58,17 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import FilterButton from '@/components/Booking/FastBooking/Button/FilterButton.vue'
-import StepperCounter from '@/components/Booking/FastBooking/Button/StepperCounter.vue'
+import StepperCounter from '@/components/Booking/Button/StepperCounter.vue'
+import { useBookingStore } from '@/store/bookingStore' // 💡 引入大腦 Store
 
 const emit = defineEmits(['update'])
+const bookingStore = useBookingStore()
 
 // ── 頁籤 ───────────────────────────────────────────────────────
 const tabs = [
@@ -80,36 +82,33 @@ const activeTab = ref('popcorn')
 
 // ── 商品資料 ───────────────────────────────────────────────────
 const allItems = ref([
-  { id: 'p1', tab: 'popcorn', name: '大爆米花', price: 145,
-    image: 'https://picsum.photos/seed/popcorn-lg/120/120', quantity: 0 },
-  { id: 'p2', tab: 'popcorn', name: '中爆米花', price: 136,
-    image: 'https://picsum.photos/seed/popcorn-md/120/120', quantity: 0 },
-  { id: 'p3', tab: 'popcorn', name: '小爆米花', price: 128,
-    image: 'https://picsum.photos/seed/popcorn-sm/120/120', quantity: 0 },
-  { id: 'd1', tab: 'drink', name: '大可樂', price: 77,
-    image: 'https://picsum.photos/seed/cola-lg/120/120', quantity: 0 },
-  { id: 'd2', tab: 'drink', name: '中可樂', price: 68,
-    image: 'https://picsum.photos/seed/cola-md/120/120', quantity: 0 },
-  { id: 'd3', tab: 'drink', name: '小可樂', price: 64,
-    image: 'https://picsum.photos/seed/cola-sm/120/120', quantity: 0 },
-  { id: 'f1', tab: 'food', name: '熱狗', price: 140, originalPrice: 165,
-    image: 'https://picsum.photos/seed/hotdog/120/120', quantity: 0 },
-  { id: 'f2', tab: 'food', name: '吉拿棒', price: 140,
-    image: 'https://picsum.photos/seed/churros/120/120', quantity: 0 },
-  { id: 'b1', tab: 'combo', name: '星展中可小爆', price: 49,
-    image: 'https://picsum.photos/seed/dbs/120/120', quantity: 0 },
-  { id: 'b2', tab: 'combo', name: '台新中可小爆', price: 35,
-    image: 'https://picsum.photos/seed/taishin/120/120', quantity: 0 },
+  { id: 'p1', tab: 'popcorn', name: '大爆米花', price: 145, image: 'https://picsum.photos/seed/popcorn-lg/120/120', quantity: 0 },
+  { id: 'p2', tab: 'popcorn', name: '中爆米花', price: 136, image: 'https://picsum.photos/seed/popcorn-md/120/120', quantity: 0 },
+  { id: 'p3', tab: 'popcorn', name: '小爆米花', price: 128, image: 'https://picsum.photos/seed/popcorn-sm/120/120', quantity: 0 },
+  { id: 'd1', tab: 'drink', name: '大可樂', price: 77, image: 'https://picsum.photos/seed/cola-lg/120/120', quantity: 0 },
+  { id: 'd2', tab: 'drink', name: '中可樂', price: 68, image: 'https://picsum.photos/seed/cola-md/120/120', quantity: 0 },
+  { id: 'd3', tab: 'drink', name: '小可樂', price: 64, image: 'https://picsum.photos/seed/cola-sm/120/120', quantity: 0 },
+  { id: 'f1', tab: 'food', name: '熱狗', price: 140, originalPrice: 165, image: 'https://picsum.photos/seed/hotdog/120/120', quantity: 0 },
+  { id: 'f2', tab: 'food', name: '吉拿棒', price: 140, image: 'https://picsum.photos/seed/churros/120/120', quantity: 0 },
+  { id: 'b1', tab: 'combo', name: '星展中可小爆', price: 49, image: 'https://picsum.photos/seed/dbs/120/120', quantity: 0 },
+  { id: 'b2', tab: 'combo', name: '台新中可小爆', price: 35, image: 'https://picsum.photos/seed/taishin/120/120', quantity: 0 },
 ])
 
 const currentItems = computed(() =>
   allItems.value.filter(item => item.tab === activeTab.value)
 )
 
-// 直接接收 StepperCounter 的新值（不是 delta）
+// ── 💡 確保這裡只有這「一個」 updateQty 函式 ────────────────────────────────
 const updateQty = (item, newVal) => {
-  item.quantity = newVal
-  emit('update', allItems.value.filter(i => i.quantity > 0))
+  item.quantity = newVal;
+  
+  const selectedFoods = allItems.value.filter(i => i.quantity > 0);
+  
+  // 1. 同步到大腦 Store
+  bookingStore.updateFoodAddOns(selectedFoods);
+  
+  // 2. 發送給父層
+  emit('update', selectedFoods);
 }
 </script>
 
@@ -118,7 +117,7 @@ const updateQty = (item, newVal) => {
 
 .food-addon {
   width: 100%;
-  font-family: 'Noto Sans TC', 'PingFang TC', sans-serif;
+  font-family: "Noto Sans TC", "PingFang TC", sans-serif;
 }
 
 // ── 頁籤：橫向滾動 ────────────────────────────────────────────
@@ -129,7 +128,9 @@ const updateQty = (item, newVal) => {
   -ms-overflow-style: none;
   padding-bottom: var(--gap-md);
   margin-bottom: var(--gap-sm);
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .food-addon__tabs {
@@ -164,10 +165,6 @@ const updateQty = (item, newVal) => {
     height: 100pt;
   }
 
-  // 交替背景
-  &--even { background: transparent; }
-  &--odd  { background-color: v.$vieshow-dark-section; }
-  // &--active { background: rgba(v.$vieshow-primary, 0.08) !important; }
 }
 
 // ── 圖片 ───────────────────────────────────────────────────────
@@ -206,7 +203,9 @@ const updateQty = (item, newVal) => {
   transition: color 0.2s ease;
 
   // 有數量時變 primary 藍色
-  &--active { color: v.$vieshow-primary; }
+  &--active {
+    color: v.$vieshow-primary;
+  }
 }
 
 // ── 右側：價格 + 計數器（水平排列）──────────────────────────

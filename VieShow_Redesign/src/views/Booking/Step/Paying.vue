@@ -1,51 +1,41 @@
 <template>
-    <div class="container  d-flex flex-column gap-3 py-5">
-        <OrderSummary />
-        <iShowCash :checkoutTotal="finalTotal" @select="handlePaymentSelect" @topup-success="handleTopUpSuccess" />
-        <CreditCard @select="handlePaymentSelect" @card-saved="handleCardSaved" />
-        <div class="payment-page">
-            <ReceiptOption />
-        </div>
+  <div class="container d-flex flex-column gap-3 py-5 position-relative">
+    <OrderSummary />
+    
+    <iShowCash :checkoutTotal="finalTotal" @select="handlePaymentSelect" @topup-success="handleTopUpSuccess" />
+    <CreditCard @select="handlePaymentSelect" @card-saved="handleCardSaved" />
+    
+    <div class="payment-page">
+        <ReceiptOption />
     </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import OrderSummary from '@/components/Booking/ConfirmationPage/OrderSummary.vue'
-import iShowCash from '@/components/Booking/Button/Paying/iShowCash.vue'
-import CreditCard from '@/components/Booking/Button/Paying/CreditCard.vue'
+import { computed } from 'vue';
+import { useBookingStore } from '@/store/bookingStore';
+
+import OrderSummary from '@/components/Booking/ConfirmationPage/OrderSummary.vue';
+import iShowCash from '@/components/Booking/Button/Paying/iShowCash.vue';
+import CreditCard from '@/components/Booking/Button/Paying/CreditCard.vue';
 import ReceiptOption from '@/components/Booking/Button/Paying/ReceiptOption.vue';
 
-// 儲存目前的發票設定
-const currentReceiptData = ref({
-    type: 'personal-e',
-    barcode: '',
-    taxId: '',
-    charityId: ''
-});
+const bookingStore = useBookingStore();
 
-const isModalOpen = ref(false);
+// 從 Store 拿總金額
+const finalTotal = computed(() => bookingStore.finalTotal);
 
-const openReceiptModal = () => {
-    isModalOpen.value = true;
+// 💡 當使用者選擇付款方式時，存進 Store 大腦中
+const handlePaymentSelect = (method) => {
+    console.log('使用者選擇了付款方式:', method);
+    bookingStore.setPaymentMethod(method); 
 };
 
-// 接收來自 ReceiptSetting 的資料更新
-const handleReceiptUpdate = (newData) => {
-    currentReceiptData.value = newData;
-    // 如果收到的是從「儲存」按鈕發送的完整資料，通常會在這裡順便關閉 Modal
-    // isModalOpen.value = false; 
+const handleTopUpSuccess = () => {
+    console.log('儲值成功！');
 };
 
-
+const handleCardSaved = () => {
+    console.log('信用卡資訊已儲存！');
+};
 </script>
-
-
-<style lang="scss">
-html,
-body,
-#app {
-    height: fit-content;
-    background: v.$vieshow-gradient-dark;
-}
-</style>
