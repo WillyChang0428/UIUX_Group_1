@@ -8,10 +8,15 @@ import { ref } from 'vue'
 
 </script>
 
+<template>
+
+</template>
+
 <style lang="scss">
-@import "@/assets/scss/variables";
-body {
+html,
+body,
+#app {
+  height: 100vh;
   background: v.$vieshow-gradient-dark;
 }
 </style>
-
