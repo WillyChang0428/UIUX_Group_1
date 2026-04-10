@@ -110,12 +110,18 @@ watch(() => props.modelValue, (newVal) => {
 
 .modal-container {
   width: fit-content;
+  max-width: 300px;
   background: rgba($white, 0.1); 
   border: 2px solid rgba($white, 0.2); 
   border-radius: $border-radius-pc;
   backdrop-filter: blur(20px) saturate(180%);
   color: $white;
   word-break: break-word;
+
+  @include media-breakpoint-up(md) {
+    max-width: 480px;
+  }
+  background: rgba($white, 0.1);
 
   &.border-danger {
     border-color: rgba($vieshow-danger, 0.5) !important;
