@@ -1,5 +1,5 @@
 <template>
-  <div class="switch d-flex justify-content-center align-items-center">
+  <div class="switch d-flex justify-content-center align-items-center pb-5">
     <div class="container p-0">
       <div
         class="toggle-container d-flex justify-content-center align-items-center gap-3 w-100"
@@ -64,6 +64,7 @@ defineEmits(["update:modelValue"]);
   justify-content: center;
   padding: 0;
   font-size: v.$h6-font-size-mobile;
+  font-weight: 400;
   transition: all 0.3s ease;
   white-space: nowrap;
   transition: all 0.3s ease; // 平滑的轉換效果
@@ -73,6 +74,7 @@ defineEmits(["update:modelValue"]);
     background: v.$light !important;
     color: v.$vieshow-primary !important;
     box-shadow: 0 8px 15px -2px rgba(0, 123, 255, 0.85) !important; // 選中時的發光/陰影感
+    font-weight: 400;
   }
 
   // 滑鼠懸停效果 (未選中時)

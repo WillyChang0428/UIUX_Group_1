@@ -25,6 +25,10 @@ const router = createRouter({
           component: () => import("@/views/MovieInfo/MovieDetail.vue") 
         },
         { 
+          path: "MovieInfo", 
+          component: () => import("@/views/MovieInfo/MovieInfo.vue") 
+        },
+        { 
           path: "fastbooking", 
           component: () => import("@/views/Booking/FastBooking.vue") 
         },

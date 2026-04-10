@@ -63,30 +63,26 @@ const handleMouseEnter = (item) => {
 const handleMouseLeave = () => {
   if (window.innerWidth >= 768) activeSubMenu.value = null;
 };
+
 const handleMobileClick = (item, event) => {
-  // 僅針對手機端 (< 768px) 且有子選單的項目
+  // 💡 如果是在手機版，且該項目「有」子選單，就攔截跳轉並展開子選單
   if (window.innerWidth < 768 && item.subItems) {
-    // 如果目前這個子選單「還沒被打開」
-    event.preventDefault(); // 🛑 攔截路由跳轉
+    event.preventDefault(); 
 
     if (activeSubMenu.value === item.text) {
       activeSubMenu.value = null;
     } else {
       activeSubMenu.value = item.text;
     }
+  } else {
+    // 💡 關鍵修正：如果「沒有」子選單（也就是可以直接跳轉的連結），
+    // 或是目前在電腦版，就發送 close 事件給父元件，把選單關起來！
+    emit('close');
   }
 };
 
 const menuItems = [
-  {
-    text: "電影資訊",
-    english: "Movie Information",
-    link: "/movies",
-    subItems: [
-      { text: "現正熱映", link: "/movies/now-showing" },
-      { text: "即將上映", link: "/movies/coming-soon" },
-    ],
-  },
+  { text: "電影資訊", english: "Movie Information", link: "/MovieInfo" },
   { text: "影城據點", english: "Theaters", link: "/theaters" },
   { text: "最新消息", english: "News", link: "/news" },
   { text: "團票 / 包廳", english: "Group Booking", link: "/group" },
@@ -95,51 +91,50 @@ const menuItems = [
 </script>
 
 <style scoped lang="scss">
+/* 💡 統一使用 @import 載入變數，下方全面拔除 v. 前綴 */
+@import "@/assets/scss/variables";
+
 .app-menu-overlay {
   position: fixed;
-  // 💡 呼叫全域導航欄高度變數，確保手機/電腦自動對齊 [cite: 122]
-  top: v.$web-top-padding-mobile;
-
-  @include v.media-breakpoint-up(md) {
-    top: v.$web-top-padding-pc;
-  }
-  @include v.media-breakpoint-up(lg) {
-    display: none !important;
-  }
-
+  top: $web-top-padding-mobile;
   left: 0;
   height: fit-content;
-  background-color: v.$vieshow-dark; // [cite: 138]
+  background-color: $vieshow-dark; 
   z-index: 1100;
   overflow-y: auto;
 
+  @include media-breakpoint-up(md) {
+    top: $web-top-padding-pc;
+  }
+  
+  // 💡 在大螢幕 (lg 以上) 通常會顯示完整導覽列，所以隱藏漢堡選單
+  @include media-breakpoint-up(lg) {
+    display: none !important;
+  }
+
   &::-webkit-scrollbar {
-    display: none; // [cite: 126]
+    display: none; 
   }
 }
 
 .menu-item {
-  // 💡 使用語意化邊框顏色變數 [cite: 161]
-  border-color: v.$vieshow-secondary-emp !important;
+  border-color: $vieshow-secondary-emp !important;
 
   .chinese {
-    // 💡 移除寫死數值，改用全域字距變數 (0.1em) [cite: 110]
-    // 若需更寬字距 (0.3em) 則依指南保留為特殊 CSS 寫法 [cite: 127]
-    letter-spacing: v.$letter-spacing-wide;
-    margin-right: calc(v.$letter-spacing-wide * -1);
+    letter-spacing: $letter-spacing-wide;
+    margin-right: calc(#{$letter-spacing-wide} * -1);
   }
 }
 
 .sub-menu-list {
-  // 💡 背景透明度配合全域變數基準
-  background-color: rgba(v.$black, 0.2);
+  background-color: rgba($black, 0.2);
 }
 
-/* 💡 從上而下絲滑展開效果 - 整合開發指南規範 [cite: 127] */
+/* 💡 從上而下絲滑展開效果 */
 .slide-enter-active {
   transition:
     clip-path 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-    opacity 0.2s linear; // 稍微增加透明度過度，感官更流暢
+    opacity 0.2s linear; 
 }
 
 .slide-leave-active {
