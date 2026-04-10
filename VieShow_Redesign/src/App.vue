@@ -3,8 +3,6 @@
 </template>
 
 <script setup>
-import { useMovieStore } from '@/store/movieStore'
-import BookingLayoutPC from '@/components/Booking/BookingLayoutPC.vue'
 
 </script>
 
