@@ -37,7 +37,7 @@
         class="action-zone d-flex align-items-center gap-2 order-3 order-lg-3"
       >
         <router-link
-          to="/booking"
+          to="/fastbooking"
           class="btn btn-light rounded-pill px-lg-2 py-lg-1 fw-medium text-primary d-none d-lg-block"
         >
           快速訂票

@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <SplashLoading />
     <Transition name="fade">
       <div v-if="appStore.isRouting" class="global-loading-overlay">
         <div class="spinner-border text-primary" role="status"></div>
@@ -13,7 +14,7 @@
 
 <script setup>
 import { useAppStore } from '@/store/appStore';
-
+import SplashLoading from '@/components/Common/SplashLoading.vue';
 const appStore = useAppStore();
 </script>
 
