@@ -48,13 +48,13 @@
           class="recaptcha-box d-flex justify-content-between align-items-center mb-4 mb-lg-3 gap-2"
           @click="isRobotChecked = !isRobotChecked"
         >
-          <div class="d-flex align-items-center gap-3">
+          <div class="d-flex align-items-center gap-3 gap-md-2">
             <i
               class="fa-solid fa-check text-success fs-4"
               v-if="isRobotChecked"
             ></i>
             <div class="check-box" v-else></div>
-            <span class="text-white">I'm not a robot</span>
+            <span class="robot-text text-white">我不是機器人</span>
           </div>
           <div class="recaptcha-logo d-flex flex-column align-items-center">
             <img
@@ -62,7 +62,7 @@
               alt="reCAPTCHA"
               width="28"
             />
-            <span class="text-tertiary mt-1 recaptcha-terms"
+            <span class="text-tertiary mt-1 recaptcha-terms "
               >Privacy - Terms</span
             >
           </div>
@@ -221,8 +221,13 @@ const handleClose = () => {
       transition: all 0.2s ease;
     }
 
+.robot-text{
+  font-size: var(--app-font-size-sm); // 💡 取代 14px
+}
+
     .recaptcha-terms {
       font-size: 0.65rem; // 💡 取代 9px
+      flex-wrap: nowrap;
     }
 
     &:hover {

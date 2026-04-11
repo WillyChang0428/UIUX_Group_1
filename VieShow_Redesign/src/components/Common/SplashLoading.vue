@@ -36,13 +36,13 @@ onMounted(() => {
   // Step 1: 0.1秒後，開始由下而上「漸層流動填滿」
   setTimeout(() => { currentStep.value = 1; }, 100);
 
-  // Step 2: 1.2秒後，文字淡入 (此時剛好填滿)
+  // Step 2: 1.7秒後，文字淡入 (此時剛好填滿)
   setTimeout(() => { currentStep.value = 2; }, 1700);
 
-  // Step 3: 2.0秒後，整組往上飛並縮小
+  // Step 3: 2.5秒後，整組往上飛並縮小
   setTimeout(() => { currentStep.value = 3; }, 2500);
 
-  // Step 4: 2.8秒後，黑色背景淡出，動畫結束
+  // Step 4: 3.3秒後，黑色背景淡出，動畫結束
   setTimeout(() => {
     isVisible.value = false;
     document.body.style.overflow = ""; 
@@ -99,27 +99,26 @@ onMounted(() => {
 
 /* 🌊 漸層流動層：核心魔術 */
 .gradient-logo {
-  /* 1. 畫出您圖片中的漸層背景 */
   background: linear-gradient(90deg, #2660A9 0%, #2F96EE 100%);
   
-  /* 2. 把 SVG 當作遮罩，讓漸層只顯示在 W 形狀內 */
   -webkit-mask-image: url('@/assets/images/SvgLogo.svg');
   -webkit-mask-size: contain;
   -webkit-mask-position: center;
   -webkit-mask-repeat: no-repeat;
-  
-  /* 標準語法相容 */
   mask-image: url('@/assets/images/SvgLogo.svg');
   mask-size: contain;
   mask-position: center;
   mask-repeat: no-repeat;
 
-  /* 3. 水位上升動畫 (clip-path) */
-  clip-path: inset(100% 0 0 0);
-  transition: clip-path 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* 💡 改變 1：使用 ellipse 創造圓弧水面。中心點放在底部偏下 (110%) */
+  clip-path: ellipse(150% 0% at 50% 110%);
+  
+  /* 💡 改變 2：時間拉長一點點 (1.2s)，並換成更像液體減速的貝茲曲線 */
+  transition: clip-path 4s cubic-bezier(0.2, 0.8, 0.2, 1);
 
   &.is-filling {
-    clip-path: inset(0 0 0 0); /* 填滿！ */
+    /* 💡 往上膨脹填滿，頂部會是一道漂亮的弧線！ */
+    clip-path: ellipse(150% 150% at 50% 110%); 
   }
 }
 

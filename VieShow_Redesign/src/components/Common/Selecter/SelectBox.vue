@@ -164,6 +164,30 @@ const handleSearch = () => {
 
 .booking-selector {
   width: 100%;
+
+  /* 💡 修正 1：防止 Flex 子元素被超長文字撐破 */
+  .selection-wrapper > div {
+    min-width: 0; 
+  }
+
+  /* 💡 修正 2：深入 FlatSelect 內部，把超長文字變成 ... */
+  :deep(.base-select-container) {
+    min-width: 0;
+
+    .select-header {
+      .placeholder {
+        /* 截斷文字黃金鐵三角 */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        
+        /* 讓文字區域可以彈性伸縮，並確保防呆 */
+        flex: 1;
+        min-width: 0;
+        text-align: left; /* 確保文字靠左，避免截斷後位置跑掉 */
+      }
+    }
+  }
 }
 
 .mode-home {

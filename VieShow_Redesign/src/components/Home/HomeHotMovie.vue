@@ -179,6 +179,7 @@ onUnmounted(() => {
     height: 400px;
     perspective: 1000px;
     position: relative;
+    touch-action: pan-y;
   }
   .poster-card {
     width: 260px;

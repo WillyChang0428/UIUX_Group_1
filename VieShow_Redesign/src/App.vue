@@ -8,16 +8,16 @@
     </Transition>
 
     <router-view />
-
-    </div>
+    <HomeVideo />
+  </div>
 </template>
 
 <script setup>
-import { useAppStore } from '@/store/appStore';
-import SplashLoading from '@/components/Common/SplashLoading.vue';
+import { useAppStore } from "@/store/appStore";
+import SplashLoading from "@/components/Common/SplashLoading.vue";
+import HomeVideo from "@/components/Home/HomeVideo.vue";
 const appStore = useAppStore();
 </script>
-
 
 <style lang="scss">
 html,
@@ -42,7 +42,7 @@ body,
   position: fixed;
   inset: 0;
   z-index: 9999; /* 確保它在最高層，蓋住 Navbar 與 BottomBar */
-  background-color: #0F1115; /* 威秀深色底 */
+  background-color: #0f1115; /* 威秀深色底 */
   display: flex;
   justify-content: center;
   align-items: center;

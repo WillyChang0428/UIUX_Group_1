@@ -6,7 +6,7 @@
 <template>
   <div v-if="movieInfo" class="movie-info-bar">
     <div class="glass-card">
-      <div class="container">
+      <div>
         <div class="glass-card__inner">
           <!-- 海報縮圖 -->
           <div class="poster-wrapper">

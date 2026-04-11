@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import MovieSwitch from "../../components/MovieInfo/MovieSwitch.vue";
 import MovieCards from "../../components/MovieInfo/MovieCards.vue";
+import GoOnTop from "../../components/Common/Button/GoOnTop.vue";
 import { useMovieStore } from "../../store/movieStore";
 
 const movieStore = useMovieStore();
@@ -38,6 +39,7 @@ const upcoming = "upcoming";
       </template>
     </div>
   </div>
+   <GoOnTop />
 </template>
 
 <style lang="scss" scoped>

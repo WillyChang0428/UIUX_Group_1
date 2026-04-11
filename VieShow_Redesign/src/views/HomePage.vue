@@ -5,7 +5,6 @@ import HomeLiveConcert from "@/components/Home/HomeLiveConcert.vue";
 import HomeNewsSection from "@/components/Home/HomeNewsSection.vue";
 import HomeSectionTitle from "@/components/Home/HomeSectionTitle.vue";
 import SelectBox from "@/components/Common/Selecter/SelectBox.vue";
-import HomeVideo from "@/components/Home/HomeVideo.vue";
 import GoOnTop from "@/components/Common/Button/GoOnTop.vue";
 </script>
 
@@ -27,7 +26,6 @@ import GoOnTop from "@/components/Common/Button/GoOnTop.vue";
       <HomeSectionTitle title="最新消息" link="/news" />
     </div>
     <HomeNewsSection />
-    <HomeVideo />
     <GoOnTop />
   </div>
 </template>

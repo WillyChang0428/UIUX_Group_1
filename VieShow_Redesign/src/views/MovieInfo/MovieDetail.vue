@@ -83,6 +83,7 @@
             </div>
         </div>
     </div>
+    <GoOnTop />
 </template>
 
 <script setup>
@@ -90,6 +91,8 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMovieStore } from '@/store/movieStore';
 import SecondaryButton from '@/components/Common/Button/SecondaryButton.vue';
+import GoOnTop from '@/components/Common/Button/GoOnTop.vue';
+
 // 💡 顯式引入分級圖片，確保 Vite 打包時能正確解析路徑
 import imgG from '@/assets/images/movie_level/普遍級.png';
 import imgP from '@/assets/images/movie_level/保護級.png';

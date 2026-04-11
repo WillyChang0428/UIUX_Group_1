@@ -25,12 +25,16 @@
 import { ref, onMounted } from "vue";
 
 const isVisible = ref(false);
-const videoPlayer = ref(null);
 
 onMounted(() => {
-  // 💡 僅限手機版 (中斷點 768px 以下) 顯示 [cite: 118]
+  // 💡 僅限手機版 (中斷點 768px 以下) 顯示
   if (window.innerWidth < 768) {
-    isVisible.value = true;
+    
+    // 💡 設定計時器：等待 1000 毫秒 (1秒) 後，才將 isVisible 設為 true
+    setTimeout(() => {
+      isVisible.value = true;
+    }, 4300);
+    
   }
 });
 
@@ -40,7 +44,7 @@ const closeVideo = () => {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/scss/variables"; // 💡 調用地基變數 [cite: 1, 92]
+@import "@/assets/scss/variables"; // 💡 調用地基變數
 
 .mobile-video-overlay {
   position: fixed;
@@ -49,11 +53,12 @@ const closeVideo = () => {
   width: 100vw;
   height: 100vh;
   z-index: 9999;
-  background: rgba(v.$black, 0.65); // 增加背景遮罩深度 [cite: 93]
+  /* 💡 修正編譯錯誤：移除 v. 前綴，直接使用 $black */
+  background: rgba($black, 0.65); 
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--gap-md); // 手機版 16px 內距 [cite: 131]
+  padding: var(--gap-md); 
 }
 
 .video-modal-container {
@@ -63,18 +68,19 @@ const closeVideo = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--gap-sm); // 元素間距 8px [cite: 130]
+  gap: var(--gap-sm); 
 }
 
 .close-btn {
   position: absolute;
-  z-index: 10; // 💡 確保按鈕在影片之上
+  z-index: 10; 
   top: 10px;
   right: 10px;
   align-self: flex-end;
-  color:rgba(v.$white, 0.5);
+  /* 💡 修正編譯錯誤：移除 v. 前綴 */
+  color:rgba($white, 0.5);
   border-radius: 50%;
-  width: var(--icon-sm); // 對齊響應式圖示尺寸 [cite: 156]
+  width: var(--icon-sm); 
   height: var(--icon-sm);
   display: flex;
   align-items: center;
@@ -85,24 +91,26 @@ const closeVideo = () => {
   position: relative;
   width: 100%;
   max-width: 350px;
-  aspect-ratio: 9 / 16; // 維持直式預告片比例
-  background: v.$black;
-  border: 1px solid v.$vieshow-primary; // 威秀藍邊框 [cite: 160]
-  border-radius: var(--app-radius-lg); // 手機版 12px 圓角 [cite: 148]
-  box-shadow: 0 0 30px rgba(v.$vieshow-primary, 0.5); // 加強發光感
+  aspect-ratio: 9 / 16; 
+  /* 💡 修正編譯錯誤：移除 v. 前綴 */
+  background: $black;
+  border: 1px solid $vieshow-primary; 
+  border-radius: var(--app-radius-lg); 
+  box-shadow: 0 0 30px rgba($vieshow-primary, 0.5); 
 }
 
 .video-element {
   width: 100%;
   height: 100%;
-  object-fit: cover; // 確保影片填滿容器
+  object-fit: cover; 
 }
 
 .bottom-glow {
   width: 80%;
   height: 20px;
   margin: 0 auto;
-  background: v.$vieshow-primary;
+  /* 💡 修正編譯錯誤：移除 v. 前綴 */
+  background: $vieshow-primary;
   filter: blur(25px);
   opacity: 0.6;
 }
