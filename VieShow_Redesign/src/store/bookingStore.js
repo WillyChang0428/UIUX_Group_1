@@ -14,28 +14,43 @@ export const useBookingStore = defineStore("booking", () => {
     charityId: "",
   });
   const paymentMethod = ref(null);
+  const selectedCard = ref(null); // 💡 紀錄選用的信用卡
 
   // ── 2. Computed (自動計算總計) ──
-  // 💡 關鍵邏輯：計算總票數 (套票 1 份 = 2 個位子，所以乘以 2)
+
+  // 1. 計算總票數
   const totalTicketCount = computed(() => {
-    const tCount = tickets.value.reduce((sum, t) => sum + t.quantity, 0);
-    const cCount = combos.value.reduce((sum, c) => sum + c.quantity * 2, 0);
-    return tCount + cCount;
+    const normalTickets = tickets.value.reduce((sum, t) => sum + (t.quantity || 0), 0);
+    const comboTickets = combos.value.reduce((sum, combo) => sum + combo.quantity * (combo.ticketCount || 1), 0);
+    return normalTickets + comboTickets;
   });
 
-  // 💡 各項金額與最終總計
-  const ticketTotal = computed(() =>
-    tickets.value.reduce((sum, t) => sum + t.price * t.quantity, 0),
-  );
-  const comboTotal = computed(() =>
-    combos.value.reduce((sum, c) => sum + c.price * c.quantity, 0),
-  );
-  const foodTotal = computed(() =>
-    foodAddOns.value.reduce((sum, f) => sum + f.price * f.quantity, 0),
-  );
-  const finalTotal = computed(
-    () => ticketTotal.value + comboTotal.value + foodTotal.value,
-  );
+  const ticketsTotal = computed(() => {
+    return tickets.value.reduce((sum, t) => sum + (t.price || 0) * (t.quantity || 0), 0);
+  });
+
+  const combosTotal = computed(() => {
+    return combos.value.reduce((sum, combo) => sum + (combo.price || 0) * (combo.quantity || 0), 0);
+  });
+
+  const foodsTotal = computed(() => {
+    return foodAddOns.value.reduce((sum, food) => sum + (food.price || 0) * (food.quantity || 0), 0);
+  });
+
+  // 商品總金額 (票 + 套票 + 餐飲)
+  const finalTotal = computed(() => {
+    return ticketsTotal.value + combosTotal.value + foodsTotal.value;
+  });
+
+  // 💡 架構升級：把散落在各元件的手續費計算，統一收回大腦！
+  const handlingFee = computed(() => {
+    return totalTicketCount.value * 20; // 每張票 20 元手續費
+  });
+
+  // 💡 架構升級：包含手續費的「最終結帳金額」
+  const checkoutTotal = computed(() => {
+    return finalTotal.value + handlingFee.value;
+  });
 
   // ── 3. Actions (更新資料的方法) ──
   const updateTickets = (newTickets) => (tickets.value = newTickets);
@@ -61,6 +76,9 @@ export const useBookingStore = defineStore("booking", () => {
     };
     paymentMethod.value = null;
   };
+  const updateSelectedCard = (card) => {
+    selectedCard.value = card;
+  };
 
   return {
     tickets,
@@ -68,18 +86,22 @@ export const useBookingStore = defineStore("booking", () => {
     selectedSeats,
     foodAddOns,
     receipt,
+    paymentMethod,
     totalTicketCount,
-    ticketTotal,
-    comboTotal,
-    foodTotal,
+    ticketsTotal, 
+    combosTotal,   
+    foodsTotal,   
     finalTotal,
+    handlingFee,   // 💡 記得 return 出去給元件用
+    checkoutTotal, // 💡 記得 return 出去給元件用
     updateTickets,
     updateCombos,
     updateSeats,
     updateFoodAddOns,
     updateReceipt,
     resetBooking,
-    paymentMethod,
     setPaymentMethod,
+    selectedCard,
+    updateSelectedCard,
   };
 });

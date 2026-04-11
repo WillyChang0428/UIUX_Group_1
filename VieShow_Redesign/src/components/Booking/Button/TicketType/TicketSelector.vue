@@ -15,7 +15,7 @@
       </div>
 
       <!-- 銀行優惠展開按鈕 -->
-      <button class="bank-toggle" @click="showBank = !showBank">
+      <button class="bank-toggle mb-2" @click="showBank = !showBank">
         <i class="fa-solid fa-arrow-down"></i>
         <fs-6>查看銀行優惠</fs-6>
         <i class="fa-solid fa-arrow-down"></i>
@@ -25,7 +25,7 @@
       <Transition name="slide-down">
         <div
           v-if="showBank"
-          class="ticket-section__list ticket-section__list--bank"
+          class="ticket-section__list ticket-section__list--bank px-3 mb-4"
         >
           <TicketRow
             v-for="ticket in bankTickets"
@@ -61,8 +61,7 @@
     <!-- ③ 底部提示 ───────────────────────────────────────────── -->
     <div class="ticket-notice">
       <p>
-        請選擇欲購票的電影票張數和類型，系統將自動為您保留座位，每筆交易最多可購買
-        4 張電影票。
+        系統將自動為您保留座位，每筆交易最多可購買 4 張電影票
       </p>
     </div>
   </div>
@@ -141,7 +140,7 @@ const otherTickets = ref([
   {
     id: "group",
     name: "團體票",
-    desc: "持有當體電影優惠票",
+    desc: "持有團體電影優惠票",
     note: "需提前申請",
     price: 320,
     quantity: 0,
@@ -150,22 +149,13 @@ const otherTickets = ref([
   },
 ]);
 
-// ── 總張數限制（最多 4 張）────────────────────────────────────
-const totalQty = computed(() => {
-  const all = [
-    ...generalTickets.value,
-    ...bankTickets.value,
-    ...otherTickets.value,
-  ];
-  return all.reduce((sum, t) => sum + t.quantity, 0);
-});
-
-// 每張票的最大可加數量 = 4 - 已選總數 + 自己目前數量
+// 直接讀取大腦的總數來算剩餘配額
 const remainingQty = (ticket) => {
-  return Math.min(4, ticket.quantity + (4 - totalQty.value));
+  const availableSlots = 4 - bookingStore.totalTicketCount;
+  return ticket.quantity + availableSlots;
 };
 
-// ── 加減數量 ───────────────────────────────────────────────────
+// ── 💡 加減數量與全域配額檢查 ──────────────────────────────────
 const handleUpdateQty = (id, delta) => {
   const all = [
     ...generalTickets.value,
@@ -176,8 +166,13 @@ const handleUpdateQty = (id, delta) => {
   if (!ticket) return;
 
   const next = ticket.quantity + delta;
-  if (next < 0) return;
-  if (totalQty.value + delta > 4 && delta > 0) return; // 總數不超過 4
+  if (next < 0) return; // 數量不能扣成負數
+
+  // 💡 關鍵修改：如果是增加數量，改用大腦 (Store) 的總數來檢查！
+  if (delta > 0 && (bookingStore.totalTicketCount + delta) > 4) {
+    alert('一般票與套票加總，最多只能劃 4 個座位！');
+    return; // 🛑 超過 4 張就擋下來，不給加
+  }
 
   ticket.quantity = next;
 };
@@ -237,6 +232,12 @@ watch(
   &--bank {
     margin-bottom: $spacing-xs-mobile;
   }
+}
+
+.ticket-section__list--bank{
+  background:rgba($white, 0.02);
+  border-radius: $border-radius-mobile;
+  overflow: hidden;
 }
 
 // ── 銀行優惠展開按鈕 ───────────────────────────────────────────

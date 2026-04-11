@@ -4,85 +4,145 @@
     <h3 class="combo-slider__title mb-3">限定套票</h3>
 
     <!-- Swiper 水平滑動容器 -->
-    <div class="combo-slider__track-wrapper">
-      <div class="combo-slider__track">
-        <ComboCard
-          v-for="item in comboList"
-          :key="item.id"
-          :item="item"
-          @update-qty="handleUpdateQty"
-        />
+      <div
+        class="combo-slider__track-wrapper mb-4"
+        ref="sliderRef"
+        @mousedown="onMouseDown"
+        @mouseleave="onMouseLeave"
+        @mouseup="onMouseUp"
+        @mousemove="onMouseMove"
+      >
+        <div class="combo-slider__track">
+          <ComboCard
+            v-for="item in comboList"
+            :key="item.id"
+            :item="item"
+            @update-qty="handleUpdateQty"
+          />
+        </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue' // 💡 引入 watch
-import { useBookingStore } from '@/store/bookingStore' // 💡 引入 Store
-import ComboCard from '@/components/Booking/Button/TicketType/ComboCard.vue'
+import { ref, computed, watch } from "vue";
+import { useBookingStore } from "@/store/bookingStore";
+import ComboCard from "@/components/Booking/Button/TicketType/ComboCard.vue";
 
 const bookingStore = useBookingStore();
+
+// ── 💡 新增：滑鼠拖曳滑動邏輯 ──────────────────────────────────
+const sliderRef = ref(null);
+let isDown = false;
+let startX = 0;
+let scrollLeft = 0;
+
+const onMouseDown = (e) => {
+  isDown = true;
+  // 記錄按下去那一刻的 X 座標與目前的捲動距離
+  startX = e.pageX - sliderRef.value.offsetLeft;
+  scrollLeft = sliderRef.value.scrollLeft;
+};
+
+const onMouseLeave = () => {
+  isDown = false; // 滑鼠移出範圍時取消拖曳狀態
+};
+
+const onMouseUp = () => {
+  isDown = false; // 放開滑鼠時取消拖曳狀態
+};
+
+const onMouseMove = (e) => {
+  if (!isDown) return; // 如果沒有按住，就不執行
+  e.preventDefault(); // 防止反白選取文字等預設行為
+  const x = e.pageX - sliderRef.value.offsetLeft;
+  const walk = (x - startX) * 1.5; // 1.5 是滑動速度倍率，可自行調整
+  sliderRef.value.scrollLeft = scrollLeft - walk;
+};
 
 // ── 套票假資料 ─────────────────────────────────────────────────
 const comboList = ref([
   {
     id: 1,
-    name: '咒術迴戰2025雙人電影套票',
-    description: '2張電影票+1份中爆米花+1杯中杯飲料+1個咒術迴戰擺玉，玉折Topper杯飲料+1份吉拿棒+1咒術迴戰小卡組',
-    price: 1139,
-    image: 'https://picsum.photos/seed/combo1/400/400',
+    name: "超級瑪利歐銀河電影版獨家星際奇遇收藏套票",
+    description:
+      "1張電影票、1份袋著走爆米花、1組獨家銀河遠征A3工藝海報組(海報4/22起開放領取至5/21)",
+    price: 540,
+    image:
+      "https://www.unicornpopcorn.com.tw/ForVieShowTicket/TicketTypeImage/%E8%B6%85%E7%B4%9A%E7%91%AA%E5%88%A9%E6%AD%90%E9%8A%80%E6%B2%B3%E9%9B%BB%E5%BD%B1%E7%89%88%E7%8D%A8%E5%AE%B6%E6%98%9F%E9%9A%9B%E5%A5%87%E9%81%87%E6%94%B6%E8%97%8F%E5%A5%97%E7%A5%A8.png",
+    ticketCount: 1, // 💡 新增：此套票包含 1 張電影票
     quantity: 0,
   },
   {
     id: 2,
-    name: '沙丘2025獨享全餐',
-    description: '1張電影票+1份大爆米花+1杯大杯飲料+沙丘限定貼紙組',
-    price: 699,
-    image: 'https://picsum.photos/seed/combo2/400/400',
+    name: "超級瑪利歐雙人電影套票D",
+    description:
+      "2張電影票+1份中爆米花+2杯大杯飲料+1個超級瑪利歐 絨毛鑰匙圈盲盒+1份吉拿棒(3/27起開放領取)",
+    price: 1079,
+    image:
+      "https://www.unicornpopcorn.com.tw/ForVieShowTicket/TicketTypeImage/%E8%B6%85%E7%B4%9A%E7%91%AA%E5%88%A9%E6%AD%90%E9%9B%99%E4%BA%BA%E9%9B%BB%E5%BD%B1%E5%A5%97%E7%A5%A8D.png",
+    ticketCount: 2, // 💡 新增：此套票包含 2 張電影票
     quantity: 0,
   },
   {
     id: 3,
-    name: '極限返航冒險套組',
-    description: '2張電影票+2份小爆米花+2杯中杯飲料+限定航行主題馬克杯',
-    price: 980,
-    image: 'https://picsum.photos/seed/combo3/400/400',
+    name: "麥可傑克森雙人電影套票",
+    description:
+      "2張電影票+1個麥可傑克森 帽子造型爆米花桶 (另附中爆米花)+2杯中杯飲料(4/22起開放領取)",
+    price: 1099,
+    image:
+      "https://www.unicornpopcorn.com.tw/ForVieShowTicket/TicketTypeImage/%E9%BA%A5%E5%8F%AF%E5%82%91%E5%85%8B%E6%A3%AE%E9%9B%99%E4%BA%BA%E9%9B%BB%E5%BD%B1%E5%A5%97%E7%A5%A8.png",
+    ticketCount: 2, // 💡 新增：此套票包含 2 張電影票
     quantity: 0,
   },
   {
     id: 4,
-    name: 'VIP豪華獨享包',
-    description: '1張VIP座位票+1份大爆米花+1杯特調飲料+限定周邊一件',
-    price: 890,
-    image: 'https://picsum.photos/seed/combo4/400/400',
+    name: "史努比小籠包雙人電影套票C",
+    description:
+      "2張電影票+1份中爆米花+2杯中杯飲料+1個史努比小籠包抱枕毯(02/27起開放領取)",
+    price: 1399,
+    image:
+      "https://www.unicornpopcorn.com.tw/ForVieShowTicket/TicketTypeImage/%E5%8F%B2%E5%8A%AA%E6%AF%94%E5%B0%8F%E7%B1%A0%E5%8C%85%E9%9B%99%E4%BA%BA%E9%9B%BB%E5%BD%B1%E5%A5%97%E7%A5%A8C.png",
+    ticketCount: 2, // 💡 新增：此套票包含 1 張電影票
     quantity: 0,
   },
-])
+]);
 
-// ── 加減數量（限 0~4）─────────────────────────────────────────
+// ── 💡 加減數量與全域配額檢查 ──────────────────────────────────
 const handleUpdateQty = (id, delta) => {
-  const item = comboList.value.find(c => c.id === id)
-  if (!item) return
-  const next = item.quantity + delta
-  if (next < 0 || next > 4) return
-  item.quantity = next
-}
+  const item = comboList.value.find((c) => c.id === id);
+  if (!item) return;
 
-// ── 統計 ───────────────────────────────────────────────────────
-const totalCount = computed(() =>
-  comboList.value.reduce((sum, c) => sum + c.quantity, 0)
-)
+  const next = item.quantity + delta;
+  if (next < 0) return; // 數量不能扣成負數
 
-const totalPrice = computed(() =>
-  comboList.value.reduce((sum, c) => sum + c.price * c.quantity, 0).toLocaleString()
-)
+  // 💡 如果是按下「+」增加數量，就要跟大腦的總數做比對
+  if (delta > 0) {
+    // 算出這次點擊會增加幾張「實體票」 (例如雙人套票 delta 1 * ticketCount 2 = 2)
+    const ticketsToAdd = delta * item.ticketCount;
 
-// 💡 新增：深度監聽陣列，只要數量改變，就把有選購的套票存入 Pinia
-watch(comboList, (newVal) => {
-  const selectedCombos = newVal.filter(c => c.quantity > 0);
-  bookingStore.updateCombos(selectedCombos);
-}, { deep: true });
+    // 把「大腦裡現有的總票數」加上「這次想買的票數」，看會不會超過 4
+    if (bookingStore.totalTicketCount + ticketsToAdd > 4) {
+      alert(
+        `座位最多只能選 4 個。此套票包含 ${item.ticketCount} 張票，剩餘配額不足！`,
+      );
+      return; // 🛑 超過就擋下來，不執行後面的加總
+    }
+  }
+
+  // 檢查通過，更新數量！
+  item.quantity = next;
+};
+
+// 深度監聽陣列，只要數量改變，就把有選購的套票存入 Pinia
+watch(
+  comboList,
+  (newVal) => {
+    const selectedCombos = newVal.filter((c) => c.quantity > 0);
+    bookingStore.updateCombos(selectedCombos);
+  },
+  { deep: true },
+);
 </script>
 
 <style lang="scss" scoped>
@@ -97,7 +157,7 @@ watch(comboList, (newVal) => {
 // ── 標題 ───────────────────────────────────────────────────────
 .combo-slider__title {
   margin: 0;
-  font-size: $h5-font-size-mobile;             // 20px
+  font-size: $h5-font-size-mobile; // 20px
   font-weight: 700;
   color: $light;
   letter-spacing: 0.04em;
@@ -110,7 +170,9 @@ watch(comboList, (newVal) => {
   // 隱藏 scrollbar 但保留滑動功能
   scrollbar-width: none;
   -ms-overflow-style: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
   // 讓卡片陰影/邊框不被截斷
   padding: 4px 2px 12px;
   margin: -4px -2px -12px;
@@ -118,8 +180,8 @@ watch(comboList, (newVal) => {
 
 .combo-slider__track {
   display: flex;
-  gap: $spacing-sm-mobile;                     // 16px 間距
-  width: max-content;                          // 讓軌道依卡片數量延展
+  gap: $spacing-sm-mobile; // 16px 間距
+  width: max-content; // 讓軌道依卡片數量延展
 }
 
 // ── 已選摘要 ───────────────────────────────────────────────────

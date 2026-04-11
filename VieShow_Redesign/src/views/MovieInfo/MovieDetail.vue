@@ -102,8 +102,10 @@ const router = useRouter();
 const movieStore = useMovieStore();
 
 const currentMovie = computed(() => {
-    //   const movieId = Number(route.params.id);
-    const movieId = 1;
+    // 💡 1. 將字串 ID 轉為數字，並從網址中抓取 :id
+    const movieId = Number(route.params.id); 
+    
+    // 💡 2. 根據抓到的 ID，去 store 裡面尋找對應的電影
     return movieStore.movieList.find(m => m.id === movieId);
 });
 

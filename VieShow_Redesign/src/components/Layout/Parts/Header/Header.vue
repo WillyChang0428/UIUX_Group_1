@@ -110,7 +110,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 const menuItems = [
-  { text: "電影資訊", link: "/movies" },
+  { text: "電影資訊", link: "/movieinfo" },
   { text: "影城據點", link: "/theaters" },
   { text: "最新消息", link: "/news" },
   { text: "團票 / 包廳", link: "/group" },
@@ -127,7 +127,7 @@ const handleLogout = () => {
 .header-bg {
   background: v.$vieshow-gradient-primary;
   height: v.$web-top-padding-mobile;
-  z-index: 1000;
+  z-index: 1050;
   display: flex;
   align-items: center;
   padding-top: var(--gap-2xl);

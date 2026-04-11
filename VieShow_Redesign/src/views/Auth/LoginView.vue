@@ -75,7 +75,7 @@
           登入
         </SecondaryButton>
 
-        <GoogleLogin :callback="handleLogin" class="google-btn w-100 mb-3" />
+        <GoogleLogin class="google-btn w-100 mb-3" />   <!-- 💡 使用同一個handleLogin函式會導致登入一直失敗 -->
 
         <div class="text-center text-secondary register-hint">
           還不是會員？
@@ -97,12 +97,11 @@ import { useAuthStore } from "@/store/authStore";
 import BaseModal from "@/components/Common/Button/BaseModal.vue";
 import SecondaryButton from "@/components/Common/Button/SecondaryButton.vue";
 
-
-const router = useRouter();
 const authStore = useAuthStore();
 
-// 💡 核心修正 1：使用 defineModel 來接收 Header 傳來的 v-model="isLoginOpen"
-// 這樣 isOpen.value = false 時，Header 也會同步知道彈窗關閉了
+// 💡 1. 宣告 emit，這樣登入成功時才能「廣播」給外面知道！
+const emit = defineEmits(["success"]);
+
 const isOpen = defineModel({ type: Boolean, default: false });
 
 const email = ref("");
@@ -111,7 +110,6 @@ const showPassword = ref(false);
 const isRobotChecked = ref(false);
 const errorMessage = ref("");
 
-// 一般帳號密碼登入邏輯
 const handleLogin = () => {
   errorMessage.value = "";
 
@@ -124,19 +122,19 @@ const handleLogin = () => {
     return;
   }
 
-  const isSuccess = authStore.login(email.value, password.value);
+  // 💡 2. 加上 .trim()，防止測試時不小心多打到空白鍵導致登入失敗
+  const isSuccess = authStore.login(email.value.trim(), password.value.trim());
 
   if (isSuccess) {
-    // 💡 核心修正 2：登入成功後，單純關閉彈窗即可，不用 router.push 跳轉！
-    isOpen.value = false;
+    isOpen.value = false; // 關閉彈窗
+    // 💡 3. 最重要的一行：發送成功訊號給 BookingBottomBar！
+    emit("success"); 
   } else {
     errorMessage.value = "帳號或密碼錯誤，請重新輸入";
   }
 };
 
-// 處理點擊 X 關閉視窗的邏輯
 const handleClose = () => {
-  // 💡 核心修正 3：點擊 X 也是單純關閉彈窗
   isOpen.value = false;
 };
 </script>

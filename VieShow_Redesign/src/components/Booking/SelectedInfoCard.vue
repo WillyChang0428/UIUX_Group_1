@@ -6,41 +6,51 @@
 <template>
   <div v-if="movieInfo" class="movie-info-bar">
     <div class="glass-card">
-      <div class="glass-card__inner">
-        <!-- 海報縮圖 -->
-        <div class="poster-wrapper">
-          <img :src="movieInfo.posterUrl" :alt="movieInfo.titleZh" class="poster-img" />
-        </div>
-
-        <!-- 電影資訊 -->
-        <div class="movie-details">
-          <!-- 第一行：中英文標題 -->
-          <div class="title-row">
-            <span class="title-zh">{{ movieInfo.titleZh }}</span>
-            <span class="title-en">{{ movieInfo.titleEn }}</span>
+      <div class="container">
+        <div class="glass-card__inner">
+          <!-- 海報縮圖 -->
+          <div class="poster-wrapper">
+            <img
+              :src="movieInfo.posterUrl"
+              :alt="movieInfo.titleZh"
+              class="poster-img"
+            />
           </div>
 
-          <!-- 第二行：所有資訊條列 -->
-          <div class="meta-row">
-            <span>{{ movieInfo.duration }}</span>
-            <span class="sep">｜</span>
-            <span>{{ movieInfo.rating }}</span>
-            <span class="sep">｜</span>
-            <span>{{ movieInfo.language }}</span>
-            <span class="sep">｜</span>
-            <span>{{ movieInfo.format }}</span>
-            <span class="sep">｜</span>
-            <span>{{ movieInfo.venue }}</span>
-            <span class="sep">｜</span>
-            <span>{{ movieInfo.date }}</span>
-            <span class="sep">｜</span>
-            <span>{{ movieInfo.time }}</span>
-          </div>
-        </div>
+          <!-- 電影資訊 -->
+          <div class="movie-details">
+            <!-- 第一行：中英文標題 -->
+            <div class="title-row">
+              <span class="title-zh">{{ movieInfo.titleZh }}</span>
+              <span class="title-en">{{ movieInfo.titleEn }}</span>
+            </div>
 
-        <div v-if="mode === 'preview'" class="action-btn d-flex align-items-center justify-content-center"
-          @click="goToMovieInfo" title="查看電影詳情">
-          <i class="fa-solid fa-ellipsis"></i>
+            <!-- 第二行：所有資訊條列 -->
+            <div class="meta-row">
+              <span>{{ movieInfo.duration }}</span>
+              <span class="sep">｜</span>
+              <span>{{ movieInfo.rating }}</span>
+              <span class="sep">｜</span>
+              <span>{{ movieInfo.language }}</span>
+              <span class="sep">｜</span>
+              <span>{{ movieInfo.format }}</span>
+              <span class="sep">｜</span>
+              <span>{{ movieInfo.venue }}</span>
+              <span class="sep">｜</span>
+              <span>{{ movieInfo.date }}</span>
+              <span class="sep">｜</span>
+              <span>{{ movieInfo.time }}</span>
+            </div>
+          </div>
+
+          <div
+            v-if="mode === 'preview'"
+            class="action-btn d-flex align-items-center justify-content-center"
+            @click="goToDetail"
+            title="查看電影詳情"
+          >
+            <i class="fa-solid fa-ellipsis"></i>
+          </div>
         </div>
       </div>
     </div>
@@ -48,31 +58,34 @@
 </template>
 
 <script setup>
-import { useMovieStore } from '@/store/movieStore'
-import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
+import { useMovieStore } from "@/store/movieStore";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 
 // 💡 新增 Props 來接收模式設定
 const props = defineProps({
   mode: {
     type: String,
-    default: 'booking', // 預設為 'booking' (完整資訊)，可傳入 'preview' (預覽模式)
-  }
-})
+    default: "booking", // 預設為 'booking' (完整資訊)，可傳入 'preview' (預覽模式)
+  },
+});
 
-const router = useRouter()
-const movieStore = useMovieStore()
-
+const router = useRouter();
+const movieStore = useMovieStore();
 
 // 💡 多解構出 selectedMovieId 供跳轉使用
-const { selectedInfoCard: movieInfo, selectedMovieId } = storeToRefs(movieStore)
+const { selectedInfoCard: movieInfo, selectedMovieId } =
+  storeToRefs(movieStore);
 
-// 💡 處理點擊 ... 按鈕的跳轉邏輯
-const goToMovieInfo = () => {
+const goToDetail = () => {
+  // 💡 直接讀取我們上面從 storeToRefs 解構出來的 selectedMovieId
   if (selectedMovieId.value) {
-    router.push(`/movie/${selectedMovieId.value}`)
+    router.push({
+      name: "movie-info",
+      params: { id: selectedMovieId.value },
+    });
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -81,7 +94,7 @@ const goToMovieInfo = () => {
 // ── 外層容器：只負責寬度，不加任何視覺樣式 ──────────────────
 .movie-info-bar {
   width: 100%;
-  font-family: 'Noto Sans TC', 'PingFang TC', sans-serif;
+  font-family: "Noto Sans TC", "PingFang TC", sans-serif;
 }
 
 // ── 玻璃卡片：所有視覺效果集中在這裡 ───────────────────────
@@ -96,12 +109,12 @@ const goToMovieInfo = () => {
   -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.05);
 
   // 半透明深色底（讓文字可讀）
-  background: rgba(v.$vieshow-dark, 0.6);
+  background: rgba(v.$vieshow-dark, 0.8);
 
-  // 下邊框 
+  // 下邊框
   border-bottom: 1px solid rgba(v.$white, 0.1);
 
-  // 陰影 
+  // 陰影
   box-shadow:
     0 8px 32px rgba(v.$black, 0.45),
     0 1px 0 rgba(v.$white, 0.06) inset;
@@ -109,30 +122,34 @@ const goToMovieInfo = () => {
   // ── 光源高光層（Light -38deg 80%）──────────────────────────
   //  ::before / ::after 掛在 .glass-card，position: relative 才有效
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(-38deg,
-        rgba(v.$white, 0.14) 0%,
-        rgba(v.$white, 0.05) 30%,
-        transparent 60%);
+    background: linear-gradient(
+      -38deg,
+      rgba(v.$white, 0.14) 0%,
+      rgba(v.$white, 0.05) 30%,
+      transparent 60%
+    );
     pointer-events: none;
     z-index: 0;
   }
 
   // ── 頂部高光線 ─────────────────────────────────────────────
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(v.$white, 0.22) 30%,
-        rgba(v.$white, 0.22) 70%,
-        transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(v.$white, 0.22) 30%,
+      rgba(v.$white, 0.22) 70%,
+      transparent
+    );
     pointer-events: none;
     z-index: 1;
   }
@@ -190,7 +207,7 @@ const goToMovieInfo = () => {
 }
 
 .title-zh {
-  font-size: 32px;
+  font-size: var(--app-font-size-h4);
   font-weight: 700;
   color: v.$light;
   letter-spacing: 0.04em;

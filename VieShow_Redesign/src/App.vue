@@ -1,9 +1,20 @@
 <template>
-  <router-view/>
+  <div id="app">
+    <Transition name="fade">
+      <div v-if="appStore.isRouting" class="global-loading-overlay">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+    </Transition>
+
+    <router-view />
+
+    </div>
 </template>
 
 <script setup>
+import { useAppStore } from '@/store/appStore';
 
+const appStore = useAppStore();
 </script>
 
 
@@ -15,4 +26,28 @@ body,
   background: v.$vieshow-gradient-dark;
 }
 
+/* 💡 將原本的 fade 動畫放在全域 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 💡 全域 Loading 遮罩樣式 */
+.global-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999; /* 確保它在最高層，蓋住 Navbar 與 BottomBar */
+  background-color: #0F1115; /* 威秀深色底 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tracking-wide {
+  letter-spacing: 2px;
+}
 </style>

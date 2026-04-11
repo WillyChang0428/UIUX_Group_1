@@ -75,7 +75,7 @@ defineEmits(["toggle"]);
     font-weight: v.$font-weight-bold; // 700 [cite: 48]
 
     /* 💡 使用品牌色變數製作陰影發光感 [cite: 59] */
-    box-shadow: 0 var(--gap-sm) 15px rgba(v.$vieshow-primary, 0.5) !important;
+    box-shadow: 0 var(--gap-xs) 8px rgba(v.$vieshow-primary, 0.5) !important;
   }
 
   /* 💡 桌機版 Hover 預防針：僅在支援滑鼠的裝置觸發 [cite: 130, 131] */

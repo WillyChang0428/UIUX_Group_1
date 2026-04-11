@@ -67,7 +67,7 @@ defineEmits(['update-qty'])
   height: 80px;
   border-radius: var(--app-radius);
   overflow: hidden;
-  background: rgba($white, 0.06);
+  background: rgba($white, 1);
   flex-shrink: 0;
 }
 

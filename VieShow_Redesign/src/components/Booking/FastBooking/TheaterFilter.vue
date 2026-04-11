@@ -35,6 +35,9 @@ const props = defineProps({
   },
 });
 
+// 💡 補上這一行！讓子組件可以發送事件給父層 (FastBooking)
+const emit = defineEmits(["update:modelValue"]);
+
 const cinemaStore = useCinemaStore();
 
 // 💡 1. 預設選中區域：改為優先從 Store 讀取，否則預設雙北

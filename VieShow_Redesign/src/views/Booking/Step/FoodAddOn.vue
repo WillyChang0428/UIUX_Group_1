@@ -62,54 +62,125 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import FilterButton from '@/components/Booking/FastBooking/Button/FilterButton.vue'
-import StepperCounter from '@/components/Booking/Button/StepperCounter.vue'
-import { useBookingStore } from '@/store/bookingStore' // 💡 引入大腦 Store
+import { ref, computed } from "vue";
+import FilterButton from "@/components/Booking/FastBooking/Button/FilterButton.vue";
+import StepperCounter from "@/components/Booking/Button/StepperCounter.vue";
+import { useBookingStore } from "@/store/bookingStore"; // 💡 引入大腦 Store
 
-const emit = defineEmits(['update'])
-const bookingStore = useBookingStore()
+const emit = defineEmits(["update"]);
+const bookingStore = useBookingStore();
 
 // ── 頁籤 ───────────────────────────────────────────────────────
 const tabs = [
-  { key: 'popcorn', label: '爆米花' },
-  { key: 'drink',   label: '飲料' },
-  { key: 'food',    label: '熱食' },
-  { key: 'combo',   label: '銀行優惠餐' },
-]
+  { key: "popcorn", label: "爆米花" },
+  { key: "drink", label: "飲料" },
+  { key: "food", label: "熱食" },
+  { key: "combo", label: "銀行優惠餐" },
+];
 
-const activeTab = ref('popcorn')
+const activeTab = ref("popcorn");
 
 // ── 商品資料 ───────────────────────────────────────────────────
 const allItems = ref([
-  { id: 'p1', tab: 'popcorn', name: '大爆米花', price: 145, image: 'https://picsum.photos/seed/popcorn-lg/120/120', quantity: 0 },
-  { id: 'p2', tab: 'popcorn', name: '中爆米花', price: 136, image: 'https://picsum.photos/seed/popcorn-md/120/120', quantity: 0 },
-  { id: 'p3', tab: 'popcorn', name: '小爆米花', price: 128, image: 'https://picsum.photos/seed/popcorn-sm/120/120', quantity: 0 },
-  { id: 'd1', tab: 'drink', name: '大可樂', price: 77, image: 'https://picsum.photos/seed/cola-lg/120/120', quantity: 0 },
-  { id: 'd2', tab: 'drink', name: '中可樂', price: 68, image: 'https://picsum.photos/seed/cola-md/120/120', quantity: 0 },
-  { id: 'd3', tab: 'drink', name: '小可樂', price: 64, image: 'https://picsum.photos/seed/cola-sm/120/120', quantity: 0 },
-  { id: 'f1', tab: 'food', name: '熱狗', price: 140, originalPrice: 165, image: 'https://picsum.photos/seed/hotdog/120/120', quantity: 0 },
-  { id: 'f2', tab: 'food', name: '吉拿棒', price: 140, image: 'https://picsum.photos/seed/churros/120/120', quantity: 0 },
-  { id: 'b1', tab: 'combo', name: '星展中可小爆', price: 49, image: 'https://picsum.photos/seed/dbs/120/120', quantity: 0 },
-  { id: 'b2', tab: 'combo', name: '台新中可小爆', price: 35, image: 'https://picsum.photos/seed/taishin/120/120', quantity: 0 },
-])
+  {
+    id: "p1",
+    tab: "popcorn",
+    name: "大爆米花",
+    price: 145,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10004654.jpg",
+    quantity: 0,
+  },
+  {
+    id: "p2",
+    tab: "popcorn",
+    name: "中爆米花",
+    price: 136,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10004655.jpg",
+    quantity: 0,
+  },
+  {
+    id: "p3",
+    tab: "popcorn",
+    name: "小爆米花",
+    price: 128,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10004656.jpg",
+    quantity: 0,
+  },
+  {
+    id: "d1",
+    tab: "drink",
+    name: "大可樂",
+    price: 77,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10004657.jpg",
+    quantity: 0,
+  },
+  {
+    id: "d2",
+    tab: "drink",
+    name: "中可樂",
+    price: 68,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10004658.jpg",
+    quantity: 0,
+  },
+  {
+    id: "d3",
+    tab: "drink",
+    name: "小可樂",
+    price: 64,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10004659.jpg",
+    quantity: 0,
+  },
+  {
+    id: "f1",
+    tab: "food",
+    name: "熱狗",
+    price: 140,
+    originalPrice: 165,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10004660.jpg",
+    quantity: 0,
+  },
+  {
+    id: "f2",
+    tab: "food",
+    name: "吉拿棒",
+    price: 140,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10004661.jpg",
+    quantity: 0,
+  },
+  {
+    id: "b1",
+    tab: "combo",
+    name: "星展中可小爆",
+    price: 49,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10005560.jpg",
+    quantity: 0,
+  },
+  {
+    id: "b2",
+    tab: "combo",
+    name: "台新中可小爆",
+    price: 35,
+    image: "https://www.unicornpopcorn.com.tw/images/CDN/10009844.jpg",
+    quantity: 0,
+  },
+]);
 
 const currentItems = computed(() =>
-  allItems.value.filter(item => item.tab === activeTab.value)
-)
+  allItems.value.filter((item) => item.tab === activeTab.value),
+);
 
 // ── 💡 確保這裡只有這「一個」 updateQty 函式 ────────────────────────────────
 const updateQty = (item, newVal) => {
   item.quantity = newVal;
-  
-  const selectedFoods = allItems.value.filter(i => i.quantity > 0);
-  
+
+  const selectedFoods = allItems.value.filter((i) => i.quantity > 0);
+
   // 1. 同步到大腦 Store
   bookingStore.updateFoodAddOns(selectedFoods);
-  
+
   // 2. 發送給父層
-  emit('update', selectedFoods);
-}
+  emit("update", selectedFoods);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -164,7 +235,6 @@ const updateQty = (item, newVal) => {
     padding: var(--gap-sm) var(--gap-2xl);
     height: 100pt;
   }
-
 }
 
 // ── 圖片 ───────────────────────────────────────────────────────

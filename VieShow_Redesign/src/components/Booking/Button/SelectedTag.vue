@@ -1,12 +1,12 @@
 <template>
   <div class="selected-tag d-inline-flex align-items-center justify-content-center">
-    <span>{{ seat.row }}排{{ seat.num }}號</span>
+    <span>{{ seat.rowLabel }}排{{ seat.colLabel }}號</span>
   </div>
 </template>
 
 <script setup>
 defineProps({
-  // 接收來自 bookingStore.seats 的單一座位物件，例如 { row: 'G', num: 8 }
+  // 接收來自 bookingStore.selectedSeats 的單一座位物件
   seat: {
     type: Object,
     required: true,

@@ -1,19 +1,24 @@
 <template>
-  <div class="ticket-row" :class="{ 'ticket-row--active': ticket.quantity > 0 }">
-
-    <!-- 左側：票種名稱 + 描述 -->
+  <div
+    class="ticket-row"
+    :class="{ 'ticket-row--active': ticket.quantity > 0 }"
+  >
     <div class="ticket-row__info">
       <div class="ticket-row__title">
         <div class="ticket-row__name-wrap">
           <span class="ticket-row__name">{{ ticket.name }}</span>
-          <span v-if="ticket.note" class="ticket-row__note-icon" :title="ticket.note">
-            <i class="fa-solid fa-circle-exclamation"></i>
-          </span>
+          <button
+            v-if="ticket.note"
+            class="ticket-row__note-icon"
+            @click="showNoteModal = true"
+            aria-label="查看票種說明"
+          >
+            <i class="fa-solid fa-circle-info"></i>
+          </button>
         </div>
         <p v-if="ticket.desc" class="ticket-row__desc">{{ ticket.desc }}</p>
       </div>
 
-      <!-- 金額：團體票不顯示 -->
       <span
         v-if="!ticket.needCode"
         class="ticket-row__price"
@@ -23,38 +28,37 @@
       </span>
     </div>
 
-    <!-- 右側 -->
-    <div class="ticket-row__right">
-
-      <!-- 團體票：兌換碼輸入框 -->
+    <div class="ticket-row__right group_ticket_section">
       <template v-if="ticket.needCode">
-        <div class="ticket-row__code-group">
-          <div class="ticket-row__code-wrap " :class="{ 'is-error': showError, 'is-redeemed': isRedeemed }">
+        <div class="ticket-row__code-group pt-1">
+          <div class="ticket-row__code-wrap" :class="codeWrapClasses">
             <input
-              :value="codeInput"
               class="ticket-row__code-input"
-              :placeholder="isRedeemed ? `已兌換 ${redeemedCount} 張 ✓` : (ticket.codePlaceholder || '票券前三碼英文字母')"
-              :disabled="isRedeemed && redeemedCount >= maxQty"
               maxlength="3"
+              :value="codeInput"
+              :placeholder="inputPlaceholder"
+              :disabled="isInputDisabled"
               @input="handleCodeInput"
             />
-            <!-- 兌換成功且達上限：顯示取消 -->
+
             <button
               v-if="isRedeemed"
               class="ticket-row__code-btn ticket-row__code-btn--cancel"
               @click="handleCancel"
-            >取消</button>
-            <!-- 未兌換：顯示兌換 -->
+            >
+              取消
+            </button>
             <button
               v-else
               class="ticket-row__code-btn"
               :class="{ 'is-active': isCodeValid }"
               :disabled="!isCodeValid"
               @click="handleRedeem"
-            >兌換</button>
+            >
+              兌換
+            </button>
           </div>
 
-          <!-- 問題一：固定高度容器，訊息在內切換，不影響外層高度 -->
           <div class="ticket-row__code-msg">
             <p v-if="showError" class="ticket-row__error">
               請輸入 3 碼英文字母
@@ -63,30 +67,54 @@
               <i class="fa-solid fa-circle-check"></i>
               已成功兌換 {{ redeemedCount }} / {{ maxQty }} 張
             </p>
-            <!-- 佔位：讓高度固定 -->
             <p v-else class="ticket-row__msg-placeholder">&nbsp;</p>
           </div>
         </div>
       </template>
 
-      <!-- 一般票：StepperCounter -->
       <template v-else>
         <StepperCounter
           :model-value="ticket.quantity"
           :min="0"
           :max="maxQty"
-          @update:model-value="(val) => $emit('update-qty', ticket.id, val - ticket.quantity)"
+          @update:model-value="
+            (val) => $emit('update-qty', ticket.id, val - ticket.quantity)
+          "
         />
       </template>
-
     </div>
   </div>
+  <component
+    v-if="currentTipComponent"
+    :is="currentTipComponent"
+    v-model="showNoteModal"
+  />
+
+  <BaseModal v-else v-model="showNoteModal" type="base">
+    <template #title>{{ ticket.name }} 說明</template>
+    <template #content>
+      <div class="p-2">
+        <p
+          class="text-white mb-0"
+          style="line-height: 1.6; letter-spacing: 0.05em"
+        >
+          {{ ticket.note }}
+        </p>
+      </div>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import StepperCounter from '@/components/Booking/Button/StepperCounter.vue'
+import { ref, computed } from "vue";
+import StepperCounter from "@/components/Booking/Button/StepperCounter.vue";
+// 💡 1. 引入您的 Tips 元件 (請根據您的實際路徑微調)
+import DiscountTickets from "../../Tips/DiscountTickets.vue";
+import FreeVoucher from "../../Tips/FreeVoucher.vue";
+import GroupTickets from "../../Tips/GroupTickets.vue";
+import LoveTickets from "../../Tips/LoveTickets.vue";
 
+// ── 1. Props & Emits ──────────────────────────────────────────
 const props = defineProps({
   ticket: {
     type: Object,
@@ -96,55 +124,106 @@ const props = defineProps({
     type: Number,
     default: 4,
   },
-})
+});
 
-const emit = defineEmits(['update-qty'])
+const emit = defineEmits(["update-qty"]);
 
-// ── 兌換碼輸入 ─────────────────────────────────────────────────
-const codeInput = ref('')
-const isRedeemed = ref(false)
-// 問題二：記錄已兌換張數，上限由 maxQty 控制（最多 4 張）
-const redeemedCount = ref(0)
+// ── 2. State (狀態變數) ────────────────────────────────────────
+const codeInput = ref("");
+const isRedeemed = ref(false);
+const redeemedCount = ref(0);
+const showNoteModal = ref(false);
 
+// 💡 2. 建立「票種 ID」與「說明元件」的對應表
+const tipComponentMap = {
+  // 免費兌換券
+  free: FreeVoucher,
+  // 團體票
+  group: GroupTickets,
+  // 敬老/愛心票
+  elder: LoveTickets,
+  //優待票
+  discount: DiscountTickets,
+};
+
+// 💡 3. 計算目前這張票應該顯示哪個元件
+const currentTipComponent = computed(() => {
+  const id = props.ticket.id;
+
+  // 1. 如果有直接對應的 ID (free, group, elder)，直接回傳
+  if (tipComponentMap[id]) {
+    return tipComponentMap[id];
+  }
+  // 2. 如果是優待票 (concession)，如果您希望它也用 DiscountTickets，可以加這行
+  if (id === "concession") {
+    return DiscountTickets;
+  }
+  // 找不到專屬元件，回傳 null (畫面就會自動去觸發純文字的 BaseModal)
+  return null;
+});
+
+// ── 3. Computed (畫面與邏輯判斷) ───────────────────────────────
+const isCodeValid = computed(() => /^[A-Z]{3}$/.test(codeInput.value));
+
+const showError = computed(
+  () => codeInput.value.length > 0 && !isCodeValid.value && !isRedeemed.value,
+);
+
+const codeWrapClasses = computed(() => ({
+  "is-error": showError.value,
+  "is-redeemed": isRedeemed.value,
+}));
+
+const inputPlaceholder = computed(() => {
+  if (isRedeemed.value) {
+    return `已兌換 ${redeemedCount.value} 張 ✓`;
+  }
+  return props.ticket.codePlaceholder || "票券前三碼英文字母";
+});
+
+const isInputDisabled = computed(() => {
+  return isRedeemed.value && redeemedCount.value >= props.maxQty;
+});
+
+// ── 4. Methods (互動事件) ──────────────────────────────────────
 const handleCodeInput = (e) => {
+  // 過濾非英文字母、轉大寫、限制 3 碼
   codeInput.value = e.target.value
-    .replace(/[^a-zA-Z]/g, '')
+    .replace(/[^a-zA-Z]/g, "")
     .toUpperCase()
-    .slice(0, 3)
-}
+    .slice(0, 3);
+};
 
-const isCodeValid = computed(() => /^[A-Z]{3}$/.test(codeInput.value))
-
-const showError = computed(() =>
-  codeInput.value.length > 0 && !isCodeValid.value && !isRedeemed.value
-)
-
-// 兌換：每次兌換 +1，最多 maxQty 張
 const handleRedeem = () => {
-  if (!isCodeValid.value) return
-  if (redeemedCount.value >= props.maxQty) return   // 問題二：上限 4 張
+  if (!isCodeValid.value) return;
+  if (redeemedCount.value >= props.maxQty) return; // 防呆：不能超過配額
 
-  redeemedCount.value++
-  isRedeemed.value = true
-  codeInput.value = ''                               // 清空輸入讓使用者可繼續輸入下一張
-  emit('update-qty', props.ticket.id, 1)
-}
+  redeemedCount.value++;
+  isRedeemed.value = true;
+  codeInput.value = ""; // 清空輸入，讓使用者可繼續輸入下一張
 
-// 取消全部兌換：還原狀態，通知父層扣除已兌換的張數
+  emit("update-qty", props.ticket.id, 1);
+};
+
 const handleCancel = () => {
-  const count = redeemedCount.value
-  redeemedCount.value = 0
-  isRedeemed.value = false
-  codeInput.value = ''
-  emit('update-qty', props.ticket.id, -count)
-}
+  const count = redeemedCount.value;
+
+  // 還原所有狀態
+  redeemedCount.value = 0;
+  isRedeemed.value = false;
+  codeInput.value = "";
+
+  // 扣除已兌換的總張數
+  emit("update-qty", props.ticket.id, -count);
+};
 </script>
 
 <style lang="scss" scoped>
 @import "@/assets/scss/variables";
 
 .ticket-row {
-  height: 90pt;
+  height: fit-content;
+  min-height: 90px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -157,10 +236,14 @@ const handleCancel = () => {
     height: 110pt;
   }
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 
   &--active {
-    .ticket-row__name { color: $vieshow-primary; }
+    .ticket-row__name {
+      color: $vieshow-primary;
+    }
   }
 }
 
@@ -193,9 +276,19 @@ const handleCancel = () => {
 }
 
 .ticket-row__note-icon {
-  font-size: $font-size-mini-mobile;
+  font-size: $font-size-sm-mobile;
   color: $vieshow-secondary;
-  cursor: help;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $white;
+  }
 }
 
 .ticket-row__desc {
@@ -216,6 +309,11 @@ const handleCancel = () => {
   flex-shrink: 0;
 }
 
+.group_ticket_section {
+  height: 100%;
+  align-items: flex-start !important;
+}
+
 // ── 價格 ───────────────────────────────────────────────────────
 .ticket-row__price {
   display: flex;
@@ -226,12 +324,15 @@ const handleCancel = () => {
   min-width: 56px;
   text-align: right;
 
-  &--free { color: $vieshow-secondary; }
+  &--free {
+    color: $vieshow-secondary;
+  }
 }
 
 // ── 團體票兌換區 ───────────────────────────────────────────────
 .ticket-row__code-group {
   display: flex;
+  height: 100%;
   flex-direction: column;
   gap: var(--gap-xs);
   align-items: flex-end;
@@ -245,18 +346,22 @@ const handleCancel = () => {
   overflow: hidden;
   transition: border-color 0.2s ease;
 
-  &.is-error    { border-color: $vieshow-danger; }
-  &.is-redeemed { border-color: $vieshow-success; }
+  &.is-error {
+    border-color: $vieshow-danger;
+  }
+  &.is-redeemed {
+    border-color: $vieshow-success;
+  }
 }
 
 .ticket-row__code-input {
-  width: 140px;
+  max-width: 300px;
   height: 40px;
   padding: 0 $spacing-sm-mobile;
   background: rgba($white, 0.05);
   border: none;
   color: $light;
-  font-size: $font-size-sm-mobile;
+  font-size: var(--app-font-size-mini);
   outline: none;
   letter-spacing: 0.05em;
 
@@ -267,7 +372,7 @@ const handleCancel = () => {
 
   &::placeholder {
     color: $vieshow-secondary;
-    font-size: $font-size-mini-mobile;
+    font-size: var(--app-font-size-mini);
   }
 }
 
@@ -282,31 +387,36 @@ const handleCancel = () => {
   font-weight: 600;
   cursor: not-allowed;
   white-space: nowrap;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 
   &.is-active {
     background: $vieshow-primary;
     color: $white;
     cursor: pointer;
-    &:hover { background: $vieshow-primary-dark; }
+    &:hover {
+      background: $vieshow-primary-dark;
+    }
   }
 
   &--cancel {
     background: rgba($vieshow-danger, 0.15);
     color: $vieshow-danger;
     cursor: pointer;
-    &:hover { background: rgba($vieshow-danger, 0.3); }
+    &:hover {
+      background: rgba($vieshow-danger, 0.3);
+    }
   }
 }
 
-// ── 問題一：固定高度訊息容器，防止跳動 ───────────────────────
-// 高度固定為一行迷你文字的高度，內容切換不影響外層
+// ── 訊息容器 (固定高度防止跳動) ──────────────────────────────────
 .ticket-row__code-msg {
-  height: var(--app-font-size-mini);       // 固定一行高
+  height: var(--app-font-size-mini);
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: 16px;                        // 至少 16px 確保不塌縮
+  min-height: 16px;
 }
 
 .ticket-row__error,
@@ -330,7 +440,6 @@ const handleCancel = () => {
 }
 
 .ticket-row__msg-placeholder {
-  // 透明佔位，撐住高度
   color: transparent;
   pointer-events: none;
   user-select: none;

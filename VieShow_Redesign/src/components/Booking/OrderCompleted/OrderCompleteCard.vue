@@ -1,7 +1,7 @@
 <template>
   <div v-if="movieInfo" class="order-card">
     <!-- ── 共用頂部 ── -->
-    <div class="glass-card pb-3">
+    <div class="glass-card pb-4 pb-md-3 ">
       <!-- 第一列：TicketStatusTag 靠右 -->
       <div class="d-flex justify-content-end mb-2">
         <TicketStatusTag :status="ticketStatus" />
@@ -45,7 +45,7 @@
 
     <!-- ── 模板一：其他票種 ── -->
     <template v-if="variant === 'other'">
-      <div class="order-card__body order-card__body--other">
+      <div class="order-card__body order-card__body--other gap-4 gap-md-3">
         <hr class="order-card__divider" />
 
         <p class="order-card__expire-notice">
@@ -61,7 +61,7 @@
 
     <!-- ── 模板二：一般購票流程 ── -->
     <template v-else-if="variant === 'standard'">
-      <div class="order-card__body order-card__body--standard">
+      <div class="order-card__body order-card__body--standard  gap-4 gap-md-3">
         <hr class="order-card__divider" />
 
         <!-- 條碼區 -->
@@ -71,8 +71,9 @@
         </div>
 
         <!-- 有效期限小字 -->
-        <p class="order-card__expire-small"> 
-          有效期限至 <span class="text-primary">{{ movieInfo.date }}</span> 當天有效
+        <p class="order-card__expire-small">
+          有效期限至
+          <span class="text-primary">{{ movieInfo.date }}</span> 當天有效
         </p>
 
         <hr class="order-card__divider" />
@@ -80,15 +81,15 @@
         <!-- 票種列表 -->
         <div class="order-card__tickets">
           <div
-            v-for="ticket in tickets"
-            :key="ticket.id"
+            v-for="ticket in expandedTickets"
+            :key="ticket.uniqueId"
             class="order-card__ticket-row"
           >
             <span class="order-card__ticket-name">{{ ticket.name }}</span>
-            <span class="order-card__ticket-qty">{{ ticket.quantity }}</span>
+
             <button
               class="order-card__share-btn"
-              @click="$emit('share-ticket', ticket.id)"
+              @click="$emit('share-ticket', ticket)"
               aria-label="分享票券"
             >
               <i class="fa-solid fa-arrow-up-from-bracket"></i>
@@ -109,17 +110,15 @@
 </template>
 
 <script setup>
-import { computed } from "vue"; // 💡 1. 記得引入 computed
+import { computed } from "vue";
 import { useMovieStore } from "@/store/movieStore.js";
 import TicketStatusTag from "@/components/Booking/Button/TicketStatusTag.vue";
 
 const movieStore = useMovieStore();
 
-// 💡 2. 使用 computed 搭配「短路求值 (||)」，給予強大的假資料備案
 const movieInfo = computed(() => {
   return (
     movieStore.selectedInfoCard || {
-      // 當 Pinia 沒資料時，預設顯示這組假資料供切版預覽
       titleZh: "沙丘：第二部",
       titleEn: "DUNE: PART TWO",
       duration: "166 分鐘",
@@ -136,7 +135,7 @@ const movieInfo = computed(() => {
   );
 });
 
-defineProps({
+const props = defineProps({
   variant: {
     type: String,
     default: "standard",
@@ -147,13 +146,12 @@ defineProps({
     default: "active",
     validator: (v) => ["active", "pending", "expired"].includes(v),
   },
+  // 💡 請確保父層傳入時，只傳 tickets 與 combos，不要把 foodAddOns 傳進來
   tickets: {
     type: Array,
     default: () => [
-      { id: "t1", name: "全票", quantity: 1 },
-      { id: "t2", name: "全票", quantity: 1 },
-      { id: "t3", name: "優待票", quantity: 1 },
-      { id: "t4", name: "星展一般卡假日優惠 PLUS20", quantity: 1 },
+      { id: "t1", name: "全票", quantity: 2 },
+      { id: "t2", name: "雙人套票", quantity: 1 },
     ],
   },
   barcodeUrl: {
@@ -171,6 +169,24 @@ defineProps({
 });
 
 defineEmits(["share-ticket"]);
+
+// ── 💡 核心新增：將票券依照「數量」展開 ──
+const expandedTickets = computed(() => {
+  const result = [];
+
+  props.tickets.forEach((ticket) => {
+    // 依據 quantity 跑迴圈，有幾張就產生幾個獨立物件
+    for (let i = 0; i < ticket.quantity; i++) {
+      result.push({
+        ...ticket,
+        // 替每一張獨立的票產生專屬的 key (例如 t1-0, t1-1)
+        uniqueId: `${ticket.id}-${i}`,
+      });
+    }
+  });
+
+  return result;
+});
 </script>
 
 <style lang="scss" scoped>
@@ -278,7 +294,6 @@ defineEmits(["share-ticket"]);
 .order-card__body {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-md);
 }
 
 .order-card__divider {
@@ -365,6 +380,8 @@ defineEmits(["share-ticket"]);
 }
 
 .order-card__share-btn {
+  height: $touch-target-size;
+  width: $touch-target-size;
   background: none;
   border: none;
   cursor: pointer;
@@ -374,6 +391,7 @@ defineEmits(["share-ticket"]);
   transition: color 0.2s ease;
   display: inline-flex;
   align-items: center;
+  justify-content: end;
 
   @include hover-focus {
     color: v.$white;

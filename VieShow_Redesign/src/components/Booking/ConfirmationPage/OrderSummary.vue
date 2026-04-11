@@ -1,119 +1,119 @@
 <template>
-    <h2 class="order-summary__title">付款明細</h2>
-    <div class="order-summary">
-      
-      <div class="summary-section">
-        <div class="summary-section__header">
-          <span class="summary-section__label text-secondary">票種</span>
-          <button class="summary-section__edit" @click="$emit('edit-tickets')">
-            <i class="fa-solid fa-pen fa-xs"></i>
-            修改票種
-          </button>
-        </div>
-
-        <div class="summary-section__body">
-          <div v-for="ticket in computedTickets" :key="ticket.id" class="summary-row">
-            <span class="summary-row__name">{{ ticket.name }}</span>
-            <span class="summary-row__qty">x{{ ticket.quantity }}</span>
-            <span class="summary-row__price text-danger">NT$ {{ ticket.subtotal.toLocaleString() }}</span>
-          </div>
-          <span v-if="computedTickets.length === 0" class="text-secondary fs-6">
-            尚未選擇票種
-          </span>
-        </div>
+  <h2 class="order-summary__title">付款明細</h2>
+  <div class="order-summary">
+    
+    <div class="summary-section">
+      <div class="summary-section__header">
+        <span class="summary-section__label text-secondary">票種</span>
+        <button class="summary-section__edit" @click="router.push('/booking/ticket')">
+          <i class="fa-solid fa-pen fa-xs"></i>
+          修改票種
+        </button>
       </div>
 
-      <hr class="summary-divider" />
-
-      <div class="summary-section">
-        <div class="summary-section__header">
-          <span class="summary-section__label text-secondary">座位</span>
-          <button class="summary-section__edit" @click="$emit('edit-seats')">
-            <i class="fa-solid fa-pen fa-xs"></i>
-            修改座位
-          </button>
+      <div class="summary-section__body">
+        <div v-for="ticket in computedTickets" :key="ticket.id" class="summary-row">
+          <span class="summary-row__name">{{ ticket.name }}</span>
+          <span class="summary-row__qty">x{{ ticket.quantity }}</span>
+          <span class="summary-row__price text-danger">NT$ {{ ticket.subtotal.toLocaleString() }}</span>
         </div>
-
-        <div class="summary-section__body">
-          <div class="d-flex flex-wrap gap-2">
-            <SelectedTag 
-              v-for="(seat, index) in bookingStore.selectedSeats" 
-              :key="`${seat?.row}-${seat?.col}-${index}`"
-              :seat="seat" 
-            />
-            <span v-if="bookingStore.selectedSeats.length === 0" class="text-secondary fs-6">
-              尚未選擇座位
-            </span>
-          </div>
-        </div>
+        <span v-if="computedTickets.length === 0" class="text-secondary fs-6">
+          尚未選擇票種
+        </span>
       </div>
-
-      <hr class="summary-divider" />
-
-      <div class="summary-section">
-        <div class="summary-section__header">
-          <span class="summary-section__label text-secondary">加購餐點</span>
-          <button class="summary-section__edit" @click="$emit('edit-food')">
-            <i class="fa-solid fa-pen fa-xs"></i>
-            修改餐點
-          </button>
-        </div>
-
-        <div class="summary-section__body">
-          <div v-for="food in computedFoods" :key="food.id" class="summary-row">
-            <span class="summary-row__name">{{ food.name }}</span>
-            <span class="summary-row__qty">x{{ food.quantity }}</span>
-            <span class="summary-row__price text-danger">NT$ {{ food.subtotal.toLocaleString() }}</span>
-          </div>
-          <span v-if="computedFoods.length === 0" class="text-secondary fs-6">
-            尚未加購餐點
-          </span>
-        </div>
-      </div>
-
-      <hr class="summary-divider" />
-
-      <div class="summary-section">
-        <div class="summary-row mb-2">
-          <span class="summary-row__name text-secondary">線上訂票手續費</span>
-          <span class="summary-row__qty text-secondary">x{{ computedFees.quantity }}</span>
-          <span class="summary-row__price text-secondary">NT$ {{ computedFees.subtotal.toLocaleString() }}</span>
-        </div>
-
-        <div class="summary-total">
-          <span class="summary-total__label">小計</span>
-          <span class="summary-total__amount text-primary">NT$ {{ totalFormatted }}</span>
-        </div>
-      </div>
-
     </div>
+
+    <hr class="summary-divider" />
+
+    <div class="summary-section">
+      <div class="summary-section__header">
+        <span class="summary-section__label text-secondary">座位</span>
+        <button class="summary-section__edit" @click="router.push('/booking/seat')">
+          <i class="fa-solid fa-pen fa-xs"></i>
+          修改座位
+        </button>
+      </div>
+
+      <div class="summary-section__body">
+        <div class="d-flex flex-wrap gap-2">
+          <SelectedTag 
+            v-for="(seat, index) in bookingStore.selectedSeats" 
+            :key="`${seat?.rowLabel}-${seat?.colLabel}-${index}`"
+            :seat="seat" 
+          >
+            {{ seat.rowLabel }}排 {{ seat.colLabel }}號
+          </SelectedTag>
+          
+          <span v-if="bookingStore.selectedSeats.length === 0" class="text-secondary fs-6">
+            尚未選擇座位
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="summary-divider" />
+
+    <div class="summary-section">
+      <div class="summary-section__header">
+        <span class="summary-section__label text-secondary">加購餐點</span>
+        <button class="summary-section__edit" @click="router.push('/booking/food')">
+          <i class="fa-solid fa-pen fa-xs"></i>
+          修改餐點
+        </button>
+      </div>
+
+      <div class="summary-section__body">
+        <div v-for="food in computedFoods" :key="food.id" class="summary-row">
+          <span class="summary-row__name">{{ food.name }}</span>
+          <span class="summary-row__qty">x{{ food.quantity }}</span>
+          <span class="summary-row__price text-danger">NT$ {{ food.subtotal.toLocaleString() }}</span>
+        </div>
+        <span v-if="computedFoods.length === 0" class="text-secondary fs-6">
+          尚未加購餐點
+        </span>
+      </div>
+    </div>
+
+    <hr class="summary-divider" />
+
+    <div class="summary-section">
+      <div class="summary-row mb-2">
+        <span class="summary-row__name text-secondary">線上訂票手續費</span>
+        <span class="summary-row__qty text-secondary">x{{ computedFees.quantity }}</span>
+        <span class="summary-row__price text-secondary">NT$ {{ computedFees.subtotal.toLocaleString() }}</span>
+      </div>
+
+      <div class="summary-total">
+        <span class="summary-total__label">小計</span>
+        <span class="summary-total__amount text-primary">NT$ {{ totalFormatted }}</span>
+      </div>
+    </div>
+
+  </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
+import { useRouter } from 'vue-router'; // 💡 引入 Vue Router
 import SelectedTag from '@/components/Booking/Button/SelectedTag.vue';
 import { useBookingStore } from '@/store/bookingStore';
 
-defineEmits(['edit-tickets', 'edit-seats', 'edit-food']);
-
+// 💡 實體化 router
+const router = useRouter();
 const bookingStore = useBookingStore();
 
 // ── 動態計算明細 (Computed) ──────────────────────────────
 
-// 💡 1. 票種：將 Store 裡的 generalTickets、bankTickets 與 combos (套票) 組合起來
 const computedTickets = computed(() => {
-  // 將一般票與套票合併顯示在票種區
   const allTickets = [...bookingStore.tickets, ...bookingStore.combos];
-  
   return allTickets.map(item => ({
-    id: item?.id || Math.random(), // 防呆
+    id: item?.id || Math.random(),
     name: item?.name || '未知項目',
     quantity: item?.quantity || 0,
     subtotal: (item?.price || 0) * (item?.quantity || 0)
   }));
 });
 
-// 💡 2. 餐飲：直接抓取 Store 裡面的 foodAddOns 陣列
 const computedFoods = computed(() => {
   return bookingStore.foodAddOns.map(item => ({
     id: item?.id || Math.random(),
@@ -123,20 +123,17 @@ const computedFoods = computed(() => {
   }));
 });
 
-// 💡 3. 手續費計算 (總票數 * 20)
 const computedFees = computed(() => {
-  const totalQty = bookingStore.totalTicketCount || 0; // 防呆，預設 0
+  const totalQty = bookingStore.totalTicketCount || 0;
   return {
     quantity: totalQty,
     subtotal: totalQty * 20
   };
 });
 
-// 💡 4. 計算最終總金額 (包含手續費)
 const totalFormatted = computed(() => {
-  // 使用 Store 已經算好的 finalTotal (票 + 套票 + 餐) 加上 手續費
   const absoluteTotal = bookingStore.finalTotal + computedFees.value.subtotal;
-  return absoluteTotal.toLocaleString(); // 加上千分位逗號
+  return absoluteTotal.toLocaleString(); 
 });
 </script>
 

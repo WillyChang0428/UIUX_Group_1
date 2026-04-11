@@ -1,20 +1,22 @@
 <template>
-  <div class="booking-success d-flex flex-column align-items-center justify-content-center">
-
+  <div
+    class="booking-success d-flex flex-column align-items-center justify-content-center flex-md-row"
+  >
     <!-- 成功 icon：圓形 + 勾勾 -->
     <div class="booking-success__icon-wrap">
       <i class="fa-solid fa-check booking-success__icon"></i>
     </div>
 
     <!-- 標題 -->
-    <h2 class="booking-success__title">訂票成功</h2>
+    <div class="d-flex flex-column align-items-center justify-content-center align-items-md-start gap-2">
+      <h2 class="booking-success__title mb-2">訂票成功</h2>
 
-    <!-- 說明文字 + email -->
-    <div class="booking-success__desc">
-      <p class="mb-0">訂單明細已發送至</p>
-      <p class="mb-0 booking-success__email">{{ email }}</p>
+      <!-- 說明文字 + email -->
+      <div class="booking-success__desc">
+        <p class="mb-0 w-100">訂單明細已發送至</p>
+        <p class="mb-0 booking-success__email">{{ email }}</p>
+      </div>
     </div>
-
   </div>
 </template>
 
@@ -23,9 +25,9 @@ defineProps({
   // 串接時由父層（view）傳入使用者 email
   email: {
     type: String,
-    default: 'vscinemas0323@gmail.com',
+    default: "vscinemas0323@gmail.com",
   },
-})
+});
 </script>
 
 <style lang="scss" scoped>
@@ -35,20 +37,19 @@ defineProps({
 .booking-success {
   width: 100%;
   // 上下留空讓內容自然置中
-  padding: var(--gap-4xl) var(--gap-lg);
+  padding: var(--gap-xl) var(--gap-lg);
   gap: var(--gap-md);
 
   @include media-breakpoint-up(md) {
-    padding: var(--gap-4xl) var(--gap-2xl);
+    padding: var(--gap-lg) var(--gap-lg);
     gap: var(--gap-lg);
   }
 }
 
 // ── 圓形 icon 外框 ─────────────────────────────────────────────
 .booking-success__icon-wrap {
-  // 圓形固定尺寸：設計稿約 80px，不寫死，用 gap 變數堆出
-  width: calc(var(--gap-4xl) + var(--gap-lg));   // 72+24 = 96px 手機 / 144+48 = 192px PC
-  height: calc(var(--gap-4xl) + var(--gap-lg));
+  width: var(--gap-4xl);
+  height: var(--gap-4xl);
   border-radius: 50%;
   border: 2px solid v.$white;
   display: flex;
@@ -60,7 +61,7 @@ defineProps({
 // ── 勾勾 icon ─────────────────────────────────────────────────
 .booking-success__icon {
   // 手機 icon-md 24px / PC 48px 自動縮放
-  font-size: var(--gap-lg);                      // 24px / 48px
+  font-size: var(--gap-lg); // 24px / 48px
   color: v.$white;
 }
 
@@ -85,5 +86,8 @@ defineProps({
   color: $white;
   text-align: center;
   line-height: 1.6;
+  @include media-breakpoint-up(md) {
+    text-align: left;
+  }
 }
 </style>

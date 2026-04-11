@@ -1,9 +1,11 @@
 <template>
-  <div 
-    class="ishow-cash-container" 
+  <div
+    class="ishow-cash-container"
     :class="{
-      'is-active': isSelected && isBalanceSufficient,     /* 💡 充足且選取時，藍框 */
-      'is-insufficient': isSelected && !isBalanceSufficient /* 💡 不足且選取時，紅框 */
+      'is-active':
+        isSelected && isBalanceSufficient /* 💡 充足且選取時，藍框 */,
+      'is-insufficient':
+        isSelected && !isBalanceSufficient /* 💡 不足且選取時，紅框 */,
     }"
   >
     <div class="header-row" @click="toggleSelection">
@@ -15,11 +17,16 @@
         <div class="d-flex flex-column">
           <div class="d-flex align-items-center gap-2">
             <span class="fs-5 fw-bold text-white">iShow儲值金</span>
-            <span v-if="!isBalanceSufficient" class="badge bg-danger rounded-pill px-2 py-1">
+            <span
+              v-if="!isBalanceSufficient"
+              class="badge bg-danger rounded-pill px-2 py-1"
+            >
               餘額不足
             </span>
           </div>
-          <span class="text-secondary fs-6">餘額NT {{ currentBalance.toLocaleString() }}元</span>
+          <span class="text-secondary fs-6"
+            >餘額NT {{ currentBalance.toLocaleString() }}元</span
+          >
         </div>
       </div>
 
@@ -28,50 +35,96 @@
       </div>
     </div>
 
-    <div v-if="isSelected && !isBalanceSufficient" class="top-up-section mt-3 pt-3">
-      <p class="text-secondary fs-6 mb-3">儲值金餘額不足，請在下方選擇加值金額。</p>
+    <div
+      v-if="isSelected && !isBalanceSufficient"
+      class="top-up-section mt-3 pt-3"
+    >
+      <p class="text-secondary fs-6 mb-3">
+        儲值金餘額不足，請在下方選擇加值金額。
+      </p>
 
       <div class="d-flex flex-wrap gap-2 mb-4">
-        <button v-for="amount in [1000, 2000]" :key="amount" class="amount-btn"
-          :class="{ 'is-active': activeTab === amount }" @click="selectTab(amount)">
+        <button
+          v-for="amount in [1000, 2000]"
+          :key="amount"
+          class="amount-btn"
+          :class="{ 'is-active': activeTab === amount }"
+          @click="selectTab(amount)"
+        >
           NT {{ amount.toLocaleString() }}
         </button>
 
-        <button class="amount-btn" :class="{ 'is-active': activeTab === 'custom' }"
-          @click="selectTab('custom')">
-          {{ activeTab === 'custom' && confirmedCustomValue ? `NT ${confirmedCustomValue.toLocaleString()}` : '自訂金額' }}
+        <button
+          class="amount-btn"
+          :class="{ 'is-active': activeTab === 'custom' }"
+          @click="selectTab('custom')"
+        >
+          {{
+            activeTab === "custom" && confirmedCustomValue
+              ? `NT ${confirmedCustomValue.toLocaleString()}`
+              : "自訂金額"
+          }}
         </button>
       </div>
 
-      <div v-if="activeTab === 'custom' && !confirmedCustomValue" class="d-flex gap-2 mb-4">
-        <input type="number" v-model.number="customInputValue" class="form-control-dark flex-grow-1"
-          placeholder="請輸入儲值金額 (最低 1,000)">
-        
-        <PrimaryButton v-if="customInputValue >= 1000" @click="confirmCustomAmount">
+      <div
+        v-if="activeTab === 'custom' && !confirmedCustomValue"
+        class="d-flex gap-2 mb-4"
+      >
+        <input
+          type="number"
+          v-model.number="customInputValue"
+          class="form-control-dark flex-grow-1"
+          placeholder="請輸入儲值金額 (最低 1,000)"
+        />
+
+        <PrimaryButton
+          v-if="customInputValue >= 1000"
+          @click="confirmCustomAmount"
+        >
           完成
         </PrimaryButton>
-        <PrimaryButton v-else status="unable" is-disabled>
-          完成
-        </PrimaryButton>
+        <PrimaryButton v-else status="unable" is-disabled> 完成 </PrimaryButton>
       </div>
 
-      <div v-if="activeTab !== 'custom' || confirmedCustomValue" class="credit-card-form">
+      <div
+        v-if="activeTab !== 'custom' || confirmedCustomValue"
+        class="credit-card-form"
+      >
         <p class="text-white fs-6 mb-2">信用卡付款</p>
 
         <div class="input-group-custom mb-3 position-relative">
-          <input type="text" v-model="cardNumber" class="form-control-dark w-100"
-            placeholder="卡號 (1234-5678-****-5678)" v-maska="'####-####-####-####'" @input="handleCardInput">
-          <i v-if="cardBrandIcon" :class="['fa-brands', cardBrandIcon, 'card-brand-icon fs-5']"></i>
+          <input
+            type="text"
+            v-model="cardNumber"
+            class="form-control-dark w-100"
+            placeholder="卡號 (1234-5678-****-5678)"
+            v-maska="'####-####-####-####'"
+          />
+          <i
+            v-if="cardBrandIcon"
+            :class="['fa-brands', cardBrandIcon, 'card-brand-icon fs-5']"
+          ></i>
         </div>
 
         <div class="d-flex gap-3 mb-4">
           <div class="input-group-custom flex-grow-1">
-            <input type="text" v-model="cvv" class="form-control-dark w-100" placeholder="檢查碼 (3碼)"
-              maxlength="3">
+            <input
+              type="text"
+              v-model="cvv"
+              class="form-control-dark w-100"
+              placeholder="檢查碼 (3碼)"
+              maxlength="3"
+            />
           </div>
           <div class="input-group-custom flex-grow-1">
-            <input type="text" v-model="expiry" class="form-control-dark w-100" placeholder="有效期限 (MM/YY)"
-              v-maska="'##/##'">
+            <input
+              type="text"
+              v-model="expiry"
+              class="form-control-dark w-100"
+              placeholder="有效期限 (MM/YY)"
+              v-maska="'##/##'"
+            />
           </div>
         </div>
 
@@ -89,48 +142,53 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { vMaska } from 'maska/vue';
-import { useAuthStore } from '@/store/authStore'; // 💡 確保路徑是 stores
-import PrimaryButton from '@/components/Common/Button/PrimaryButton.vue';
+import { ref, computed, watch } from "vue"; // 💡 1. 記得引入 watch
+import { vMaska } from "maska/vue";
+import { useAuthStore } from "@/store/authStore";
+import PrimaryButton from "@/components/Common/Button/PrimaryButton.vue";
 
-// 💡 父層必須傳入結帳總金額 (純數字)
+// 💡 1. 在 props 中新增 currentMethod
 const props = defineProps({
-  checkoutTotal: { type: Number, required: true, default: 0 }
+  checkoutTotal: { type: Number, required: true, default: 0 },
+  currentMethod: { type: String, default: "" },
 });
-const emit = defineEmits(['select', 'topup-success']);
+const emit = defineEmits(["select", "topup-success"]);
 
 const authStore = useAuthStore();
-const isSelected = ref(false);
+// 💡 2. 刪除原本的 ref(false)，改用 computed 判斷自己是否被選中
+const isSelected = computed(() => props.currentMethod === "ishowCash");
 
-const currentBalance = computed(() => authStore.currentUser?.walletBalance || 0);
+const currentBalance = computed(
+  () => authStore.currentUser?.walletBalance || 0,
+);
 
-// 💡 關鍵判斷：比較「會員餘額」是否大於等於「結帳總額」
 const isBalanceSufficient = computed(() => {
   return currentBalance.value >= props.checkoutTotal;
 });
 
+// 💡 3. 修改點擊邏輯：如果還沒被選中，才發送選取訊號 (防止雙擊取消)
 const toggleSelection = () => {
-  isSelected.value = !isSelected.value;
-  if (isSelected.value) emit('select', 'ishowCash');
+  if (!isSelected.value) {
+    emit("select", "ishowCash");
+  }
 };
 
 // ── 儲值選項與自訂金額邏輯 ──────────────────────────────────
-const activeTab = ref(1000);           
-const customInputValue = ref('');      
-const confirmedCustomValue = ref(null); 
+const activeTab = ref(1000);
+const customInputValue = ref("");
+const confirmedCustomValue = ref(null);
 
 const selectTab = (tab) => {
   activeTab.value = tab;
-  if (tab !== 'custom') {
+  if (tab !== "custom") {
     confirmedCustomValue.value = null;
-    customInputValue.value = '';
+    customInputValue.value = "";
   } else {
     confirmedCustomValue.value = null;
   }
-  cardNumber.value = '';
-  cvv.value = '';
-  expiry.value = '';
+  cardNumber.value = "";
+  cvv.value = "";
+  expiry.value = "";
 };
 
 const confirmCustomAmount = () => {
@@ -140,43 +198,57 @@ const confirmCustomAmount = () => {
 };
 
 // ── 信用卡表單邏輯 ────────────────────────────────────────
-const cardNumber = ref('');
-const cvv = ref('');
-const expiry = ref('');
-const cardBrandIcon = ref('');
+const cardNumber = ref("");
+const cvv = ref("");
+const expiry = ref("");
+const cardBrandIcon = ref("");
 
-const handleCardInput = (e) => {
-  const val = e.target.value.replace(/-/g, '');
-  if (val.startsWith('4')) cardBrandIcon.value = 'fa-cc-visa';
-  else if (/^5[1-5]/.test(val)) cardBrandIcon.value = 'fa-cc-mastercard';
-  else if (/^3[47]/.test(val)) cardBrandIcon.value = 'fa-cc-amex';
-  else if (/^352[89]|^35[3-8][0-9]/.test(val)) cardBrandIcon.value = 'fa-cc-jcb';
-  else cardBrandIcon.value = '';
-};
+// 💡 2. 使用 watch 監聽 cardNumber，不受套件干擾，即時判斷信用卡品牌
+watch(cardNumber, (newVal) => {
+  const val = newVal.replace(/-/g, ""); // 移除橫線後判斷
+  if (val.startsWith("4")) cardBrandIcon.value = "fa-cc-visa";
+  else if (/^5[1-5]/.test(val)) cardBrandIcon.value = "fa-cc-mastercard";
+  else if (/^3[47]/.test(val)) cardBrandIcon.value = "fa-cc-amex";
+  else if (/^352[89]|^35[3-8][0-9]/.test(val))
+    cardBrandIcon.value = "fa-cc-jcb";
+  else cardBrandIcon.value = "";
+});
 
 const isFormValid = computed(() => {
   const isCardValid = cardNumber.value.length === 19;
   const isCvvValid = cvv.value.length === 3;
-  const isExpiryValid = expiry.value.length === 5; 
+  const isExpiryValid = expiry.value.length === 5;
   return isCardValid && isCvvValid && isExpiryValid;
 });
 
 const handleTopUp = () => {
   if (!isFormValid.value) return;
 
-  const topUpValue = activeTab.value === 'custom' ? confirmedCustomValue.value : activeTab.value;
+  const rawValue =
+    activeTab.value === "custom" ? confirmedCustomValue.value : activeTab.value;
 
-  if (authStore.addBalance) {
+  // 💡 3. 強制轉為 Number，確保數學加法正確執行 (避免字串相加)
+  const topUpValue = Number(rawValue);
+
+  if (typeof authStore.addBalance === "function") {
+    // 如果您的 Store 裡面有寫好 addBalance 這個 action，優先呼叫它
     authStore.addBalance(topUpValue);
-  } else if (authStore.currentUser) {
-    authStore.currentUser.walletBalance += topUpValue;
+  } else {
+    // ⚠️ 如果目前是未登入狀態 (currentUser 為 null)，為了測試順利，我們幫他建立一個假的會員實體
+    if (!authStore.currentUser) {
+      authStore.currentUser = { walletBalance: 0 };
+    }
+    // 將金額加上去
+    authStore.currentUser.walletBalance =
+      Number(authStore.currentUser.walletBalance) + topUpValue;
   }
 
-  cardNumber.value = '';
-  cvv.value = '';
-  expiry.value = '';
-  selectTab(1000); 
-  emit('topup-success', topUpValue);
+  // 清空表單與重置狀態
+  cardNumber.value = "";
+  cvv.value = "";
+  expiry.value = "";
+  selectTab(1000);
+  emit("topup-success", topUpValue);
 };
 </script>
 
@@ -194,6 +266,15 @@ const handleTopUp = () => {
   /* 💡 充足且選取時顯示藍色 */
   &.is-active {
     border-color: $vieshow-primary;
+
+    // 👇 新增這段：背景變品牌藍、icon 變白
+    .wallet-icon-box {
+      background-color: $vieshow-primary;
+      i {
+        color: $white !important;
+      }
+    }
+
     .radio-circle {
       border-color: $vieshow-primary;
       .radio-inner {
@@ -306,18 +387,32 @@ const handleTopUp = () => {
   color: $white;
 }
 
-.fa-cc-visa { color: #1a1f71; background: white; border-radius: 2px; }
-.fa-cc-mastercard { color: #ff5f00; }
-.fa-cc-jcb { color: #007940; background: white; border-radius: 2px; }
-.fa-cc-amex { color: #002663; background: white; border-radius: 2px; }
+.fa-cc-visa {
+  color: #1a1f71;
+  background: white;
+  border-radius: 2px;
+}
+.fa-cc-mastercard {
+  color: #ff5f00;
+}
+.fa-cc-jcb {
+  color: #007940;
+  background: white;
+  border-radius: 2px;
+}
+.fa-cc-amex {
+  color: #002663;
+  background: white;
+  border-radius: 2px;
+}
 
 input[type="number"] {
-  -moz-appearance: textfield; 
-  appearance: textfield; 
+  -moz-appearance: textfield;
+  appearance: textfield;
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
-    -webkit-appearance: none; 
+    -webkit-appearance: none;
     margin: 0;
   }
 }

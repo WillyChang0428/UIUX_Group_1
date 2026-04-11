@@ -2,8 +2,18 @@
   <div class="container d-flex flex-column gap-3 py-5 position-relative">
     <OrderSummary />
     
-    <iShowCash :checkoutTotal="finalTotal" @select="handlePaymentSelect" @topup-success="handleTopUpSuccess" />
-    <CreditCard @select="handlePaymentSelect" @card-saved="handleCardSaved" />
+    <iShowCash 
+      :checkoutTotal="finalTotal" 
+      :currentMethod="bookingStore.paymentMethod" 
+      @select="handlePaymentSelect" 
+      @topup-success="handleTopUpSuccess" 
+    />
+    
+    <CreditCard 
+      :currentMethod="bookingStore.paymentMethod" 
+      @select="handlePaymentSelect" 
+      @card-saved="handleCardSaved" 
+    />
     
     <div class="payment-page">
         <ReceiptOption />
@@ -12,7 +22,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue'; // 💡 記得引入 onMounted
 import { useBookingStore } from '@/store/bookingStore';
 
 import OrderSummary from '@/components/Booking/ConfirmationPage/OrderSummary.vue';
@@ -22,12 +32,17 @@ import ReceiptOption from '@/components/Booking/Button/Paying/ReceiptOption.vue'
 
 const bookingStore = useBookingStore();
 
-// 從 Store 拿總金額
 const finalTotal = computed(() => bookingStore.finalTotal);
 
-// 💡 當使用者選擇付款方式時，存進 Store 大腦中
+// 💡 進到付款頁時，如果還沒選過付款方式，預設設定為儲值金
+onMounted(() => {
+    if (!bookingStore.paymentMethod) {
+        bookingStore.setPaymentMethod('ishowCash');
+    }
+});
+
 const handlePaymentSelect = (method) => {
-    console.log('使用者選擇了付款方式:', method);
+    // 收到子元件傳來的選擇後，寫入大腦
     bookingStore.setPaymentMethod(method); 
 };
 

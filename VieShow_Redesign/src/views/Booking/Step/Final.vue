@@ -2,7 +2,7 @@
   <div class="final-page py-5">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6 d-flex flex-column gap-4 gap-md-5">
+        <div class="col-12 col-md-8 col-lg-6 d-flex flex-column gap-4 gap-md-5 ">
           
           <BookingSuccess :email="userEmail" />
 
@@ -14,7 +14,7 @@
           />
 
           <div class="d-flex justify-content-center mt-2">
-            <SecondaryButton @click="goHome">
+            <SecondaryButton class="w-100" @click="goHome">
               返回首頁
             </SecondaryButton>
           </div>
@@ -47,7 +47,6 @@ const allPurchasedItems = computed(() => {
   return [
     ...bookingStore.tickets,
     ...bookingStore.combos,
-    ...bookingStore.foodAddOns
   ];
 });
 

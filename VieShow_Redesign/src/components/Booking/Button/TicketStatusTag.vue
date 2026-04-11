@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="ticket-status-tag d-inline-block px-2 py-2 rounded-xl font-size-mini"
+    class="ticket-status-tag d-inline-block px-2 py-1 rounded-xl font-size-mini"
     :class="statusClass"
   >
     {{ statusText }}
