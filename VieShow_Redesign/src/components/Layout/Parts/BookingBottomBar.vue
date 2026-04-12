@@ -209,7 +209,7 @@ const processPayment = () => {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1030;
+  z-index: 1050;
   background: $vieshow-dark;
   border-top: 1px solid rgba($white, 0.1);
   box-shadow: 0 -4px 24px rgba($black, 0.4);

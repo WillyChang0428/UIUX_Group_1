@@ -143,7 +143,7 @@ onUnmounted(() => {
   height: fit-content;
   display: flex;
   align-items: center;
-  z-index: 1030;
+  z-index: 1050;
   background-color: $vieshow-dark;
   border-bottom: 1px solid rgba($white, 0.05);
 

@@ -63,7 +63,7 @@ const handleClose = () => {
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 1030;
+  z-index: 1050;
   background-color: $vieshow-dark;
   border-bottom: 1px solid rgba($white, 0.05);
 

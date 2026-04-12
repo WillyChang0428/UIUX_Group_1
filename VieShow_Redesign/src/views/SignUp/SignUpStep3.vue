@@ -82,10 +82,11 @@ const handleRegister = () => {
 </script>
 
 <template>
+  <div class="container py-5">
   <ProgressStep :currentStep="currentStep" :totalSteps="totalSteps" />
 
   <form @submit.prevent="handleRegister">
-    <ul class="container list-unstyled d-flex flex-column gap-4">
+    <ul class="list-unstyled d-flex flex-column gap-4 pt-3">
       <li><h5 class="text-light mb-1">填寫會員資料</h5></li>
       <li>
         <MetadataInput
@@ -105,8 +106,8 @@ const handleRegister = () => {
         <div class="d-flex gap-3 w-100">
           <div class="flex-grow-1" style="min-width: 0;">
             <MetadataInput
-              label="手機號碼"
-              placeholder="請輸入號碼"
+              hide-label
+              placeholder="請輸入手機號碼"
               type="tel"
               inputmode="numeric"
               v-model="userPhone"
@@ -150,6 +151,7 @@ const handleRegister = () => {
       </li>
     </ul>
   </form>
+  </div>
 </template>
 
 <style lang="scss" scoped>

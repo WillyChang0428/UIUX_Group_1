@@ -4,7 +4,7 @@
       <Header />
     </div>
     <BookingStepHeader />
-    
+
     <div class="selectedinfocard d-xl-none">
       <SelectedInfoCard v-if="movieStore.selectedMovieId" />
     </div>
@@ -33,7 +33,6 @@ import BookingBottomBar from "./Parts/BookingBottomBar.vue";
 import Header from "./Parts/Header/Header.vue";
 import SelectedInfoCard from "../Booking/SelectedInfoCard.vue";
 import BookingLayoutPC from "../Booking/BookingLayoutPC.vue";
-
 
 const movieStore = useMovieStore();
 
@@ -77,6 +76,7 @@ main {
   top: 0;
   left: 0;
   right: 0;
+  z-index: 50;
   margin-top: v.$web-top-padding-mobile;
   @include media-breakpoint-up(md) {
     margin-top: 164px;

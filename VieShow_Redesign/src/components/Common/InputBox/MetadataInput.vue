@@ -3,7 +3,8 @@ const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
   label: { type: String, default: '標籤' },
   type: { type: String, default: 'text' },
-  placeholder: { type: String, default: '' }
+  placeholder: { type: String, default: '' },
+  hideLabel: { type: Boolean, default: false }
 });
 
 const emit = defineEmits(['update:modelValue', 'blur']);
@@ -12,7 +13,7 @@ const emit = defineEmits(['update:modelValue', 'blur']);
 <template>
   <div class="metadata-input-wrapper d-flex align-items-center w-100 border rounded-lg bg-dark-section overflow-hidden">
     
-    <div class="label-box px-3 h-100 d-flex align-items-center justify-content-center">
+    <div v-if="!hideLabel" class="label-box px-3 h-100 d-flex align-items-center justify-content-center">
       <span class="text-tertiary fs-6 fw-medium text-nowrap">{{ label }}</span>
     </div>
 
