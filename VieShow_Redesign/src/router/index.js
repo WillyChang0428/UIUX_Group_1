@@ -7,7 +7,7 @@ import BookingLayout from "@/components/Layout/BookingLayout.vue";
 import SignUpLayout from "@/components/Layout/SignUpLayout.vue";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     // ==========================================
     // 🟢 型態一：預設佈局 (一般 Header + Footer)
