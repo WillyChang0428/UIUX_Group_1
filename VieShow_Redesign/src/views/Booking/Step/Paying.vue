@@ -1,5 +1,6 @@
 <template>
   <div class="container d-flex flex-column gap-3 py-5 position-relative">
+    <ProgressStep class="mb-4" :currentStep="4" :totalSteps="totalSteps" />
     <OrderSummary />
     
     <iShowCash 
@@ -29,6 +30,8 @@ import OrderSummary from '@/components/Booking/ConfirmationPage/OrderSummary.vue
 import iShowCash from '@/components/Booking/Button/Paying/iShowCash.vue';
 import CreditCard from '@/components/Booking/Button/Paying/CreditCard.vue';
 import ReceiptOption from '@/components/Booking/Button/Paying/ReceiptOption.vue';
+import ProgressStep from "@/components/Common/ProgressStep.vue";
+
 
 const bookingStore = useBookingStore();
 

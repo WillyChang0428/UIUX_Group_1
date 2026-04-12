@@ -1,4 +1,5 @@
 <template>
+    <ProgressStep :currentStep="3" :totalSteps="totalSteps" />
   <div class="food-addon container w-100 py-5">
     <!-- 頁籤列：橫向滾動不換行 -->
     <div class="food-addon__tabs-wrap">
@@ -65,6 +66,7 @@
 import { ref, computed } from "vue";
 import FilterButton from "@/components/Booking/FastBooking/Button/FilterButton.vue";
 import StepperCounter from "@/components/Booking/Button/StepperCounter.vue";
+import ProgressStep from "@/components/Common/ProgressStep.vue";
 import { useBookingStore } from "@/store/bookingStore"; // 💡 引入大腦 Store
 
 const emit = defineEmits(["update"]);
