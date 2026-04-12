@@ -47,10 +47,11 @@ const handleNext = () => {
             <i class="fa-solid fa-check check-icon" :class="{ 'is-active': isAgreed }"></i>
           </div>
           
-          <span class="text-light fs-6 select-none">
+          <span class="text-light select-none">
             我同意
-            <span class="terms-link" @click.prevent="isTermsModalOpen = true">【威秀影城iShow會員】服務辦法</span>
+            <span class="terms-link" @click.prevent="isTermsModalOpen = true">威秀影城會員服務辦法</span>
           </span>
+          
         </label>
         <SecondaryButton 
           class="w-100 py-2 my-3"
