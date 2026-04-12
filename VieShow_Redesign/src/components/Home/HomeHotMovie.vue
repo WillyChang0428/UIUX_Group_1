@@ -92,8 +92,10 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useMovieStore } from "@/store/movieStore";
+import { useRouter } from "vue-router";
 import SecondaryButton from "@/components/Common/Button/SecondaryButton.vue";
 
+const router = useRouter();
 const movieStore = useMovieStore();
 const currentIndex = ref(0);
 const desktopIndex = ref(0);
@@ -102,7 +104,14 @@ let autoPlayTimer = null;
 const currentMovie = computed(
   () => movieStore.movieList[currentIndex.value] || {},
 );
-const handleBooking = (id) => console.log("Booking:", id);
+
+const handleBooking = (id) => {
+  // 將選取的電影 ID 存入 Pinia
+  movieStore.selectMovie(id);
+
+  // 跳轉至快速訂票頁
+  router.push("/fastbooking");
+};
 
 const resetTimer = () => {
   if (autoPlayTimer) clearInterval(autoPlayTimer);

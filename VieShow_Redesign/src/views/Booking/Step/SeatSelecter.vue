@@ -1,5 +1,6 @@
 <template>
   <div class="container d-flex flex-column gap-6 py-5">
+    <ProgressStep :currentStep="2" :totalSteps="totalSteps" />
     <SeatMap
       :ticketCount="bookingStore.totalTicketCount"
       @seats-selected="handleSeatUpdate"
@@ -11,6 +12,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useBookingStore } from "@/store/bookingStore";
 import SeatMap from "@/components/Booking/Button/SeatSelecting/SeatMap.vue";
+import ProgressStep from "@/components/Common/ProgressStep.vue";
 
 const bookingStore = useBookingStore();
 const ticketCount = computed(() => bookingStore.totalTicketCount);

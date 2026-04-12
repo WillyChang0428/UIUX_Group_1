@@ -84,8 +84,10 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useMovieStore } from "@/store/movieStore";
+import { useRouter } from "vue-router";
 import PrimaryButton from "@/components/Common/Button/PrimaryButton.vue";
 
+const router = useRouter();
 const movieStore = useMovieStore();
 const currentIndex = ref(0);
 let timer = null;
@@ -139,7 +141,11 @@ onUnmounted(() => {
 });
 
 const goBooking = (id) => {
-  console.log(`跳轉至電影 ID: ${id} 訂票頁`);
+  // 將選取的電影 ID 存入 Pinia
+  movieStore.selectMovie(id);
+
+  // 跳轉至快速訂票頁
+  router.push("/fastbooking");
 };
 
 // 💡 自動提取 YouTube ID 的工具函式
@@ -216,7 +222,6 @@ const getYouTubeID = (url) => {
     @include v.media-breakpoint-up(md) {
       max-width: 800px;
     }
-
   }
 
   .banner-pagination-wrapper {

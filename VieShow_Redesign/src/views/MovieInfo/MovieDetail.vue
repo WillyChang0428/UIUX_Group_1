@@ -1,5 +1,5 @@
 <template>
-    <div class="main-wrapper">
+    <div>
         <div v-if="!currentMovie"
             class="loading-screen text-white d-flex justify-content-center align-items-center vh-100">
             <div class="spinner-border text-primary" role="status"></div>

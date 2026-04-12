@@ -82,7 +82,7 @@ const handleMobileClick = (item, event) => {
 };
 
 const menuItems = [
-  { text: "電影資訊", english: "Movie Information", link: "/MovieInfo" },
+  { text: "電影資訊", english: "Movie Information", link: "/movieinfo" },
   { text: "影城據點", english: "Theaters", link: "/" },
   { text: "最新消息", english: "News", link: "/" },
   { text: "團票 / 包廳", english: "Group Booking", link: "/" },
