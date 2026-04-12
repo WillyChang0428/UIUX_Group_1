@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from "vue-router";
+// 必須在這裡明確寫出 createWebHashHistory
+import { createRouter, createWebHashHistory } from "vue-router";
 import { useAppStore } from "@/store/appStore"; // 💡 引入剛剛建立的 Store
 
 // 💡 1. 引入您的三種 Layout 外殼
@@ -85,7 +86,7 @@ const router = createRouter({
     // ==========================================
     {
       path: "/SignUp",
-      component: () => import("@/components/Layout/SignUpLayout.vue"),
+      component: SignUpLayout,
       redirect: '/SignUp/SignUpStep1',
       children: [
         { 

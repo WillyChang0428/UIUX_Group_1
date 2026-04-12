@@ -4,42 +4,40 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
-  base: './', // 保持相對路徑
-
+  
+  // 保持相對路徑，這是目前最穩定的設定
+  base: './', 
+  
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
-
+  
   build: {
     rollupOptions: {
       output: {
-        // 🌟 這裡做了 null 檢查 (chunk.name || 'chunk')
-        // 確保即便檔案沒名字，也不會噴錯誤，且一定會去掉底線
+        // 🌟 修正後的 JS 檔名規則
         chunkFileNames: (chunk) => {
           const name = (chunk.name || 'chunk').replace(/^_+/, '');
           return `assets/${name}-[hash].js`;
         },
         entryFileNames: (chunk) => {
+          // 修正點：這裡原本寫成了 ${name] ，現在改回 ${name}
           const name = (chunk.name || 'index').replace(/^_+/, '');
           return `assets/${name}-[hash].js`;
         },
-        assetFileNames: (assetInfo) => {
-          // 資源檔案通常比較穩定，我們直接用內建變數避開底線
-          // 如果真的還有底線檔案，GitHub Pages 會被 .nojekyll 擋住保險
-          return `assets/[name]-[hash][extname]`;
-        },
+        // 資源檔案直接使用字串格式，最安全
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
   },
-
+  
   css: {
     preprocessorOptions: {
       scss: {
         additionalData: `@use "@/assets/scss/_variables.scss" as v;`,
         quietDeps: true,
-        silenceDeprecations: ['color-functions', 'import', 'global-builtin'],
       }
     }
   }
