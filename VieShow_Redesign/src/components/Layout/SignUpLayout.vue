@@ -7,7 +7,8 @@ import SignUpStepHeader from './Parts/SignUpStepHeader.vue';
 const isDesktop = ref(false);
 
 const checkScreenSize = () => {
-  isDesktop.value = window.innerWidth >= 768; // md 斷點
+  // 🌟 修正：lg 尺寸在 Bootstrap 預設是 992px
+  isDesktop.value = window.innerWidth >= 992; 
 };
 
 onMounted(() => {
@@ -22,43 +23,35 @@ onUnmounted(() => {
 
 <template>
   <div class="default-layout container">
-    <Header />
+    <Header v-if="isDesktop" />
 
-    <SignUpStepHeader />
-
-    <main 
+    <SignUpStepHeader v-if="!isDesktop" />
+    <SignUpStepHeader v-else /> <main 
       class="layout-main" 
       :class="isDesktop ? 'other-wrapper' : 'main-wrapper'"
     >
       <router-view />
     </main>
-
   </div>
 </template>
 
 <style lang="scss" scoped>
 @import "@/assets/scss/variables";
 
-.default-layout {
+.layout-main {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh; 
-  background: $vieshow-gradient-dark; 
-}
 
-/* 讓中間內容區自動撐開，把 Footer 推到底部 */
-.layout-main {
-  flex: 1; 
-  display: flex;
-  flex-direction: column; /* 如果裡面的 Step 需要置中，這行很實用 */
-}
+  // 🌟 手機版：只有一個 SignUpStepHeader
+  &.main-wrapper {
+    padding-top: $web-top-padding-mobile; 
+  }
 
-/* 預留給你的 wrapper 樣式 */
-.main-wrapper {
-  // 手機版樣式
-}
-
-.other-wrapper {
-  // 電腦版樣式
+  // 🌟 電腦版：Header (1倍) + SignUpStepHeader (1倍) = 2倍高度
+  &.other-wrapper {
+    // 使用 calc 確保剛好是兩個標頭的高度，照片就不會被吃掉
+    padding-top: calc($web-top-padding-pc * 2); 
+  }
 }
 </style>
