@@ -26,10 +26,7 @@ import { useRouter } from 'vue-router'
 import PrimaryButton from '@/components/Common/Button/PrimaryButton.vue';
 
 const router = useRouter()
-
-function handleBack()     { router.back() }
-function handleClose()    { router.push({ name: 'Home' }) }
-function handleComplete() { router.push({ name: 'Home' }) }
+function handleComplete() { router.push('/') }
 </script>
 
 <style lang="scss" scoped>

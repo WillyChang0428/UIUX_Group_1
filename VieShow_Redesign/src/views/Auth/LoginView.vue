@@ -75,12 +75,12 @@
           登入
         </SecondaryButton>
 
-        <GoogleLogin :callback="handleLogin" class="google-btn w-100 mb-3" />
+        <GoogleLogin :callback="handleGoogleLogin" class="google-btn w-100 mb-3" />
 
         <div class="text-center text-secondary register-hint">
           還不是會員？
           <router-link
-            to="/register"
+            to="/SignUp"
             class="register-link text-decoration-none fw-medium"
             >立即註冊</router-link
           >
@@ -134,6 +134,35 @@ const handleLogin = () => {
   }
 };
 
+// 🌟 處理 Google 按鈕回傳的專屬邏輯
+const handleGoogleLogin = (response) => {
+  // 1. 取得 Google 回傳的 Email 
+  // ⚠️ 備註：這裡取決於你的 GoogleLogin 組件怎麼寫。
+  // 如果是官方預設按鈕，通常需要 decodeCredential(response.credential).email
+  const googleEmail = response.email; 
+
+  if (!googleEmail) {
+    errorMessage.value = "無法取得 Google 帳號資訊，請重試";
+    return;
+  }
+
+  // 2. 呼叫 Store 的判斷邏輯
+  const result = authStore.startGoogleRegistration(googleEmail);
+
+  // 3. 根據結果決定彈窗與路由的動向
+  if (result.action === 'login') {
+    // 【情境 A：老會員】
+    console.log("歡迎回來，老朋友！");
+    isOpen.value = false; // 直接關閉登入彈窗，此時 Navbar 應該會變更為已登入狀態
+    
+  } else if (result.action === 'register') {
+    // 【情境 B：新朋友】
+    console.log("發現新朋友，準備跳轉至註冊流程！");
+    isOpen.value = false; // 先把登入彈窗關掉
+    // 直接導向註冊流程的 Step 3 (填寫身分證與手機)
+    router.push('/SignUp/SignUpStep3'); 
+  }
+};
 // 處理點擊 X 關閉視窗的邏輯
 const handleClose = () => {
   // 💡 核心修正 3：點擊 X 也是單純關閉彈窗

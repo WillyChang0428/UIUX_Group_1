@@ -5,7 +5,7 @@ export const useAuthStore = defineStore("auth", () => {
   // ══════════════════════════════════════════════════════════════
   // 1. 模擬會員資料庫 (假資料，實戰中會存在後端資料庫)
   // ══════════════════════════════════════════════════════════════
-  const userList = ref([
+  const userList = ref(
     [
       {
         id: "U001",
@@ -15,7 +15,7 @@ export const useAuthStore = defineStore("auth", () => {
         idNumber: "A123456789",     // 身分證字號
         phone: "0912345678",        // 手機號碼
         isGoogleLinked: true,       // 是否綁定 Google
-        linkedGoogleEmail: "a2492257@gmail.com", // 已綁定的 Google 信箱
+        linkedGoogleEmail: "wang123@gmail.com", // 已綁定的 Google 信箱
         walletBalance: 1500         // 💰 新增：錢包餘額 (預設 1500)
       },
       {
@@ -63,72 +63,108 @@ export const useAuthStore = defineStore("auth", () => {
         walletBalance: 120          // 💰 新增：錢包餘額 (預設 120)
       }
     ]
-  ]);
+  );
+
+  //註冊資料存入
+  // 1. 註冊暫存區 (跨步驟表單共用的空白表單)
+  const pendingUser = ref({
+    email: "",
+    password: "",
+    realName: "",
+    idNumber: "",
+    phone: "",
+    birthday: null, // 建議加上生日
+    isGoogleLinked: false,
+    linkedGoogleEmail: ""
+  });
+
+  const resetPendingUser = () => {
+    pendingUser.value = {
+      email: "",
+      password: "",
+      realName: "",
+      idNumber: "",
+      phone: "",
+      birthday: null,
+      isGoogleLinked: false,
+      linkedGoogleEmail: ""
+    };
+    console.log("🧹 註冊暫存區已清空");
+  };
+
+  const generateNextId = () => {
+    if (userList.value.length === 0) return "U001";
+    const lastUser = userList.value[userList.value.length - 1];
+    const nextNum = parseInt(lastUser.id.replace("U", "")) + 1;
+    return `U${nextNum.toString().padStart(3, "0")}`;
+  };
 
   // ══════════════════════════════════════════════════════════════
-  // 2. 登入狀態管理
+  // 2. 核心邏輯修改：處理 Google 註冊/檢查
   // ══════════════════════════════════════════════════════════════
+  const startGoogleRegistration = (googleEmail) => {
+    // 🌟 核心防錯：如果傳入空值，直接視為新用戶或報錯，不進行比對
+    if (!googleEmail) {
+      console.error("❌ Google Email 為空，無法檢查");
+      return { action: 'register' };
+    }
 
-  // 當前登入的會員 (若為 null 代表未登入)
-  const currentUser = ref(null); // 預設為第一個會員，實際使用時可改為 null
+    // 🌟 核心修正：增加「必須有值」的判斷 (避免 null === null 的誤判)
+    const existingUser = userList.value.find(u => {
+      const matchGoogle = u.linkedGoogleEmail && u.linkedGoogleEmail === googleEmail;
+      const matchAccount = u.email && u.email === googleEmail;
+      return matchGoogle || matchAccount; // 只要其中一個信箱對上，就代表註冊過了
+    });
 
-  // 判斷是否已登入的 computed (供 Navbar 或 Route Guard 使用)
+    if (existingUser) {
+      console.log("🚩 偵測到已註冊用戶，準備執行登入");
+      currentUser.value = existingUser; // 老客戶直接幫他登入
+      return { action: 'login' }; 
+    }
+
+    // ✅ 新用戶：資料自動推送到暫存區
+    console.log("🚩 新用戶，將 Email 存入暫存區並前往 Step 3");
+    pendingUser.value.email = googleEmail;
+    pendingUser.value.linkedGoogleEmail = googleEmail;
+    pendingUser.value.isGoogleLinked = true;
+    pendingUser.value.password = "GOOGLE_OAUTH_ACCOUNT"; // 標記為 Google 帳號
+    
+    return { action: 'register' };
+  };
+
+  // 完成註冊
+  const completeRegistration = () => {
+    const newUser = {
+      id: generateNextId(),
+      ...pendingUser.value,
+      walletBalance: 0 
+    };
+    
+    userList.value.push(newUser);
+    currentUser.value = newUser; 
+
+    console.log("🎉 新會員註冊成功！資料庫已更新", newUser);
+    resetPendingUser(); 
+  };
+
+  // ══════════════════════════════════════════════════════════════
+  // 3. 登入狀態與 Actions
+  // ══════════════════════════════════════════════════════════════
+  const currentUser = ref(null);
   const isLoggedIn = computed(() => currentUser.value !== null);
 
-  // ══════════════════════════════════════════════════════════════
-  // 3. Actions (提供給組件呼叫的方法)
-  // ══════════════════════════════════════════════════════════════
-
-  /**
-   * 一般帳號密碼登入
-   * @param {String} email 輸入的信箱
-   * @param {String} password 輸入的密碼
-   * @returns {Boolean} 登入是否成功
-   */
   const login = (email, password) => {
-    const user = userList.value.find(
-      (u) => u.email === email && u.password === password
-    );
-
-    if (user) {
-      currentUser.value = user;
-      return true; // 登入成功
-    }
-    return false;  // 登入失敗 (帳號或密碼錯誤)
+    const user = userList.value.find(u => u.email === email && u.password === password);
+    if (user) { currentUser.value = user; return true; }
+    return false;
   };
 
-  /**
-   * 模擬 Google 快速登入
-   * @param {String} googleEmail Google 授權回傳的信箱
-   */
-  const loginWithGoogle = (googleEmail) => {
-    const user = userList.value.find(
-      (u) => u.isGoogleLinked && u.linkedGoogleEmail === googleEmail
-    );
-
-    if (user) {
-      currentUser.value = user;
-      return true;
-    }
-    return false; // 找不到綁定此 Google 信箱的帳號
-  };
-
-  /**
-   * 登出
-   */
-  const logout = () => {
-    currentUser.value = null;
-  };
+  const logout = () => { currentUser.value = null; };
 
   return {
-    // State
-    userList,
-    currentUser,
-    // Computed
+    userList, currentUser, pendingUser,
     isLoggedIn,
-    // Actions
-    login,
-    loginWithGoogle,
-    logout
+    login, logout,
+    startGoogleRegistration, completeRegistration, resetPendingUser
   };
 });

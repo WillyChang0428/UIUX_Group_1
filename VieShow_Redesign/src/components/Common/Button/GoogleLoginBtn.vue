@@ -1,50 +1,59 @@
 <script setup>
-import { ref } from 'vue'
-// 引入解密 JWT 的魔術工具
-import { jwtDecode } from 'jwt-decode'
+import { defineEmits } from 'vue';
+import { jwtDecode } from 'jwt-decode';
 
-// 準備一個變數來裝解密後的資料
-const userInfo = ref(null)
+const emit = defineEmits(['success']);
 
-// 當使用者點擊授權成功後，Google 會觸發這個函式
 const handleGoogleSuccess = (response) => {
-  // 1. 攔截 Google 回傳的加密憑證 (Credential)
-  const token = response.credential
-  
-  // 2. 直接在前端解密！
-  const decodedData = jwtDecode(token)
-  
-  // 3. 把我們需要的資料抓出來存進變數
-  userInfo.value = {
-    name: decodedData.name,       // 真實姓名
-    email: decodedData.email,     // 信箱
-    picture: decodedData.picture  // Google 頭像網址
+  try {
+    const token = response.credential;
+    const decodedData = jwtDecode(token);
+    const data = {
+      name: decodedData.name,
+      email: decodedData.email,
+      picture: decodedData.picture
+    };
+    emit('success', data);
+  } catch (error) {
+    console.error('解密失敗:', error);
   }
-  
-  console.log('Google 登入成功！抓到的資料：', userInfo.value)
-  // 這裡你可以加上 router.push('/home') 讓他跳轉回首頁
-}
+};
 </script>
 
 <template>
-  <div>
-    <GoogleLogin :callback="handleGoogleSuccess" class="google-btn" />
+  <div class="google-btn-custom-wrapper">
+    <GoogleLogin 
+      :callback="handleGoogleSuccess" 
+      popup-type="CODE"
+      width="192" 
+    />
   </div>
 </template>
 
-
-
 <style lang="scss" scoped>
-.google-btn {
-    color: v.$vieshow-primary;
-    border-radius: var(--app-radius);
-    font-size: var(--app-font-size-base);
-    transition: all 0.2s ease;
-    overflow: hidden;
+@import "@/assets/scss/variables";
 
-    // &:hover {
-    //   // 💡 取代死白的 #F0F0F0，改用具語意化的 rgba 輔助色
-    //   background-color: rgba(v.$vieshow-secondary, 0.1) !important;
-    // }
+.google-btn-custom-wrapper {
+  // 這裡套用你原本的設計規範
+  width: 192.14px;  // 🌟 保持你設定的精確寬度
+  height: 40px;     // 🌟 保持高度
+  border-radius: var(--app-radius);
+  overflow: hidden; // 確保按鈕不會超出圓角
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+    background-color: rgba($vieshow-secondary, 0.1);
   }
+}
+
+// 深度選擇器，確保 Google 內部的按鈕稍微對齊
+:deep(.S67qz-I097p) {
+  border-radius: var(--app-radius) !important;
+}
 </style>
