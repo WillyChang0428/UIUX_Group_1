@@ -1,52 +1,57 @@
 <script setup>
-import SignUpStepHeader from './Parts/SignUpStepHeader.vue';
 import { ref, onMounted, onUnmounted } from 'vue';
 import Header from './Parts/Header/Header.vue';
-// ── 判斷是否為桌機的響應式變數 ──────────────────────────────
-const isDesktop = ref(false); // Mobile First，預設先給 false
+import SignUpStepHeader from './Parts/SignUpStepHeader.vue';
 
-// 檢查視窗寬度是否大於等於 Bootstrap 的 md 斷點 (768px)
+// ── 判斷是否為桌機的響應式變數 ──────────────────────────────
+const isDesktop = ref(false);
+
 const checkScreenSize = () => {
-  isDesktop.value = window.innerWidth >= 768;
+  // 🌟 修正：lg 尺寸在 Bootstrap 預設是 992px
+  isDesktop.value = window.innerWidth >= 992; 
 };
 
-// 進入畫面時，執行初始檢查並掛載 resize 監聽器
 onMounted(() => {
   checkScreenSize(); 
   window.addEventListener('resize', checkScreenSize);
 });
 
-// 離開畫面時，務必移除監聽器，避免消耗記憶體效能
 onUnmounted(() => {
   window.removeEventListener('resize', checkScreenSize);
 });
 </script>
 
 <template>
-  <div class="default-layout ">
-    <Header />
+  <div class="default-layout container">
+    <Header v-if="isDesktop" />
 
-    <SignUpStepHeader />
-
-    <main :class="isDesktop ? 'other-wrapper' : 'main-wrapper'">
+    <SignUpStepHeader v-if="!isDesktop" />
+    <SignUpStepHeader v-else /> <main 
+      class="layout-main" 
+      :class="isDesktop ? 'other-wrapper' : 'main-wrapper'"
+    >
       <router-view />
     </main>
-
   </div>
 </template>
 
 <style lang="scss" scoped>
-/* 💡 引入全域變數，並移除原本會報錯的 v. 前綴 */
 @import "@/assets/scss/variables";
 
-.default-layout {
+.layout-main {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh; // 確保佈局至少跟螢幕一樣高
-  background: $vieshow-gradient-dark; // 💡 使用正確的變數呼叫方式
-}
 
-.layout-main {
-  flex: 1; // 讓中間內容區自動撐開，把 Footer 推到底部
+  // 🌟 手機版：只有一個 SignUpStepHeader
+  &.main-wrapper {
+    padding-top: $web-top-padding-mobile; 
+  }
+
+  // 🌟 電腦版：Header (1倍) + SignUpStepHeader (1倍) = 2倍高度
+  &.other-wrapper {
+    // 使用 calc 確保剛好是兩個標頭的高度，照片就不會被吃掉
+    padding-top: calc($web-top-padding-pc * 2); 
+  }
 }
 </style>

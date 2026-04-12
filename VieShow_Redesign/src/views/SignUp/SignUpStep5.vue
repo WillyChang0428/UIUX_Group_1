@@ -12,7 +12,7 @@
     </main>
 
     <!-- ── 底部完成按鈕（固定底部） ── -->
-    <footer class="page-footer">
+    <footer class="page-footer d-flex justify-content-center align-items-center">
       <PrimaryButton class="btn-complete d-flex justify-content-center align-items-center w-100" @click="handleComplete">
         完成
       </PrimaryButton>
@@ -26,10 +26,7 @@ import { useRouter } from 'vue-router'
 import PrimaryButton from '@/components/Common/Button/PrimaryButton.vue';
 
 const router = useRouter()
-
-function handleBack()     { router.back() }
-function handleClose()    { router.push({ name: 'Home' }) }
-function handleComplete() { router.push({ name: 'Home' }) }
+function handleComplete() { router.push('/') }
 </script>
 
 <style lang="scss" scoped>
