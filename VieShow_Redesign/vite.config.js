@@ -1,31 +1,44 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path' // 1. 引入路徑模組，用來設定路徑別名
+import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  base: './', // 保持相對路徑
 
-  base: './',
-  
-  // 2. 設定路徑別名，讓 @ 指向 src 資料夾
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
 
-  // 3. CSS 預處理器全域注入設定
+  build: {
+    rollupOptions: {
+      output: {
+        // 🌟 這裡做了 null 檢查 (chunk.name || 'chunk')
+        // 確保即便檔案沒名字，也不會噴錯誤，且一定會去掉底線
+        chunkFileNames: (chunk) => {
+          const name = (chunk.name || 'chunk').replace(/^_+/, '');
+          return `assets/${name}-[hash].js`;
+        },
+        entryFileNames: (chunk) => {
+          const name = (chunk.name || 'index').replace(/^_+/, '');
+          return `assets/${name}-[hash].js`;
+        },
+        assetFileNames: (assetInfo) => {
+          // 資源檔案通常比較穩定，我們直接用內建變數避開底線
+          // 如果真的還有底線檔案，GitHub Pages 會被 .nojekyll 擋住保險
+          return `assets/[name]-[hash][extname]`;
+        },
+      },
+    },
+  },
+
   css: {
     preprocessorOptions: {
       scss: {
-        // 1. 保留你之前的自動注入
         additionalData: `@use "@/assets/scss/_variables.scss" as v;`,
-        
-        // 2. 加入這行「安靜模式」
-        // 這會忽略來自第三方套件 (dependencies) 的所有廢棄警告
         quietDeps: true,
-        
-        // 3. 在 2026 年，建議也加入這行，處理新的 Sass 現代 API 警告
         silenceDeprecations: ['color-functions', 'import', 'global-builtin'],
       }
     }
