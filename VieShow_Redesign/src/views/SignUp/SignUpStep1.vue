@@ -1,28 +1,43 @@
 <script setup>
-import SignUpStart from '@/components/Auth/SignUpStart.vue';
-import SecondaryButton from '@/components/Common/Button/SecondaryButton.vue'
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/store/authStore';
+import SignUpStart from '@/components/Auth/SignUpStart.vue';
+import Agreement from '@/components/Auth/Agreement.vue';
+import SecondaryButton from '@/components/Common/Button/SecondaryButton.vue';
+import ProgressStep from '@/components/Common/ProgressStep.vue';
+// 🌟 1. 引入你的 BaseModal (請確認路徑是否正確)
+import BaseModal from '@/components/Common/Button/BaseModal.vue';
 
 const router = useRouter();
 const isAgreed = ref(false);
+const currentStep = ref(1);
+const totalSteps = 4;
+const authStore = useAuthStore();
+
+// 🌟 2. 控制條款彈窗開關的變數
+const isTermsModalOpen = ref(false);
 
 const handleNext = () => {
-  if (!isAgreed.value) return; // 雙重防呆
+  if (!isAgreed.value) return; 
+  authStore.resetPendingUser();
   console.log("同意條款，準備前往下一步！");
-  // router.push('/next-step'); 
+  router.push('/SignUp/SignUpStep2'); 
 };
 </script>
 
 <template>
+  <ProgressStep :currentStep="currentStep" :totalSteps="totalSteps" />
   <div class="container d-flex flex-column justify-content-center align-items-center gap-3 ">
     <img src="@/assets/images/Member1.png" class="d-none d-md-block rounded">
     <img src="@/assets/images/Member2.png" class="d-md-none rounded">
+    
     <div class="outer-wrapper border border-light rounded p-3 w-100">
       <div class="inner-scroll-box">
         <SignUpStart></SignUpStart>
       </div>
     </div>
+    
     <div class="w-100 d-flex flex-column gap-3 mt-1">
         
         <label class="custom-checkbox d-flex align-items-center gap-2 m-0 px-1">
@@ -32,34 +47,41 @@ const handleNext = () => {
             <i class="fa-solid fa-check check-icon" :class="{ 'is-active': isAgreed }"></i>
           </div>
           
-          <span class="text-light fs-6 select-none">我已詳細閱讀並完全同意上述條款</span>
+          <span class="text-light fs-6 select-none">
+            我同意
+            <span class="terms-link" @click.prevent="isTermsModalOpen = true">【威秀影城iShow會員】服務辦法</span>
+          </span>
         </label>
-
         <SecondaryButton 
           class="w-100 py-2 my-3"
-          :is-disabled="!isAgreed" 
+          :disabled="!isAgreed" 
           @click="handleNext"
         >
           下一步
         </SecondaryButton>
-
       </div>
+
+      <BaseModal v-model="isTermsModalOpen" type="scroll">
+        <template #title>【威秀影城iShow會員】服務辦法：</template>
+        <template #content>
+          <Agreement />
+        </template>
+      </BaseModal>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/variables"; // 💡 確保引入地基
+@import "@/assets/scss/variables";
 
 html, body , #app {
   height: 100vh;
   background: v.$vieshow-gradient-dark;
 }
 
-img{
+img {
   max-width: 100%;
   height: auto;
 }
-
 
 /* --- 外層容器：只管背景和白線邊框 --- */
 .outer-wrapper {
@@ -69,11 +91,10 @@ img{
 
 /* --- 內層容器：負責高度與所有捲軸行為 --- */
 .inner-scroll-box {
-  height: 30vh; // 🌟 高度限制移到這裡，讓藍框固定高度
-  overflow-y: auto; // 🌟 捲軸只在這裡產生
+  height: 30vh; 
+  overflow-y: auto; 
   overflow-x: hidden;
   
-  /* 客製化捲軸 (現在只會依附在藍線上) */
   &::-webkit-scrollbar {
     width: 10px;
   }
@@ -92,7 +113,7 @@ img{
 
 .custom-checkbox {
   cursor: pointer;
-  user-select: none; // 防止連點時文字反白
+  user-select: none; 
   
   .checkbox-box {
     width: 22px;
@@ -101,7 +122,7 @@ img{
     transition: all 0.2s ease;
     
     .check-icon {
-      color: v.$vieshow-dark; // 打勾的顏色用深色比較明顯
+      color: v.$vieshow-dark; 
       font-size: 14px;
       opacity: 0;
       transform: scale(0.5);
@@ -109,15 +130,27 @@ img{
       
       &.is-active {
         opacity: 1;
-        transform: scale(1); // 加上彈出動畫
+        transform: scale(1); 
       }
     }
   }
 
-  /* 當隱藏的 input 被勾選時，改變我們畫的框框 */
   input:checked + .checkbox-box {
     background-color: v.$vieshow-primary;
     border-color: v.$vieshow-primary;
+  }
+}
+
+/* 🌟 5. 新增條款文字的樣式 */
+.terms-link {
+  color: v.$vieshow-primary;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 0 4px; // 稍微增加點擊熱區
+
+  &:hover {
+    color: v.$vieshow-primary-dark;
   }
 }
 </style>

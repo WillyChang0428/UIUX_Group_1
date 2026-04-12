@@ -84,16 +84,32 @@ const router = createRouter({
     // 適用：註冊流程
     // ==========================================
     {
-      path: "/auth",
-      component: SignUpLayout,
+      path: "/SignUp",
+      component: () => import("@/components/Layout/SignUpLayout.vue"),
+      redirect: '/SignUp/SignUpStep1',
       children: [
-        // 範例：路徑會變成 /auth/signup
-        // {
-        //   path: "signup",
-        //   component: () => import("@/views/SignUp/SignUpPage.vue")
-        // }
-      ],
-    },
+        { 
+          path: "SignUpStep1", 
+          component: () => import("@/views/SignUp/SignUpStep1.vue") 
+        },
+        { 
+          path: "SignUpStep2", 
+          component: () => import("@/views/SignUp/SignUpStep2.vue") 
+        },
+        { 
+          path: "SignUpStep3", 
+          component: () => import("@/views/SignUp/SignUpStep3.vue") 
+        },
+        { 
+          path: "SignUpStep4", 
+          component: () => import("@/views/SignUp/SignUpStep4.vue") 
+        },
+        { 
+          path: "SignUpStep5", 
+          component: () => import("@/views/SignUp/SignUpStep5.vue") 
+        }
+      ]
+    }
   ],
   // 💡 加上這個 scrollBehavior 函式
   scrollBehavior(to, from, savedPosition) {
