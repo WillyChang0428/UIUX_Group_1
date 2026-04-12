@@ -103,7 +103,6 @@ const formattedTime = computed(() => {
 
 const isUrgent = computed(() => secondsLeft.value <= 60);
 
-
 onMounted(() => {
   if (props.step === 5) return; // 訂單完成頁不倒數
 
@@ -145,12 +144,11 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   z-index: 1030;
-  background-color: $vieshow-dark; // 💡 修正
+  background-color: $vieshow-dark;
   border-bottom: 1px solid rgba($white, 0.05);
 
   @include media-breakpoint-up(md) {
-    // 💡 修正
-    top: $web-top-padding-pc; // 💡 修正
+    top: $web-top-padding-pc;
   }
 }
 
@@ -158,7 +156,7 @@ onUnmounted(() => {
   width: 100%;
   list-style: none;
   margin: 0;
-  padding: 48px 0 var(--gap-lg);
+  padding: var(--gap-lg) 0;
 
   @include media-breakpoint-up(md) {
     // 💡 修正

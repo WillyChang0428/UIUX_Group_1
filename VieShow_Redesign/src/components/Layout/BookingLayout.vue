@@ -77,7 +77,7 @@ main {
   top: 0;
   left: 0;
   right: 0;
-  margin-top: 117px;
+  margin-top: v.$web-top-padding-mobile;
   @include media-breakpoint-up(md) {
     margin-top: 164px;
   }
