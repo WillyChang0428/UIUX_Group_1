@@ -5,7 +5,7 @@ import path from 'path' // 1. 引入路徑模組，用來設定路徑別名
 export default defineConfig({
   plugins: [vue()],
 
-  base: '/UIUX_Group_1/',
+  base: './',
   
   // 2. 設定路徑別名，讓 @ 指向 src 資料夾
   resolve: {
