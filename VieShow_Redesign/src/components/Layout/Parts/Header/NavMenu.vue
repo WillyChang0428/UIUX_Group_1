@@ -83,10 +83,10 @@ const handleMobileClick = (item, event) => {
 
 const menuItems = [
   { text: "電影資訊", english: "Movie Information", link: "/MovieInfo" },
-  { text: "影城據點", english: "Theaters", link: "/theaters" },
-  { text: "最新消息", english: "News", link: "/news" },
-  { text: "團票 / 包廳", english: "Group Booking", link: "/group" },
-  { text: "快速訂票", english: "Quick Booking", link: "/booking" },
+  { text: "影城據點", english: "Theaters", link: "/" },
+  { text: "最新消息", english: "News", link: "/" },
+  { text: "團票 / 包廳", english: "Group Booking", link: "/" },
+  { text: "快速訂票", english: "Quick Booking", link: "/fastbooking" },
 ];
 </script>
 
