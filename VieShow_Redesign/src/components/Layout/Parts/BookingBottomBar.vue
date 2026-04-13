@@ -115,6 +115,13 @@ const isNextButtonDisabled = computed(() => {
 
   if (isLoading.value) return true;
 
+  // 💡 1. 補上「選擇座位頁」的防呆邏輯
+  if (path.includes("seat")) {
+    // 如果目前選取的座位數量，不等於總購買票數，就把按鈕鎖死！
+    return bookingStore.selectedSeats.length !== bookingStore.totalTicketCount;
+  }
+
+  // 以下保留您原本寫好的付款頁防呆邏輯...
   if (path.includes("paying") || path.includes("payment")) {
     // ❌ 條件 1：如果完全沒有選付款方式，直接鎖死
     if (!bookingStore.paymentMethod) return true;
@@ -122,12 +129,11 @@ const isNextButtonDisabled = computed(() => {
     // 💰 條件 2：如果是選擇「iShow儲值金」
     if (bookingStore.paymentMethod === "ishowCash") {
       const balance = authStore.currentUser?.walletBalance || 0;
-      return balance < bookingStore.checkoutTotal; // 如果餘額小於結帳總額，就鎖死！
+      return balance < bookingStore.checkoutTotal; 
     }
 
     // 💳 條件 3：如果是選擇「信用卡」
     if (bookingStore.paymentMethod === "creditCard") {
-      // 必須要有「已選用的卡片」才放行，否則鎖死！
       return !bookingStore.selectedCard;
     }
 
