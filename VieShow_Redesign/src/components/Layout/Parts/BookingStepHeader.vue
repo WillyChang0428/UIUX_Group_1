@@ -43,13 +43,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+// 💡 確保有引入 watch
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useBookingStore } from "@/store/bookingStore"; // 💡 引入您的訂票 Store
+import { useBookingStore } from "@/store/bookingStore";
 import BaseModal from "../../Common/Button/BaseModal.vue";
 
 const props = defineProps({
-  // 目前步驟：1=選擇票種 2=選擇座位 3=加購餐點 4=發票選擇 5=訂單完成
   step: {
     type: Number,
     default: 1,
@@ -61,20 +61,30 @@ const props = defineProps({
 const router = useRouter();
 const bookingStore = useBookingStore();
 
-// ── 💡 導覽與狀態控制邏輯 ───────────────────────────────────────
+// ── 變數宣告 ──
+const isDeleteOpen = ref(false);
+const secondsLeft = ref(props.totalSeconds);
+let timer = null;
+let timeoutId = null;
 
-// 點擊左側箭頭：返回瀏覽器的上一頁
+// ── 清除計時器的共用函式 (確保任何情況下都能乾淨殺死計時器) ──
+const clearAllTimers = () => {
+  if (timer) clearInterval(timer);
+  if (timeoutId) clearTimeout(timeoutId);
+};
+
+// ── 導覽與狀態控制邏輯 ──
 const handleBack = () => {
   router.back();
 };
 
-// 點擊右側叉叉：清空購物車資料，並跳轉回首頁
 const handleClose = () => {
-  bookingStore.resetBooking(); // 呼叫您在 Store 中寫好的清空方法
-  router.push("/"); // 回到首頁
+  clearAllTimers(); // 💡 修正 1：關閉前確實殺死背景計時器
+  bookingStore.resetBooking();
+  router.push("/");
 };
 
-// ── 步驟標題 ───────────────────────────────────────────────────
+// ── 步驟標題 ──
 const stepTitles = {
   1: "選擇票種",
   2: "選擇座位",
@@ -82,17 +92,9 @@ const stepTitles = {
   4: "發票選擇",
   5: "訂單完成",
 };
-
 const currentTitle = computed(() => stepTitles[props.step] ?? "購票流程");
 
-// 💡 1. 宣告彈窗控制變數
-const isDeleteOpen = ref(false);
-
-// ── 倒數計時（訂單完成頁不啟動）───────────────────────────────
-const secondsLeft = ref(props.totalSeconds);
-let timer = null;
-let timeoutId = null; // 💡 建立一個變數來存 3 秒的延遲計時器 (防止組件銷毀時報錯)
-
+// ── 倒數計時邏輯 ──
 const formattedTime = computed(() => {
   const m = Math.floor(secondsLeft.value / 60)
     .toString()
@@ -100,35 +102,46 @@ const formattedTime = computed(() => {
   const s = (secondsLeft.value % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 });
-
 const isUrgent = computed(() => secondsLeft.value <= 60);
 
-onMounted(() => {
-  if (props.step === 5) return; // 訂單完成頁不倒數
+const startTimer = () => {
+  // 如果已經是第五步，或是計時器已經在跑了，就不啟動
+  if (props.step === 5 || timer) return;
 
   timer = setInterval(() => {
     if (secondsLeft.value <= 0) {
-      clearInterval(timer); // 停止倒數
+      clearAllTimers(); // 💡 修正 2：使用共用清理函式
 
-      // 💡 2. 觸發逾時邏輯
-      isDeleteOpen.value = true; // 打開彈窗
+      isDeleteOpen.value = true;
 
-      // 💡 3. 等待 3 秒 (3000 毫秒) 後執行清空與跳轉
       timeoutId = setTimeout(() => {
-        isDeleteOpen.value = false; // 關閉彈窗
-        bookingStore.resetBooking(); // 清空 Store 訂票紀錄
-        router.push("/"); // 跳轉回首頁
+        isDeleteOpen.value = false;
+        bookingStore.resetBooking();
+        router.push("/");
       }, 3000);
-
       return;
     }
     secondsLeft.value--;
   }, 1000);
+};
+
+// 💡 修正 3：利用 watch 監聽步驟變化。
+// 當走到第 5 步 (結帳完成) 時，立刻停止計時器，避免把使用者踢出去！
+watch(
+  () => props.step,
+  (newStep) => {
+    if (newStep === 5) {
+      clearAllTimers();
+    }
+  },
+);
+
+onMounted(() => {
+  startTimer();
 });
 
 onUnmounted(() => {
-  clearInterval(timer);
-  if (timeoutId) clearTimeout(timeoutId);
+  clearAllTimers();
 });
 </script>
 
