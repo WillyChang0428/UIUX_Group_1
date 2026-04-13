@@ -295,6 +295,10 @@ const handleClose = () => {
   }
 
   .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
     color: v.$vieshow-primary;
     border-radius: var(--app-radius);
     font-size: var(--app-font-size-base);

@@ -22,14 +22,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 const isVisible = ref(false);
+let timer = null; // 把計時器存起來，方便需要時可以取消
 
-onMounted(() => {
-  // 💡 1. 確保目前是在首頁 (根據您路由的設定，通常是 '/' 或 '/home')
+const checkAndShowVideo = () => {
+  // 💡 1. 確保目前「真的」是在首頁
   if (route.path !== "/") return;
 
   // 💡 2. 確保是手機版 (中斷點 768px 以下)
@@ -37,15 +38,32 @@ onMounted(() => {
 
   // 💡 3. 檢查 sessionStorage 是否已經有「播放過」的紀錄
   const hasSeenVideo = sessionStorage.getItem("hasSeenHomeVideo");
-  if (hasSeenVideo) return; // 如果看過了，就直接中斷，不彈出
+  if (hasSeenVideo) return; 
 
-  // 💡 4. 如果都通過了，設定計時器彈出影片
-  setTimeout(() => {
-    isVisible.value = true;
-
-    // 彈出的同時，在 sessionStorage 寫下紀錄，這一次的瀏覽器 session 就不會再彈了！
-    sessionStorage.setItem("hasSeenHomeVideo", "true");
+  // 💡 4. 設定計時器彈出影片
+  timer = setTimeout(() => {
+    // 再做最後一次雙重確認，避免倒數期間使用者已經跳去別頁了！
+    if (route.path === "/") {
+      isVisible.value = true;
+      sessionStorage.setItem("hasSeenHomeVideo", "true");
+    }
   }, 4300);
+};
+
+// 進入元件時先檢查一次 (應付從其他頁面按「首頁」按鈕回來的情況)
+onMounted(() => {
+  checkAndShowVideo();
+});
+
+// 💡 關鍵：監聽網址變化。應付「直接輸入網址開新分頁」時的延遲解析問題
+watch(() => route.path, (newPath) => {
+  if (newPath === '/') {
+    checkAndShowVideo();
+  } else {
+    // 如果使用者在 4.3 秒內跳走，立刻取消計時器，以免在別頁彈出！
+    if (timer) clearTimeout(timer);
+    isVisible.value = false;
+  }
 });
 
 const closeVideo = () => {
