@@ -6,10 +6,10 @@
     <BookingStepHeader :step="currentStep" />
 
     <div class="selectedinfocard d-xl-none">
-      <SelectedInfoCard v-if="movieStore.selectedMovieId && !isReceiptPage"" />
+      <SelectedInfoCard v-if="movieStore.selectedMovieId && !isReceiptPage" />
     </div>
 
-    <main class="main-wrapper">
+    <main :class="isReceiptPage ? 'main-wrapper' : 'other-wrapper'">
       <BookingLayoutPC>
         <template #content>
           <router-view v-slot="{ Component }">
@@ -77,9 +77,8 @@ const currentStep = computed(() => {
 
 // 💡 新增：判斷目前是否為「收據/訂單完成」頁面
 const isReceiptPage = computed(() => {
-  return route.path === '/booking/receipt'; 
+  return route.path === "/booking/receipt";
 });
-
 </script>
 
 <style lang="scss" scoped>
