@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column gap-4 container py-5">
+  <div class="d-flex flex-column gap-4 container-mb py-5">
     <ProgressStep :currentStep="2" :totalSteps="totalSteps" />
     <SeatMap
       :ticketCount="bookingStore.totalTicketCount"

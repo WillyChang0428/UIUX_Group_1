@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-5">
+  <div class="container-mb py-5">
     <ProgressStep class="mb-4" :currentStep="1" :totalSteps="totalSteps" />
     <!-- 限定套票 -->
     <ComboSlider />
