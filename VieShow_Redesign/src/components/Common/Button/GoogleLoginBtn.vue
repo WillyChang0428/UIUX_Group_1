@@ -1,6 +1,14 @@
 <script setup>
-import { defineEmits } from 'vue';
+import { defineEmits, defineProps } from 'vue'; // 🌟 引入 defineProps
 import { jwtDecode } from 'jwt-decode';
+
+// 🌟 新增 Props，讓外部可以控制寬度
+const props = defineProps({
+  width: {
+    type: [String, Number],
+    default: 192 // 預設值保持和你原本設計的一樣
+  }
+});
 
 const emit = defineEmits(['success']);
 
@@ -11,7 +19,8 @@ const handleGoogleSuccess = (response) => {
     const data = {
       name: decodedData.name,
       email: decodedData.email,
-      picture: decodedData.picture
+      picture: decodedData.picture,
+      credential: response.credential // 🌟 記得把這個傳回去，LoginView 需要它來執行分流
     };
     emit('success', data);
   } catch (error) {
@@ -25,35 +34,30 @@ const handleGoogleSuccess = (response) => {
     <GoogleLogin 
       :callback="handleGoogleSuccess" 
       popup-type="CODE"
-      width="192" 
+      :width="width" 
     />
   </div>
 </template>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/variables";
-
 .google-btn-custom-wrapper {
-  // 這裡套用你原本的設計規範
-  width: 192.14px;  // 🌟 保持你設定的精確寬度
-  height: 40px;     // 🌟 保持高度
-  border-radius: var(--app-radius);
-  overflow: hidden; // 確保按鈕不會超出圓角
-  
+  width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  min-height: 40px;
 
-  transition: all 0.2s ease;
-
-  &:hover {
-    opacity: 0.9;
-    background-color: rgba($vieshow-secondary, 0.1);
+  /* 🌟 核心修正：只針對 Google 的「按鈕本體」class，不要針對所有的 div */
+  :deep(.nsm7Bb-HzV7m-LgbsSe) {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: var(--app-radius) !important;
   }
-}
 
-// 深度選擇器，確保 Google 內部的按鈕稍微對齊
-:deep(.S67qz-I097p) {
-  border-radius: var(--app-radius) !important;
+  /* 🌟 針對 iframe 確保它是滿的 */
+  :deep(iframe) {
+    width: 100% !important;
+    left: 0 !important;
+    position: relative !important;
+  }
 }
 </style>
