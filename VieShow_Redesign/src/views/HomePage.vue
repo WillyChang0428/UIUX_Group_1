@@ -35,7 +35,7 @@ import GoOnTop from "@/components/Common/Button/GoOnTop.vue";
 
 .select-box {
   position: absolute;
-  top: 530px;
+  top: 480px;
   /* 💡 關鍵：設定較高的 z-index 確保它在 banner 之後、其他內容之前 */
   z-index: 100; 
   left: 50%;

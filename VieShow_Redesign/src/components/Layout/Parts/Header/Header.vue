@@ -4,7 +4,7 @@
       class="container d-flex justify-content-between align-items-center h-100"
     >
       <div
-        class="clickable-icon h2 mb-0 d-lg-none order-1"
+        class="clickable-icon h5 mb-0 d-lg-none order-1"
         @click="isMenuOpen = !isMenuOpen"
       >
         <i
@@ -38,7 +38,7 @@
       >
         <router-link
           to="/fastbooking"
-          class="btn btn-light rounded-pill px-lg-2 py-lg-1 fw-medium text-primary d-none d-lg-block"
+          class="btn btn-light py-1 rounded-pill fw-medium text-primary d-none d-lg-block"
         >
           快速訂票
         </router-link>
@@ -46,14 +46,14 @@
         <div
           v-if="!authStore.isLoggedIn"
           @click="isLoginOpen = true"
-          class="clickable-icon h2 mb-0 text-decoration-none"
+          class="clickable-icon h5 mb-0 text-decoration-none"
         >
           <i class="fa-solid fa-right-to-bracket text-white"></i>
         </div>
 
         <div v-else class="dropdown d-flex align-items-center">
           <div
-            class="clickable-icon h4 mb-0"
+            class="clickable-icon h5 mb-0"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
@@ -130,7 +130,7 @@ const handleLogout = () => {
   z-index: 1050;
   display: flex;
   align-items: center;
-  padding: var(--gap-lg) 0;
+  padding: 0;
 
   @include v.media-breakpoint-up(md) {
     height: v.$web-top-padding-pc;
@@ -141,7 +141,7 @@ const handleLogout = () => {
 .desktop-nav {
   .nav-link {
     text-decoration: none;
-    font-size: 1.1rem;
+    font-size: 16px;
     transition: opacity 0.3s;
 
     &:hover {
@@ -151,7 +151,7 @@ const handleLogout = () => {
 }
 
 .logo-wrapper {
-  width: 158px;
+  width: 120px;
 
   @include v.media-breakpoint-down(lg) {
     position: absolute;

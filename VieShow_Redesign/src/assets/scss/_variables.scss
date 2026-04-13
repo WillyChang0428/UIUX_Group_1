@@ -224,17 +224,16 @@ $container-padding-mobile: 24px;
 $container-padding-pc: 48px;
 
 // 4. 頁面全域間距 (Web Padding)
-$web-top-padding-mobile: 93px;
+$web-top-padding-mobile: 65px;
 $web-bottom-padding-mobile: 111px;
 
-$web-top-padding-pc: 86px;
+$web-top-padding-pc:76px;
 $web-bottom-padding-pc: 95px;
 
-
-$web-top-padding-mobile-other: 195px;
+$web-top-padding-mobile-other: 167px;
 $web-bottom-padding-mobile-other: 111px;
 
-$web-top-padding-pc-other: 164px;
+$web-top-padding-pc-other: 142px;
 $web-bottom-padding-pc-other: 95px;
 
 // 定義只在桌機（有滑鼠游標）才觸發的 hover 預防針

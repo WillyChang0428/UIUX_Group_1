@@ -9,7 +9,7 @@
       <SelectedInfoCard v-if="movieStore.selectedMovieId" />
     </div>
 
-    <main class="other-wrapper">
+    <main class="main-wrapper">
       <BookingLayoutPC>
         <template #content>
           <router-view v-slot="{ Component }">
@@ -66,10 +66,17 @@ onUnmounted(() => {
   background: $vieshow-gradient-dark;
 }
 
-/* 確保 main 區域能夠自動撐開高度 */
-main {
+.main-wrapper {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  @include media-breakpoint-up(md) {
+    padding-top: v.$web-top-padding-pc-other;
+    padding-bottom: v.$web-bottom-padding-pc-other;
+  }
 }
+
+
 
 .selectedinfocard {
   position: fixed;
@@ -79,7 +86,7 @@ main {
   z-index: 50;
   margin-top: v.$web-top-padding-mobile;
   @include media-breakpoint-up(md) {
-    margin-top: 164px;
+    margin-top: v.$web-top-padding-pc-other;
   }
 }
 </style>

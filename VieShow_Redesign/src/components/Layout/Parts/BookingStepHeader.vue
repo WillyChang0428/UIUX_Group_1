@@ -156,11 +156,12 @@ onUnmounted(() => {
   width: 100%;
   list-style: none;
   margin: 0;
-  padding: var(--gap-lg) 0;
+  padding: 0;
+  height: v.$web-top-padding-mobile;
 
   @include media-breakpoint-up(md) {
     // 💡 修正
-    padding: 16px var(--gap-lg);
+    padding: 8px var(--gap-lg);
   }
 }
 

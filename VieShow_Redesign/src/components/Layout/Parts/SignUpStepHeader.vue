@@ -75,9 +75,10 @@ const handleClose = () => {
 
 .navigation-bar {
   width: 100%;
-  padding: var(--gap-lg) 0;
+  padding: 0;
+  height: v.$web-top-padding-mobile;
   @include media-breakpoint-up(md) {
-    padding: 16px 0;
+    padding: 8px 0;
   }
 }
 

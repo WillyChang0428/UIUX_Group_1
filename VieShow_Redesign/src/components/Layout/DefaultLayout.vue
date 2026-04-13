@@ -7,7 +7,7 @@ import Footer from './Parts/Footer/Footer.vue';
   <div class="default-layout ">
     <Header />
 
-    <main class="layout-main main-wrapper">
+    <main class="main-wrapper">
       <router-view />
     </main>
 
@@ -26,7 +26,9 @@ import Footer from './Parts/Footer/Footer.vue';
   background: $vieshow-gradient-dark; // 💡 使用正確的變數呼叫方式
 }
 
-.layout-main {
-  flex: 1; // 讓中間內容區自動撐開，把 Footer 推到底部
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 </style>
