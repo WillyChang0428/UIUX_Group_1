@@ -1,7 +1,7 @@
 <template>
   <li class="category-item list-unstyled" ref="itemRef">
     <div
-      class="category-header d-flex justify-content-between align-items-center py-2"
+      class="category-header d-flex justify-content-between align-items-center"
       @click.stop="toggleExpand"
     >
       <span class="fw-medium">{{ label }}</span>
@@ -67,13 +67,9 @@ const toggleExpand = async () => {
   }
 
   .sub-options {
-    // 💡 呼叫等級二 CSS 變數：間距自動縮放 (手機 16px / 電腦 32px)
-    padding-left: var(--gap-md);
     overflow: hidden;
 
     :deep(li) {
-      // 💡 使用手冊規範的子項目間距 [cite: 111, 131]
-      padding: var(--gap-sm) var(--gap-md);
 
       // 💡 字體使用 Sm 等級：手機 14px / 電腦 16px
       font-size: var(--app-font-size-sm);

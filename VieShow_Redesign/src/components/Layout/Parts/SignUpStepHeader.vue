@@ -1,8 +1,9 @@
 <template>
   <header class="header-wrapper fixed-top">
     <div class="container">
-      <div class="navigation-bar d-flex justify-content-between align-items-center">
-        
+      <div
+        class="navigation-bar d-flex justify-content-between align-items-center"
+      >
         <div
           class="arrow_back d-flex justify-content-center align-items-center clickable-icon"
           :class="{ 'is-hidden': !showBack }"
@@ -12,7 +13,7 @@
         </div>
 
         <div class="title fw-bold">
-          {{ isStep5 ? '註冊成功' : '加入會員' }}
+          {{ isStep5 ? "註冊成功" : "加入會員" }}
         </div>
 
         <div
@@ -27,8 +28,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useRouter, useRoute } from 'vue-router'; // 🌟 引入 useRoute 來監聽目前在哪一頁
+import { computed } from "vue";
+import { useRouter, useRoute } from "vue-router"; // 🌟 引入 useRoute 來監聽目前在哪一頁
 
 const router = useRouter();
 const route = useRoute();
@@ -37,7 +38,7 @@ const route = useRoute();
 
 // 🌟 1. 判斷現在是不是在 Step 5 (路徑名稱請依你實際的路由名稱修改)
 const isStep5 = computed(() => {
-  return route.path.includes('SignUpStep5') || route.name === 'SignUpStep5';
+  return route.path.includes("SignUpStep5") || route.name === "SignUpStep5";
 });
 
 // 🌟 2. 如果是 Step 5，就不顯示返回鍵
@@ -49,7 +50,7 @@ const handleBack = () => {
 };
 
 const handleClose = () => {
-  router.push('/'); // 回到首頁
+  router.push("/"); // 回到首頁
 };
 </script>
 
@@ -62,10 +63,10 @@ const handleClose = () => {
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 1030;
+  z-index: 1050;
   background-color: $vieshow-dark;
   border-bottom: 1px solid rgba($white, 0.05);
-  
+
   @include media-breakpoint-up(md) {
     // 💡 幫組長把 v. 拔掉了
     top: $web-top-padding-pc;
@@ -74,7 +75,7 @@ const handleClose = () => {
 
 .navigation-bar {
   width: 100%;
-  padding: 48px 0 var(--gap-lg);
+  padding: var(--gap-lg) 0;
   @include media-breakpoint-up(md) {
     padding: 16px 0;
   }

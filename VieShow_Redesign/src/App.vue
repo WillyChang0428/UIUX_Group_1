@@ -25,6 +25,7 @@ body,
 #app {
   height: fit-content;
   background: v.$vieshow-gradient-dark;
+  min-height: 100vh;
 }
 
 /* 💡 將原本的 fade 動畫放在全域 */

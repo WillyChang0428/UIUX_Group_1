@@ -33,7 +33,7 @@
               </div>
 
               <h5 class="h5 fw-bold text-white mb-3">{{ item.titleZh }}</h5>
-              <SecondaryButton class="btn btn-primary w-100 rounded"
+              <SecondaryButton class="w-100"
                 >立即訂票</SecondaryButton
               >
             </div>

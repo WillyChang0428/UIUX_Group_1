@@ -1,10 +1,13 @@
 <template>
   <div class="page-register">
-
     <!-- ── 主內容區：圖示 + 文字，垂直置中 ── -->
     <main class="page-content d-flex justify-content-center align-items-center">
-      <div class="success-center d-grid gap-3 d-flex flex-column align-items-center">
-        <div class="check-icon text-light d-flex justify-content-center align-items-center">
+      <div
+        class="success-center d-grid gap-3 d-flex flex-column align-items-center"
+      >
+        <div
+          class="check-icon text-light d-flex justify-content-center align-items-center"
+        >
           <i class="fa-regular fa-circle-check"></i>
         </div>
         <h5 class="success-text text-white lh-relaxed">註冊成功</h5>
@@ -12,28 +15,39 @@
     </main>
 
     <!-- ── 底部完成按鈕（固定底部） ── -->
-    <footer class="page-footer d-flex justify-content-center align-items-center">
-      <PrimaryButton class="btn-complete d-flex justify-content-center align-items-center w-100" @click="handleComplete">
+    <footer
+      class="page-footer d-flex justify-content-center align-items-center"
+    >
+      <PrimaryButton
+        class="btn-complete d-flex justify-content-center align-items-center w-100"
+        @click="handleComplete"
+      >
         完成
       </PrimaryButton>
     </footer>
-
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import PrimaryButton from '@/components/Common/Button/PrimaryButton.vue';
+import { useRouter } from "vue-router";
+import PrimaryButton from "@/components/Common/Button/PrimaryButton.vue";
 
-const router = useRouter()
-function handleComplete() { router.push('/') }
+const router = useRouter();
+function handleComplete() {
+  router.push("/");
+}
 </script>
 
 <style lang="scss" scoped>
 // ── 主內容區 ──────────────────────────────────────────────
 .page-content {
-  padding-top: v.$web-top-padding-mobile;
-  padding-bottom: 100px;   // 讓出底部按鈕的空間
+  min-height: 100vh;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 200px;
 }
 
 .check-icon {

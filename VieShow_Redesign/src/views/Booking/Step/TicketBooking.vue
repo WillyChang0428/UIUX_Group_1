@@ -1,21 +1,22 @@
 <template>
-      <div class="container py-5">
+  <div class="container py-5">
+    <ProgressStep class="mb-4" :currentStep="1" :totalSteps="totalSteps" />
+    <!-- 限定套票 -->
+    <ComboSlider />
 
-        <!-- 限定套票 -->
-        <ComboSlider />
+    <!-- 分隔線 -->
+    <hr class="section-divider" />
 
-        <!-- 分隔線 -->
-        <hr class="section-divider" />
-
-        <!-- 一般票種 + 其他票種 -->
-        <TicketSelector />
-
-      </div>
+    <!-- 一般票種 + 其他票種 -->
+    <TicketSelector />
+  </div>
 </template>
 
-<script setup >
-import ComboSlider from '@/components/Booking/Button/TicketType/ComboSlider.vue'
-import TicketSelector from '@/components/Booking/Button/TicketType/TicketSelector.vue'
+<script setup>
+import ComboSlider from "@/components/Booking/Button/TicketType/ComboSlider.vue";
+import TicketSelector from "@/components/Booking/Button/TicketType/TicketSelector.vue";
+import ProgressStep from "@/components/Common/ProgressStep.vue";
+
 </script>
 
 <style lang="scss" scoped>

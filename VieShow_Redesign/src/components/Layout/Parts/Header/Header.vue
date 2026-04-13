@@ -130,7 +130,7 @@ const handleLogout = () => {
   z-index: 1050;
   display: flex;
   align-items: center;
-  padding-top: var(--gap-2xl);
+  padding: var(--gap-lg) 0;
 
   @include v.media-breakpoint-up(md) {
     height: v.$web-top-padding-pc;

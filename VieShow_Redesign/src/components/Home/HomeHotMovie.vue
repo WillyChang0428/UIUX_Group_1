@@ -52,7 +52,10 @@
             class="movie-card-pc"
           >
             <div class="card-hover-wrapper d-flex flex-column h-100">
-              <div class="poster-box rounded-lg shadow-sm mb-3">
+              <div
+                class="poster-box rounded-lg shadow-sm mb-3"
+                @click="handleBooking(movie.id)"
+              >
                 <img
                   :src="movie.posterUrl"
                   class="w-100 h-100 object-fit-cover"
@@ -66,7 +69,7 @@
                 <p class="small mb-4 text-secondary text-truncate">
                   演員：{{ movie.cast }}
                 </p>
-                <SecondaryButton @click="handleBooking(movie.id)" class="btn-sm"
+                <SecondaryButton @click="handleBooking(movie.id)"
                   >立即訂票</SecondaryButton
                 >
               </div>
@@ -92,8 +95,10 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useMovieStore } from "@/store/movieStore";
+import { useRouter } from "vue-router";
 import SecondaryButton from "@/components/Common/Button/SecondaryButton.vue";
 
+const router = useRouter();
 const movieStore = useMovieStore();
 const currentIndex = ref(0);
 const desktopIndex = ref(0);
@@ -102,7 +107,14 @@ let autoPlayTimer = null;
 const currentMovie = computed(
   () => movieStore.movieList[currentIndex.value] || {},
 );
-const handleBooking = (id) => console.log("Booking:", id);
+
+const handleBooking = (id) => {
+  // 將選取的電影 ID 存入 Pinia
+  movieStore.selectMovie(id);
+
+  // 跳轉至快速訂票頁
+  router.push("/fastbooking");
+};
 
 const resetTimer = () => {
   if (autoPlayTimer) clearInterval(autoPlayTimer);
@@ -226,6 +238,7 @@ onUnmounted(() => {
       .poster-box {
         border-color: v.$vieshow-primary;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
       }
     }
   }
