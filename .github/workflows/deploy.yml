@@ -1,0 +1,51 @@
+name: 自動部署網站到 GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+      - WillyChang
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 🌟 這裡新增一個全域設定，告訴 GitHub 指令都要在子資料夾執行
+defaults:
+  run:
+    working-directory: VieShow_Redesign
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. 抓取原始碼
+        uses: actions/checkout@v4
+
+      - name: 2. 設定 Node.js 環境
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22 # 🌟 順便幫你升級到最新的 22，解決那個 Warning
+          cache: 'npm'
+          # 🌟 告訴它去哪裡找 lock 檔案來建立快取
+          cache-dependency-path: VieShow_Redesign/package-lock.json
+
+      - name: 3. 安裝套件
+        run: npm install
+
+      - name: 4. 執行打包 (Build)
+        run: npm run build
+
+      - name: 5. 設定 Pages
+        uses: actions/configure-pages@v4
+
+      - name: 6. 上傳打包後的檔案 (dist)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 🌟 這裡路徑也要改，指向子資料夾內的 dist
+          path: './VieShow_Redesign/dist'
+
+      - name: 7. 正式發布到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

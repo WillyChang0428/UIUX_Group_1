@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   
   // 保持相對路徑，這是目前最穩定的設定
-  base: './', 
+  base: '/UIUX_Group_1/', 
   
   resolve: {
     alias: {
