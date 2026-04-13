@@ -1,6 +1,6 @@
 <template>
   <div class="bottom-bar">
-    <div class="container pb-5 pt-4 py-md-2">
+    <div class="container pb-4 pt-4 py-md-2">
       <div
         class="d-flex align-items-center justify-content-between bottom-bar__inner"
       >
