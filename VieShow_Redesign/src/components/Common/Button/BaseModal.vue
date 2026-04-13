@@ -40,34 +40,36 @@ Slots:
 
 
 <template>
-  <Transition name="fade">
-    <div v-if="modelValue" 
-         class="modal-overlay d-flex justify-content-center" 
-         :class="[type === 'toast' ? 'align-items-start pt-5' : 'align-items-center']"
-         @click.self="type !== 'toast' && close()">
-      
-      <div class="modal-container shadow-lg p-4" 
-           :class="{ 'border-danger': type === 'danger', 'toast-style': type === 'toast' }">
+  <Teleport to="body">
+    <Transition name="fade">
+      <div v-if="modelValue" 
+          class="modal-overlay d-flex justify-content-center" 
+          :class="[type === 'toast' ? 'align-items-start pt-5' : 'align-items-center']"
+          @click.self="type !== 'toast' && close()">
         
-        <div v-if="type !== 'toast'" class="modal-header d-flex justify-content-between align-items-center border-0 mb-3 p-0">
-          <h4 class="modal-title h4 mb-0 fw-medium" :class="{ '$text-danger': type === '$danger' }">
-            <slot name="title">標題</slot>
-          </h4>
+        <div class="modal-container shadow-lg p-4" 
+            :class="{ 'border-danger': type === 'danger', 'toast-style': type === 'toast' }">
           
-          <button type="button" class="close-btn border-0 bg-transparent p-2" @click="close" aria-label="Close">
-            <i class="fa-solid fa-xmark icon-md text-white"></i>
-          </button>
-        </div>
-
-        <div class="modal-body p-0">
-          <div class="modal-text" :class="[type === 'scroll' ? 'scroll-mode' : 'fs-sm']">
-            <slot name="content">此為預設警示說明內容。</slot>
+          <div v-if="type !== 'toast'" class="modal-header d-flex justify-content-between align-items-center border-0 mb-3 p-0">
+            <h4 class="modal-title h4 mb-0 fw-medium" :class="{ 'text-danger': type === 'danger' }">
+              <slot name="title">標題</slot>
+            </h4>
+            
+            <button type="button" class="close-btn border-0 bg-transparent p-2" @click="close" aria-label="Close">
+              <i class="fa-solid fa-xmark icon-md text-white"></i>
+            </button>
           </div>
-        </div>
 
+          <div class="modal-body p-0">
+            <div class="modal-text" :class="[type === 'scroll' ? 'scroll-mode' : 'fs-sm']">
+              <slot name="content">此為預設警示說明內容。</slot>
+            </div>
+          </div>
+
+        </div>
       </div>
-    </div>
-  </Transition>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup>
@@ -104,7 +106,7 @@ watch(() => props.modelValue, (newVal) => {
   position: fixed;
   inset: 0;
   background: rgba($black, 0.6); 
-  z-index: $zindex-modal-backdrop;
+  z-index: 9999;
   backdrop-filter: blur(4px);
 }
 
