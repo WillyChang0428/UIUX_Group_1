@@ -3,7 +3,7 @@
     <div class="video-modal-container">
       <div class="video-content-wrapper rounded-lg overflow-hidden">
         <button class="close-btn clickable-icon" @click="closeVideo">
-          <i class="fa-solid fa-xmark icon-lg"></i>
+          <i class="fa-solid fa-xmark fs-5"></i>
         </button>
         <video
           ref="videoPlayer"
