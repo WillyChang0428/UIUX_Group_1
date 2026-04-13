@@ -1,12 +1,12 @@
 <template>
   <header class="booking-header">
-    <div class="container-md p-0">
+    <div class="container">
       <ul
-        class="d-flex justify-content-between align-items-center booking-header__bar container-md"
+        class="d-flex justify-content-between align-items-center booking-header__bar"
       >
         <li class="booking-header__side">
           <button v-if="step !== 5" class="clickable-icon" @click="handleBack">
-            <i class="fa-solid fa-angle-left text-secondary"></i>
+            <i class="fa-solid fa-angle-left text-secondary fs-6"></i>
           </button>
         </li>
 
@@ -30,7 +30,7 @@
 
         <li class="booking-header__side">
           <button class="clickable-icon" @click="handleClose">
-            <i class="fa-solid fa-xmark text-secondary"></i>
+            <i class="fa-solid fa-xmark text-secondary fs-6"></i>
           </button>
         </li>
       </ul>
@@ -161,7 +161,7 @@ onUnmounted(() => {
 
   @include media-breakpoint-up(md) {
     // 💡 修正
-    padding: 8px var(--gap-lg);
+    padding: 8px 0;
   }
 }
 

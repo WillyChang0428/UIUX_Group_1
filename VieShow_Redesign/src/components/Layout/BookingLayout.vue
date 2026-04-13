@@ -3,7 +3,7 @@
     <div class="d-none d-md-block">
       <Header />
     </div>
-    <BookingStepHeader />
+    <BookingStepHeader :step="currentStep" />
 
     <div class="selectedinfocard d-xl-none">
       <SelectedInfoCard v-if="movieStore.selectedMovieId" />
@@ -26,13 +26,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useMovieStore } from "@/store/movieStore";
+import { useRoute } from "vue-router";
 import BookingStepHeader from "./Parts/BookingStepHeader.vue";
 import BookingBottomBar from "./Parts/BookingBottomBar.vue";
 import Header from "./Parts/Header/Header.vue";
 import SelectedInfoCard from "../Booking/SelectedInfoCard.vue";
 import BookingLayoutPC from "../Booking/BookingLayoutPC.vue";
+
+const route = useRoute();
 
 const movieStore = useMovieStore();
 
@@ -53,6 +56,23 @@ onMounted(() => {
 // 離開畫面時，務必移除監聽器，避免消耗記憶體效能
 onUnmounted(() => {
   window.removeEventListener("resize", checkScreenSize);
+});
+
+// 💡 根據現在的路由「路徑」，動態計算目前的 step 是多少
+const currentStep = computed(() => {
+  // 💡 改用 route.path 來比對斜線網址
+  switch (route.path) {
+    case "/booking/ticket":
+      return 1;
+    case "/booking/seat":
+      return 2;
+    case "/booking/food":
+      return 3;
+    case "/booking/paying":
+      return 4;
+    default:
+      return 1;
+  }
 });
 </script>
 
@@ -75,8 +95,6 @@ onUnmounted(() => {
     padding-bottom: v.$web-bottom-padding-pc-other;
   }
 }
-
-
 
 .selectedinfocard {
   position: fixed;

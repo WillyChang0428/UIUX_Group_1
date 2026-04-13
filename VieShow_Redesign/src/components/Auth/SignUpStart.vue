@@ -2,7 +2,7 @@
 </script>
 
 <template>
-    <div class="container text-secondary">
+    <div class="text-secondary px-1">
         <ul>
             <li>
                 <h6 class="fw-bold">一、iShow會員相關權益</h6>

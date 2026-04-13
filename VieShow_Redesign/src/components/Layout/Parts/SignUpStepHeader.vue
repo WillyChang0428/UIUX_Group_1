@@ -9,7 +9,7 @@
           :class="{ 'is-hidden': !showBack }"
           @click="handleBack"
         >
-          <i class="fa-solid fa-angle-left"></i>
+          <i class="fa-solid fa-angle-left fs-6"></i>
         </div>
 
         <div class="title fw-bold">
@@ -20,7 +20,7 @@
           class="close_icon d-flex justify-content-center align-items-center clickable-icon"
           @click="handleClose"
         >
-          <i class="fa-solid fa-xmark"></i>
+          <i class="fa-solid fa-xmark fs-6"></i>
         </div>
       </div>
     </div>
