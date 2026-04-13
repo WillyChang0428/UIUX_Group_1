@@ -52,19 +52,13 @@
           </div>
         </div>
 
-        <div class="action-btn-group">
-          <SecondaryButton class="w-100 login-btn" @click="handleLogin">
-            登入
-          </SecondaryButton>
+        <SecondaryButton class="w-100 fw-bold mb-3 mb-lg-2 login-btn" @click="handleLogin">
+          登入
+        </SecondaryButton>
 
-          <GoogleLoginBtn 
-            class="w-100" 
-            :width="380" 
-            @success="handleGoogleLogin" 
-          />
-        </div>
+        <GoogleLogin :callback="handleGoogleLogin" class="google-btn w-100 mb-3" />
 
-        <div class="text-center text-secondary register-hint mt-3">
+        <div class="text-center text-secondary register-hint">
           還不是會員？
           <router-link
             to="/SignUp"
@@ -80,15 +74,15 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/authStore";
 import { jwtDecode } from "jwt-decode";
+import { watch } from 'vue';
 import BaseModal from "@/components/Common/Button/BaseModal.vue";
 import SecondaryButton from "@/components/Common/Button/SecondaryButton.vue";
-import GoogleLoginBtn from "@/components/Common/Button/GoogleLoginBtn.vue";
 
-const router = useRouter();
+const router = useRouter(); // 🌟 記得確保有 import router
 const authStore = useAuthStore();
 const emit = defineEmits(["success"]);
 
@@ -101,11 +95,13 @@ const errorMessage = ref("");
 
 watch(() => authStore.isLoggedIn, (newVal) => {
   if (newVal === true) {
-    isOpen.value = false;
-    emit("success");
+    console.log("偵測到已登入，自動關閉彈窗並通知成功！");
+    isOpen.value = false; // 自動關閉登入彈窗
+    emit("success");      // 告訴 BookingBottomBar 登入成功了，可以繼續訂票
   }
 });
 
+// 一般登入邏輯保持不變
 const handleLogin = () => {
   errorMessage.value = "";
   if (!email.value || !password.value) {
@@ -118,6 +114,7 @@ const handleLogin = () => {
   }
 
   const isSuccess = authStore.login(email.value.trim(), password.value.trim());
+
   if (isSuccess) {
     isOpen.value = false;
     emit("success"); 
@@ -126,24 +123,59 @@ const handleLogin = () => {
   }
 };
 
+// 🌟 重點 2：處理 Google 登入分流（開新分頁）
+/**
+ * 🌟 強化後的 Google 登入處理
+ */
 const handleGoogleLogin = (response) => {
+  console.log("🚩 [Debug] 收到 Google 回傳：", response);
+  
   try {
-    if (!response.credential) return;
+    // 1. 解密 Google 回傳的 JWT
+    if (!response.credential) {
+      errorMessage.value = "Google 認證失敗，請重試。";
+      return;
+    }
+    
     const decoded = jwtDecode(response.credential);
     const googleEmail = decoded.email;
+    console.log("🚩 [Debug] 解析 Email：", googleEmail);
+
+    if (!googleEmail) {
+      errorMessage.value = "無法取得 Google 帳號資訊";
+      return;
+    }
+
+    // 2. 呼叫 Store 進行分流
     const result = authStore.startGoogleRegistration(googleEmail);
+    console.log("🚩 [Debug] Store 分流結果：", result.action);
 
     if (result.action === 'login') {
+      // ✅ 老會員：直接登入成功
       isOpen.value = false; 
       emit("success"); 
+      console.log("✅ 老會員登入成功");
     } 
     else if (result.action === 'register') {
+      // 🆕 新朋友：引導至註冊流程第一步
+      console.log("🆕 新用戶，準備引導至註冊 Step 1");
       isOpen.value = false; 
+
+      // 取得目標網址
       const routeUrl = router.resolve({ path: '/SignUp/SignUpStep1' }).href;
-      window.open(routeUrl, '_blank');
+      
+      // 🌟 嘗試開新分頁
+      const newTab = window.open(routeUrl, '_blank');
+
+      // 💡 防呆機制：如果開新分頁被瀏覽器攔截 (Popup Blocker)，就改用原地跳轉
+      if (!newTab || newTab.closed || typeof newTab.closed === 'undefined') {
+        console.warn("⚠️ 偵測到彈窗攔截，改為原地跳轉");
+        router.push('/SignUp/SignUpStep1');
+      }
     }
   } catch (error) {
-    console.error("Google 登入解析錯誤:", error);
+    console.error("❌ Google 登入解析錯誤:", error);
+    errorMessage.value = "系統忙碌中，請稍後再試";
   }
 };
 
@@ -158,18 +190,37 @@ const handleClose = () => {
 .login-form-wrapper {
   padding: 0;
 
+  /* ==========================================
+     1. 自定義無邊框輸入框 (底線樣式)
+     ========================================== */
   .custom-input {
     background: transparent !important;
     border: none;
     border-bottom: 1px solid rgba(v.$white, 0.3);
     border-radius: 0;
     color: v.$white;
+    // 💡 12px 10px 替換為響應式間距
     padding: var(--gap-sm) var(--gap-sm) var(--gap-sm) 0;
     font-size: var(--app-font-size-base);
+    transition: all 0.3s ease;
     box-shadow: none !important;
-    &:focus { border-bottom-color: v.$vieshow-primary; }
+
+    &:focus {
+      border-bottom-color: v.$vieshow-primary;
+    }
+
+    &::placeholder {
+      color: rgba(v.$white, 0.5);
+    }
+
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+      -webkit-text-fill-color: v.$white !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
   }
 
+  // 眼睛圖示定位
   .password-toggle {
     position: absolute;
     right: 0;
@@ -177,44 +228,92 @@ const handleClose = () => {
     transform: translateY(-50%);
     cursor: pointer;
     color: rgba(v.$white, 0.5);
-    padding: var(--gap-sm);
+    z-index: 10;
+    padding: var(--gap-sm); // 💡 取代 10px
+
+    &:hover {
+      color: v.$white;
+    }
+  }
+
+  // 💡 獨立拉出錯誤文字與連結的樣式，取代 inline-style
+  .error-text {
+    font-size: var(--app-font-size-mini); // 對應 12px/14px
+    letter-spacing: v.$letter-spacing-wide;
+  }
+
+  .forgot-pwd-link {
+    font-size: var(--app-font-size-sm); // 💡 取代 14px
   }
 
   /* ==========================================
-    🌟 修正後的按鈕佈局 (Grid 是強制對齊的神器)
+     2. 模擬 reCAPTCHA 驗證區塊
      ========================================== */
-  .action-btn-group {
-    display: grid;         /* 1. 啟用網格佈局 */
-    grid-template-columns: 1fr; /* 2. 只有一欄，代表橫向填滿 */
-    width: 100%;
-    gap: 1rem;             /* 按鈕間距 */
+  .recaptcha-box {
+    border: 1px solid v.$vieshow-tertiary; // 💡 取代 #D3D3D3
+    border-radius: var(--app-radius-sm); // 💡 取代 4px
+    padding: var(--gap-sm) var(--gap-md); // 💡 取代 12px 16px
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(v.$black, 0.05); // 💡 改用 v.$black
+    transition: all 0.2s ease;
 
-    .login-btn {
-      height: 40px;
-      width: 100%;         /* 強制 100% */
-      border-radius: var(--app-radius-lg);
-      background-color: v.$vieshow-primary-dark;
+    .check-box {
+      width: var(--app-font-size-h4);
+      height: var(--app-font-size-h4); // 💡 取代 24px
+      height: 1.5rem;
+      border: 2px solid v.$vieshow-tertiary; // 💡 取代 #C1C1C1
+      border-radius: 2px; // 極小圓角保留
+      transition: all 0.2s ease;
     }
 
-    .google-custom-btn {
-      width: 100% !important;
-      height: 40px;
-      display: flex;
-      justify-content: center;
+.robot-text{
+  font-size: var(--app-font-size-sm); // 💡 取代 14px
+}
 
-      /* 🌟 核心：穿透進去把 Google 的所有容器都拉到 100% */
-      :deep(div), :deep(iframe) {
-        width: 100% !important;
-        max-width: 100% !important;
-        min-width: 100% !important;
+    .recaptcha-terms {
+      font-size: 0.65rem; // 💡 取代 9px
+      flex-wrap: nowrap;
+    }
+
+    &:hover {
+      box-shadow: 0 4px 8px rgba(v.$black, 0.1);
+
+      .check-box {
+        border-color: v.$vieshow-secondary; // 💡 取代 #A0A0A0
       }
     }
   }
 
+  /* ==========================================
+     3. 按鈕樣式微調
+     ========================================== */
+  .login-btn {
+    padding: var(--gap-sm); // 💡 取代 12px
+    border-radius: var(--app-radius-lg);
+    font-size: var(--app-font-size-base);
+    background-color: v.$vieshow-primary-dark;
+  }
+
+  .google-btn {
+    color: v.$vieshow-primary;
+    border-radius: var(--app-radius);
+    font-size: var(--app-font-size-base);
+    transition: all 0.2s ease;
+    overflow: hidden;
+
+    &:hover {
+      // 💡 取代死白的 #F0F0F0，改用具語意化的 rgba 輔助色
+      background-color: rgba(v.$vieshow-secondary, 0.1) !important;
+    }
+  }
+
   .register-hint {
-    font-size: var(--app-font-size-sm);
+    font-size: var(--app-font-size-sm); // 💡 取代 14px
     .register-link {
       color: v.$vieshow-primary;
+      &:hover {
+        color: v.$vieshow-primary-dark;
+      }
     }
   }
 }
