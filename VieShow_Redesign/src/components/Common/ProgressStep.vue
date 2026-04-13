@@ -51,7 +51,7 @@ const props = defineProps({
 .progress-container {
     width: 100%;
     max-width: 500px;
-    padding: 24px 64px;
+    padding: 0 64px 24px ;
     display: flex;
     margin: 0 auto;
     align-items: center;

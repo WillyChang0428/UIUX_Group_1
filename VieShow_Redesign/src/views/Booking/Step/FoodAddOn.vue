@@ -1,61 +1,65 @@
 <template>
+  <div class="container py-5">
     <ProgressStep :currentStep="3" :totalSteps="totalSteps" />
-  <div class="food-addon container w-100 py-5">
-    <!-- 頁籤列：橫向滾動不換行 -->
-    <div class="food-addon__tabs-wrap">
-      <div class="d-flex gap-2 food-addon__tabs">
-        <FilterButton
-          v-for="tab in tabs"
-          :key="tab.key"
-          :label="tab.label"
-          :active="activeTab === tab.key"
-          @toggle="activeTab = tab.key"
-        />
-      </div>
-    </div>
-
-    <!-- 餐點列表 -->
-    <div class="food-addon__list">
-      <div
-        v-for="(item, index) in currentItems"
-        :key="item.id"
-        class="food-item d-flex align-items-start justify-content-between"
-        :class="[
-          index % 2 === 0 ? 'food-item--even' : 'food-item--odd',
-          { 'food-item--active': item.quantity > 0 },
-        ]"
-      >
-        <!-- 左：圖片 -->
-        <div class="food-item__img-wrap">
-          <img :src="item.image" :alt="item.name" class="food-item__img" />
-        </div>
-
-        <!-- 中：品名（有數量時變 primary 色）-->
-        <div class="food-item__info d-flex flex-column justify-content-between">
-          <p
-            class="food-item__name mb-0"
-            :class="{ 'food-item__name--active': item.quantity > 0 }"
-          >
-            {{ item.name }}
-          </p>
-          <div class="d-flex flex-column align-items-baseline">
-            <span v-if="item.originalPrice" class="food-item__price-original">
-              NT {{ item.originalPrice }}
-            </span>
-            <span class="food-item__price">NT {{ item.price }}</span>
-          </div>
-        </div>
-
-        <!-- 右：價格 + StepperCounter（每品項上限 9，最少 0）-->
-        <div
-          class="food-item__right d-flex flex-column justify-content-end align-items-end"
-        >
-          <StepperCounter
-            :model-value="item.quantity"
-            :min="0"
-            :max="9"
-            @update:model-value="(val) => updateQty(item, val)"
+    <div class="food-addon w-100 py-5">
+      <!-- 頁籤列：橫向滾動不換行 -->
+      <div class="food-addon__tabs-wrap">
+        <div class="d-flex gap-2 food-addon__tabs">
+          <FilterButton
+            v-for="tab in tabs"
+            :key="tab.key"
+            :label="tab.label"
+            :active="activeTab === tab.key"
+            @toggle="activeTab = tab.key"
           />
+        </div>
+      </div>
+
+      <!-- 餐點列表 -->
+      <div class="food-addon__list">
+        <div
+          v-for="(item, index) in currentItems"
+          :key="item.id"
+          class="food-item d-flex align-items-start justify-content-between"
+          :class="[
+            index % 2 === 0 ? 'food-item--even' : 'food-item--odd',
+            { 'food-item--active': item.quantity > 0 },
+          ]"
+        >
+          <!-- 左：圖片 -->
+          <div class="food-item__img-wrap">
+            <img :src="item.image" :alt="item.name" class="food-item__img" />
+          </div>
+
+          <!-- 中：品名（有數量時變 primary 色）-->
+          <div
+            class="food-item__info d-flex flex-column justify-content-between"
+          >
+            <p
+              class="food-item__name mb-0"
+              :class="{ 'food-item__name--active': item.quantity > 0 }"
+            >
+              {{ item.name }}
+            </p>
+            <div class="d-flex flex-column align-items-baseline">
+              <span v-if="item.originalPrice" class="food-item__price-original">
+                NT {{ item.originalPrice }}
+              </span>
+              <span class="food-item__price">NT {{ item.price }}</span>
+            </div>
+          </div>
+
+          <!-- 右：價格 + StepperCounter（每品項上限 9，最少 0）-->
+          <div
+            class="food-item__right d-flex flex-column justify-content-end align-items-end"
+          >
+            <StepperCounter
+              :model-value="item.quantity"
+              :min="0"
+              :max="9"
+              @update:model-value="(val) => updateQty(item, val)"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -242,6 +246,8 @@ const updateQty = (item, newVal) => {
 // ── 圖片 ───────────────────────────────────────────────────────
 .food-item__img-wrap {
   height: 100%;
+  max-height: 100px;
+  aspect-ratio: 1 / 1;
   flex-shrink: 0;
   border-radius: var(--app-radius);
   overflow: hidden;
@@ -249,7 +255,6 @@ const updateQty = (item, newVal) => {
 }
 
 .food-item__img {
-  width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;

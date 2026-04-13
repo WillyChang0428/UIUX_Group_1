@@ -52,7 +52,10 @@
             class="movie-card-pc"
           >
             <div class="card-hover-wrapper d-flex flex-column h-100">
-              <div class="poster-box rounded-lg shadow-sm mb-3">
+              <div
+                class="poster-box rounded-lg shadow-sm mb-3"
+                @click="handleBooking(movie.id)"
+              >
                 <img
                   :src="movie.posterUrl"
                   class="w-100 h-100 object-fit-cover"
@@ -66,7 +69,7 @@
                 <p class="small mb-4 text-secondary text-truncate">
                   演員：{{ movie.cast }}
                 </p>
-                <SecondaryButton @click="handleBooking(movie.id)" class="btn-sm"
+                <SecondaryButton @click="handleBooking(movie.id)"
                   >立即訂票</SecondaryButton
                 >
               </div>
@@ -235,6 +238,7 @@ onUnmounted(() => {
       .poster-box {
         border-color: v.$vieshow-primary;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
       }
     }
   }

@@ -8,13 +8,13 @@ export const useAuthStore = defineStore("auth", () => {
   const userList = ref([
     {
       id: "U001",
-      realName: "王大明",
-      email: "wang123@gmail.com",
-      password: "Password123",
+      realName: "林芷璿",
+      email: "andylinsally@gmail.com",
+      password: "Aa12345678",
       idNumber: "A123456789",
       phone: "0912345678",
       isGoogleLinked: true,
-      linkedGoogleEmail: "wang123@gmail.com",
+      linkedGoogleEmail: "andylinsally@gmail.com",
       walletBalance: 1500
     },
     {

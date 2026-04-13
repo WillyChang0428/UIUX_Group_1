@@ -198,7 +198,7 @@ onUnmounted(() => {
 
       // 💡 穿透插槽 li 樣式
       :deep(li) {
-        padding: var(--gap-sm) var(--gap-md); // 手機 8px/16px, 電腦 16px/32px [cite: 38, 59, 131]
+        padding: 16px 16px; // 手機 8px/16px, 電腦 16px/32px [cite: 38, 59, 131]
         color: v.$white;
         font-size: var(--app-font-size-base);
         cursor: pointer;

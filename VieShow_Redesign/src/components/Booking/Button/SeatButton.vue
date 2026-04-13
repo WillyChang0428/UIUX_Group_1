@@ -70,8 +70,8 @@ const ariaLabel = computed(() => {
      尺寸設定 (Size) - 對應圖一的三種大小
      ========================================== */
     &.size-sm {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
         border-radius: 4px;
         border-width: 1px;
 
@@ -81,8 +81,8 @@ const ariaLabel = computed(() => {
     }
 
     &.size-md {
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
         border-radius: 6px;
         border-width: 1.5px;
 

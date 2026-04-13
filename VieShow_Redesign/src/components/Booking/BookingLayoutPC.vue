@@ -234,7 +234,5 @@ const movieInfo = computed(() => {
   // 剩餘 70% 空間
   flex: 1;
   min-width: 0;
-  padding: var(--gap-lg) var(--gap-lg);
-  // 右側不需要設定 height，讓它自然撐開頁面高度
 }
 </style>

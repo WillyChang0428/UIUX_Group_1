@@ -54,10 +54,11 @@ async function handleSubmit() {
 </script>
 
 <template>
+  <div class="container py-5">
   <ProgressStep :currentStep="currentStep" :totalSteps="totalSteps" />
   
   <form @submit.prevent="handleSubmit">
-    <ul class="container list-unstyled d-flex flex-column gap-4">
+    <ul class="list-unstyled d-flex flex-column gap-4 pt-3">
       <li><h5 class="text-light mb-1">帳號密碼設定</h5></li>
 
       <li>
@@ -108,6 +109,7 @@ async function handleSubmit() {
       </li>
     </ul>
   </form>
+  </div>
 </template>
 
 <style lang="scss" scoped>

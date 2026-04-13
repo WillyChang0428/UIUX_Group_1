@@ -15,15 +15,15 @@ import GoOnTop from "@/components/Common/Button/GoOnTop.vue";
       <SelectBox mode="home" />
     </div>
     <div class="hot-movie container">
-      <HomeSectionTitle title="熱門電影" link="/movie" />
+      <HomeSectionTitle title="熱門電影" link="/" />
     </div>
     <HomeHotMovie />
     <div class="container">
-      <HomeSectionTitle title="LIVE演唱會" link="/live" />
+      <HomeSectionTitle title="LIVE演唱會" link="/" />
     </div>
     <HomeLiveConcert />
     <div class="container">
-      <HomeSectionTitle title="最新消息" link="/news" />
+      <HomeSectionTitle title="最新消息" link="/" />
     </div>
     <HomeNewsSection />
     <GoOnTop />

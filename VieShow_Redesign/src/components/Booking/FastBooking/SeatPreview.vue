@@ -111,7 +111,7 @@ const getSeatState = (code) => {
       // 💡 利用 Vieshow Warning (黃色) 繪製螢幕發光線條 [cite: 54]
       border-top: 4px solid v.$vieshow-warning;
       border-radius: 50% / 100% 100% 0 0;
-      filter: drop-shadow(0px 4px 6px rgba(v.$vieshow-warning, 0.4));
+      filter: drop-shadow(0px 3px 3px rgba(v.$vieshow-warning, 0.4));
     }
 
     .screen-text {
