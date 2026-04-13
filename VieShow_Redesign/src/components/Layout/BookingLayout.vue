@@ -6,7 +6,7 @@
     <BookingStepHeader :step="currentStep" />
 
     <div class="selectedinfocard d-xl-none">
-      <SelectedInfoCard v-if="movieStore.selectedMovieId" />
+      <SelectedInfoCard v-if="movieStore.selectedMovieId && !isReceiptPage"" />
     </div>
 
     <main class="main-wrapper">
@@ -74,6 +74,12 @@ const currentStep = computed(() => {
       return 1;
   }
 });
+
+// 💡 新增：判斷目前是否為「收據/訂單完成」頁面
+const isReceiptPage = computed(() => {
+  return route.path === '/booking/receipt'; 
+});
+
 </script>
 
 <style lang="scss" scoped>
