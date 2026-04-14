@@ -1,15 +1,11 @@
 <template>
   <div v-if="movieInfo" class="order-card">
-    <!-- ── 共用頂部 ── -->
-    <div class="glass-card pb-4 pb-md-3 ">
-      <!-- 第一列：TicketStatusTag 靠右 -->
+    <div class="glass-card pb-4 pb-md-3">
       <div class="d-flex justify-content-end mb-2">
         <TicketStatusTag :status="ticketStatus" />
       </div>
 
-      <!-- 第二列：海報 + 電影資訊 -->
       <div class="glass-card__inner">
-        <!-- 左：海報縮圖 -->
         <div class="poster-wrapper">
           <img
             :src="movieInfo.posterUrl"
@@ -18,7 +14,6 @@
           />
         </div>
 
-        <!-- 右：電影資訊 -->
         <div class="movie-details">
           <div class="title-row">
             <span class="title-zh">{{ movieInfo.titleZh }}</span>
@@ -43,7 +38,6 @@
       </div>
     </div>
 
-    <!-- ── 模板一：其他票種 ── -->
     <template v-if="variant === 'other'">
       <div class="order-card__body order-card__body--other gap-4 gap-md-3">
         <hr class="order-card__divider" />
@@ -59,18 +53,15 @@
       </div>
     </template>
 
-    <!-- ── 模板二：一般購票流程 ── -->
     <template v-else-if="variant === 'standard'">
-      <div class="order-card__body order-card__body--standard  gap-4 gap-md-3">
+      <div class="order-card__body order-card__body--standard gap-4 gap-md-3">
         <hr class="order-card__divider" />
 
-        <!-- 條碼區 -->
         <div class="order-card__barcode-wrap">
           <img :src="barcodeUrl" alt="訂單條碼" class="order-card__barcode" />
           <p class="order-card__barcode-num">{{ barcodeNumber }}</p>
         </div>
 
-        <!-- 有效期限小字 -->
         <p class="order-card__expire-small">
           有效期限至
           <span class="text-primary">{{ movieInfo.date }}</span> 當天有效
@@ -78,7 +69,6 @@
 
         <hr class="order-card__divider" />
 
-        <!-- 票種列表 -->
         <div class="order-card__tickets">
           <div
             v-for="ticket in expandedTickets"
@@ -89,30 +79,53 @@
 
             <button
               class="order-card__share-btn"
-              @click="$emit('share-ticket', ticket)"
+              @click="openShareModal(ticket)"
               aria-label="分享票券"
             >
               <i class="fa-solid fa-arrow-up-from-bracket"></i>
             </button>
           </div>
         </div>
-
-        <!-- <hr class="order-card__divider" /> -->
-
-        <!-- 取餐代碼 -->
-        <!-- <div class="d-flex justify-content-between align-items-center">
-          <span class="order-card__pickup-label">取餐代碼</span>
-          <span class="order-card__pickup-code">{{ pickupCode }}</span>
-        </div> -->
+        <div class="order-card__food-notice">
+          <i class="fa-solid fa-utensils notice-icon"></i>
+          <span class="notice-text">如有加購餐點，請持上方條碼至櫃台取餐</span>
+        </div>
       </div>
     </template>
+
+    <Teleport to="body">
+      <BaseModal v-model="isShareModalOpen" type="danger">
+        <template #title>
+          <span class="fw-bold fs-5 text-white">分享此張票券</span>
+        </template>
+        <template #content>
+          <p class="mb-0 text-white fs-6">
+            一旦對方領取此票券，您將失去該座位的入場權限。
+          </p>
+        </template>
+        <template #footer>
+          <div class="d-flex justify-content-end gap-3 w-100">
+            <button
+              class="btn btn-outline-secondary"
+              @click="isShareModalOpen = false"
+            >
+              取消
+            </button>
+            <button class="btn btn-light" @click="confirmShare">
+              確認分享
+            </button>
+          </div>
+        </template>
+      </BaseModal>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { ref, computed } from "vue";
 import { useMovieStore } from "@/store/movieStore.js";
 import TicketStatusTag from "@/components/Booking/Button/TicketStatusTag.vue";
+import BaseModal from "@/components/Common/Button/BaseModal.vue"; // 💡 引入 BaseModal
 
 const movieStore = useMovieStore();
 
@@ -146,7 +159,6 @@ const props = defineProps({
     default: "active",
     validator: (v) => ["active", "pending", "expired"].includes(v),
   },
-  // 💡 請確保父層傳入時，只傳 tickets 與 combos，不要把 foodAddOns 傳進來
   tickets: {
     type: Array,
     default: () => [
@@ -168,31 +180,40 @@ const props = defineProps({
   },
 });
 
-defineEmits(["share-ticket"]);
+const emit = defineEmits(["share-ticket"]);
 
-// ── 💡 核心新增：將票券依照「數量」展開 ──
 const expandedTickets = computed(() => {
   const result = [];
-
   props.tickets.forEach((ticket) => {
-    // 依據 quantity 跑迴圈，有幾張就產生幾個獨立物件
     for (let i = 0; i < ticket.quantity; i++) {
       result.push({
         ...ticket,
-        // 替每一張獨立的票產生專屬的 key (例如 t1-0, t1-1)
         uniqueId: `${ticket.id}-${i}`,
       });
     }
   });
-
   return result;
 });
+
+// ── 💡 Modal 邏輯與狀態 ──
+const isShareModalOpen = ref(false);
+const selectedTicketToShare = ref(null); // 暫存準備分享的票
+
+const openShareModal = (ticket) => {
+  selectedTicketToShare.value = ticket; // 先把這張票記下來
+  isShareModalOpen.value = true; // 打開彈窗
+};
+
+const confirmShare = () => {
+  isShareModalOpen.value = false; // 關閉彈窗
+  emit("share-ticket", selectedTicketToShare.value); // 正式觸發分享事件
+  selectedTicketToShare.value = null; // 清空暫存
+};
 </script>
 
 <style lang="scss" scoped>
 @import "@/assets/scss/variables";
 
-// ── 卡片外框 ───────────────────────────────────────────────────
 .order-card {
   border-radius: var(--app-radius-lg);
   overflow: hidden;
@@ -200,7 +221,6 @@ const expandedTickets = computed(() => {
   padding: var(--gap-lg);
 }
 
-// ── 頂部區塊 ──────────────────────────────────────────────────
 .glass-card {
   width: 100%;
 }
@@ -212,7 +232,6 @@ const expandedTickets = computed(() => {
   width: 100%;
 }
 
-// ── 海報 ───────────────────────────────────────────────────────
 .poster-wrapper {
   flex-shrink: 0;
   width: 56px;
@@ -220,8 +239,8 @@ const expandedTickets = computed(() => {
   overflow: hidden;
   border-radius: var(--app-radius-lg);
   box-shadow:
-    0 4px 14px rgba(v.$black, 0.5),
-    0 0 0 1px rgba(v.$white, 0.08);
+    0 4px 14px rgba($black, 0.5),
+    0 0 0 1px rgba($white, 0.08);
 }
 
 .poster-img {
@@ -232,7 +251,6 @@ const expandedTickets = computed(() => {
   border-radius: var(--app-radius-lg);
 }
 
-// ── 文字區 ─────────────────────────────────────────────────────
 .movie-details {
   flex: 1;
   display: flex;
@@ -252,7 +270,7 @@ const expandedTickets = computed(() => {
 .title-zh {
   font-size: var(--app-font-size-h5);
   font-weight: 700;
-  color: v.$light;
+  color: $light;
   letter-spacing: 0.04em;
   line-height: 1.2;
   white-space: nowrap;
@@ -264,7 +282,7 @@ const expandedTickets = computed(() => {
 
 .title-en {
   font-size: var(--app-font-size-mini);
-  color: v.$light;
+  color: $light;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -280,17 +298,16 @@ const expandedTickets = computed(() => {
   flex-wrap: wrap;
   font-size: var(--app-font-size-mini);
   font-weight: 200;
-  color: v.$light;
+  color: $light;
   line-height: 1.4;
   letter-spacing: 0.01em;
 }
 
 .sep {
-  color: v.$white;
+  color: $white;
   margin: 0 0.125rem;
 }
 
-// ── body 共用 ──────────────────────────────────────────────────
 .order-card__body {
   display: flex;
   flex-direction: column;
@@ -302,12 +319,11 @@ const expandedTickets = computed(() => {
   border-top: 1px dashed $white;
 }
 
-// ── 模板一 ─────────────────────────────────────────────────────
 .order-card__expire-notice {
   margin: 0;
   font-size: var(--app-font-size-h6);
   font-weight: 700;
-  color: v.$vieshow-warning;
+  color: $vieshow-warning;
   line-height: 1.6;
   text-align: center;
 }
@@ -320,13 +336,12 @@ const expandedTickets = computed(() => {
   padding: var(--gap-xs) 0;
 }
 
-// ── 模板二 ─────────────────────────────────────────────────────
 .order-card__barcode-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--gap-xs);
-  background: v.$white;
+  background: $white;
   border-radius: var(--app-radius);
   padding: var(--gap-sm) var(--gap-md);
 }
@@ -342,7 +357,7 @@ const expandedTickets = computed(() => {
   margin: 0;
   font-size: var(--app-font-size-base);
   font-weight: 700;
-  color: v.$vieshow-dark;
+  color: $vieshow-dark;
   letter-spacing: 0.1em;
 }
 
@@ -368,13 +383,13 @@ const expandedTickets = computed(() => {
 .order-card__ticket-name {
   flex: 1;
   font-size: var(--app-font-size-base);
-  color: v.$white;
+  color: $white;
   min-width: 0;
 }
 
 .order-card__ticket-qty {
   font-size: var(--app-font-size-base);
-  color: v.$white;
+  color: $white;
   min-width: var(--gap-md);
   text-align: center;
 }
@@ -385,7 +400,7 @@ const expandedTickets = computed(() => {
   background: none;
   border: none;
   cursor: pointer;
-  color: v.$vieshow-secondary;
+  color: $vieshow-secondary;
   font-size: var(--app-font-size-base);
   padding: var(--gap-xs);
   transition: color 0.2s ease;
@@ -394,19 +409,45 @@ const expandedTickets = computed(() => {
   justify-content: end;
 
   @include hover-focus {
-    color: v.$white;
+    color: $white;
   }
 }
 
 .order-card__pickup-label {
   font-size: var(--app-font-size-base);
-  color: v.$white;
+  color: $white;
 }
 
 .order-card__pickup-code {
   font-size: var(--app-font-size-h5);
   font-weight: 700;
-  color: v.$vieshow-primary;
+  color: $vieshow-primary;
   letter-spacing: 0.05em;
+}
+
+// ── 💡 新增：取餐提示區塊 ─────────────────────────────────────────
+.order-card__food-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-sm);
+  margin-top: var(--gap-xs);
+  padding: 12px 16px;
+  border-radius: var(--app-radius);
+  background: rgba($vieshow-warning, 0.1); // 使用淡淡的警告色作為背景
+  border: 1px solid rgba($vieshow-warning, 0.3); // 加上細微的邊框增加立體感
+}
+
+.order-card__food-notice .notice-icon {
+  color: $vieshow-warning; // 讓 Icon 吃 Warning 顏色
+  font-size: var(--app-font-size-base);
+}
+
+.order-card__food-notice .notice-text {
+  color: $vieshow-warning; // 文字也使用 Warning 顏色
+  font-size: var(--app-font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  margin: 0;
 }
 </style>

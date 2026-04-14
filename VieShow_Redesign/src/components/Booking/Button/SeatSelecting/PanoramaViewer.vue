@@ -62,7 +62,7 @@ const onTouchMove = onPanMove;
   position: absolute;
   inset: 0;
   background: $black;
-  z-index: 20;
+  z-index: 120;
   overflow: hidden;
   display: flex;
   align-items: center;

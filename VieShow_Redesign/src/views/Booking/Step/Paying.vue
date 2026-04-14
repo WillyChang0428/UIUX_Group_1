@@ -1,5 +1,5 @@
 <template>
-  <div class="container-mb d-flex flex-column gap-3 py-5 position-relative">
+  <div class="container-md d-flex flex-column gap-3 py-5 position-relative">
     <ProgressStep class="mb-4" :currentStep="4" :totalSteps="totalSteps" />
     <OrderSummary />
     

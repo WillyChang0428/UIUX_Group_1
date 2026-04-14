@@ -1,5 +1,5 @@
 <template>
-  <div class="container-mb py-5">
+  <div class="container-md py-5">
     <ProgressStep :currentStep="3" :totalSteps="totalSteps" />
     <div class="food-addon w-100 py-5">
       <!-- 頁籤列：橫向滾動不換行 -->

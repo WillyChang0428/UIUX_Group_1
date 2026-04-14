@@ -258,36 +258,39 @@ const getTooltipClamp = (colIndex, row) => {
 };
 
 const handleSeatClick = (rowIndex, colIndex, seatCode) => {
-  if (seatCode === 0 || seatCode === 2 || seatCode === 3 || seatCode === 5)
-    return;
+  // 1. 阻擋不可選的座位 (走道、已售出、輪椅等)
+  if (seatCode === 0 || seatCode === 2 || seatCode === 3 || seatCode === 5) return;
 
   const key = `${rowIndex}-${colIndex}`;
   const idx = selectedSeats.value.indexOf(key);
 
   if (idx >= 0) {
+    // 💡 點擊第二次：如果已經選過了，就把它從陣列中移除 (取消選取)
     selectedSeats.value.splice(idx, 1);
     tooltip.value.key = "";
   } else {
-    while (selectedSeats.value.length >= props.ticketCount) {
-      selectedSeats.value.shift();
+    // 💡 點擊第一次：準備選取新座位
+    // 【修改重點】判斷是否已經達到總票數，如果達到就跳 Alert 並且 return 終止
+    if (selectedSeats.value.length >= props.ticketCount) {
+      alert(`您最多只能選擇 ${props.ticketCount} 個座位！\n如需更換座位，請先取消已選取的座位。`);
+      return; 
     }
+    
+    // 如果還沒超過票數，正常加入
     selectedSeats.value.push(key);
     tooltip.value.key = key;
   }
 
-  // 發送更新後的結果給父元件，確保格式包含 rowLabel 和 colLabel 讓付款明細使用
-  emit(
-    "seats-selected",
-    selectedSeats.value.map((k) => {
-      const [r, c] = k.split("-").map(Number);
-      return {
-        row: r,
-        col: c,
-        rowLabel: ROW_LABELS[r],
-        colLabel: getDisplayCol(seatLayout.value[r], c),
-      };
-    }),
-  );
+  // 發送更新後的結果給父元件
+  emit("seats-selected", selectedSeats.value.map((k) => {
+    const [r, c] = k.split("-").map(Number);
+    return {
+      row: r,
+      col: c,
+      rowLabel: ROW_LABELS[r],
+      colLabel: getDisplayCol(seatLayout.value[r], c)
+    };
+  }));
 };
 </script>
 
@@ -339,7 +342,6 @@ const handleSeatClick = (rowIndex, colIndex, seatCode) => {
   overflow: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba($white, 0.2) transparent;
-  cursor: grab;
   flex: 1;
   -webkit-overflow-scrolling: touch;
   @include media-breakpoint-up(md) {

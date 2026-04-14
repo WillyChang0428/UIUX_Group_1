@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="container-mb py-5">
+        <div class="container-md py-5">
             <ReceiptSetting />
         </div>
     </div>

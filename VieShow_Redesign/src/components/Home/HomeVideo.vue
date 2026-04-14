@@ -2,14 +2,20 @@
   <div v-if="isVisible" class="mobile-video-overlay d-md-none">
     <div class="video-modal-container">
       <div class="video-content-wrapper rounded-lg overflow-hidden">
+        
         <button class="close-btn clickable-icon" @click="closeVideo">
           <i class="fa-solid fa-xmark fs-5"></i>
         </button>
+
+        <button class="mute-btn clickable-icon" @click="toggleMute">
+          <i :class="['fa-solid', isMuted ? 'fa-volume-xmark' : 'fa-volume-high']"></i>
+        </button>
+
         <video
           ref="videoPlayer"
           class="video-element"
           autoplay
-          muted
+          :muted="isMuted"
           playsinline
           loop
         >
@@ -27,22 +33,19 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 const isVisible = ref(false);
-let timer = null; // 把計時器存起來，方便需要時可以取消
+let timer = null; 
+
+// 💡 新增：控制靜音狀態的響應式變數 (預設必須為 true 才能讓瀏覽器自動播放)
+const isMuted = ref(true);
 
 const checkAndShowVideo = () => {
-  // 💡 1. 確保目前「真的」是在首頁
   if (route.path !== "/") return;
-
-  // 💡 2. 確保是手機版 (中斷點 768px 以下)
   if (window.innerWidth >= 768) return;
 
-  // 💡 3. 檢查 sessionStorage 是否已經有「播放過」的紀錄
   const hasSeenVideo = sessionStorage.getItem("hasSeenHomeVideo");
   if (hasSeenVideo) return; 
 
-  // 💡 4. 設定計時器彈出影片
   timer = setTimeout(() => {
-    // 再做最後一次雙重確認，避免倒數期間使用者已經跳去別頁了！
     if (route.path === "/") {
       isVisible.value = true;
       sessionStorage.setItem("hasSeenHomeVideo", "true");
@@ -50,29 +53,33 @@ const checkAndShowVideo = () => {
   }, 4300);
 };
 
-// 進入元件時先檢查一次 (應付從其他頁面按「首頁」按鈕回來的情況)
 onMounted(() => {
   checkAndShowVideo();
 });
 
-// 💡 關鍵：監聽網址變化。應付「直接輸入網址開新分頁」時的延遲解析問題
 watch(() => route.path, (newPath) => {
   if (newPath === '/') {
     checkAndShowVideo();
   } else {
-    // 如果使用者在 4.3 秒內跳走，立刻取消計時器，以免在別頁彈出！
     if (timer) clearTimeout(timer);
     isVisible.value = false;
+    isMuted.value = true; // 💡 離開時順便把音量重置回靜音
   }
 });
 
+// 💡 新增：切換音量的方法
+const toggleMute = () => {
+  isMuted.value = !isMuted.value;
+};
+
 const closeVideo = () => {
   isVisible.value = false;
+  isMuted.value = true; // 💡 關閉彈窗時順便把音量重置回靜音
 };
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/scss/variables"; // 💡 調用地基變數
+@import "@/assets/scss/variables";
 
 .mobile-video-overlay {
   position: fixed;
@@ -81,7 +88,6 @@ const closeVideo = () => {
   width: 100vw;
   height: 100vh;
   z-index: 9999;
-  /* 💡 修正編譯錯誤：移除 v. 前綴，直接使用 $black */
   background: rgba($black, 0.65);
   display: flex;
   align-items: center;
@@ -105,7 +111,6 @@ const closeVideo = () => {
   top: 10px;
   right: 10px;
   align-self: flex-end;
-  /* 💡 修正編譯錯誤：移除 v. 前綴 */
   color: rgba($white, 0.5);
   border-radius: 50%;
   width: var(--icon-sm);
@@ -113,6 +118,35 @@ const closeVideo = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: $white;
+  }
+}
+
+/* 💡 新增：靜音按鈕專屬樣式 */
+.mute-btn {
+  position: absolute;
+  z-index: 10;
+  bottom: 15px;
+  right: 15px;
+  background: rgba($black, 0.4);
+  backdrop-filter: blur(4px);
+  color: $white;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba($white, 0.2);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba($vieshow-primary, 0.8);
+    border-color: $vieshow-primary;
+  }
 }
 
 .video-content-wrapper {
@@ -120,7 +154,6 @@ const closeVideo = () => {
   width: 100%;
   max-width: 350px;
   aspect-ratio: 9 / 16;
-  /* 💡 修正編譯錯誤：移除 v. 前綴 */
   background: $black;
   border: 1px solid $vieshow-primary;
   border-radius: var(--app-radius-lg);
@@ -137,7 +170,6 @@ const closeVideo = () => {
   width: 80%;
   height: 20px;
   margin: 0 auto;
-  /* 💡 修正編譯錯誤：移除 v. 前綴 */
   background: $vieshow-primary;
   filter: blur(25px);
   opacity: 0.6;

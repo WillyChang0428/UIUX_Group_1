@@ -36,36 +36,59 @@ Slots:
 #content: 彈窗主體內容，支援純文字或 HTML。
 -->
 
-
-
-
 <template>
   <Teleport to="body">
     <Transition name="fade">
-      <div v-if="modelValue" 
-          class="modal-overlay d-flex justify-content-center" 
-          :class="[type === 'toast' ? 'align-items-start pt-5' : 'align-items-center']"
-          @click.self="type !== 'toast' && close()">
-        
-        <div class="modal-container shadow-lg p-4" 
-            :class="{ 'border-danger': type === 'danger', 'toast-style': type === 'toast' }">
-          
-          <div v-if="type !== 'toast'" class="modal-header d-flex justify-content-between align-items-center border-0 mb-3 p-0">
-            <h4 class="modal-title h4 mb-0 fw-medium" :class="{ 'text-danger': type === 'danger' }">
+      <div
+        v-if="modelValue"
+        class="modal-overlay d-flex justify-content-center"
+        :class="[
+          type === 'toast' ? 'align-items-start pt-5' : 'align-items-center',
+        ]"
+        @click.self="type !== 'toast' && close()"
+      >
+        <div
+          class="modal-container shadow-lg p-4"
+          :class="{
+            'border-danger': type === 'danger',
+            'toast-style': type === 'toast',
+          }"
+        >
+          <div
+            v-if="type !== 'toast'"
+            class="modal-header d-flex justify-content-between align-items-center border-0 mb-3 p-0"
+          >
+            <h4
+              class="modal-title h4 mb-0 fw-medium"
+              :class="{ 'text-danger': type === 'danger' }"
+            >
               <slot name="title">標題</slot>
             </h4>
-            
-            <button type="button" class="close-btn border-0 bg-transparent p-2" @click="close" aria-label="Close">
+
+            <button
+              type="button"
+              class="close-btn border-0 bg-transparent p-2"
+              @click="close"
+              aria-label="Close"
+            >
               <i class="fa-solid fa-xmark icon-md text-white"></i>
             </button>
           </div>
 
           <div class="modal-body p-0">
-            <div class="modal-text" :class="[type === 'scroll' ? 'scroll-mode' : 'fs-sm']">
+            <div
+              class="modal-text"
+              :class="[type === 'scroll' ? 'scroll-mode' : 'fs-sm']"
+            >
               <slot name="content">此為預設警示說明內容。</slot>
             </div>
           </div>
-
+          <div
+            v-if="$slots.footer && type !== 'toast'"
+            class="modal-footer border-0 p-0 mt-4"
+          >
+            <slot name="footer"></slot>
+          </div>
         </div>
       </div>
     </Transition>
@@ -73,30 +96,33 @@ Slots:
 </template>
 
 <script setup>
-import { watch } from 'vue';
+import { watch } from "vue";
 
 const props = defineProps({
   modelValue: { type: Boolean, required: true },
   // 樣式類型：'base' (基本), 'danger' (危險), 'scroll' (長文字), 'toast' (自動關閉提示)
-  type: { type: String, default: 'base' },
+  type: { type: String, default: "base" },
   // 自動關閉時間 (毫秒)
-  duration: { type: Number, default: 3000 }
+  duration: { type: Number, default: 3000 },
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(["update:modelValue"]);
 
 const close = () => {
-  emit('update:modelValue', false);
+  emit("update:modelValue", false);
 };
 
 // 處理模式 4：自動關閉邏輯
-watch(() => props.modelValue, (newVal) => {
-  if (newVal && props.type === 'toast') {
-    setTimeout(() => {
-      close();
-    }, props.duration);
-  }
-});
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal && props.type === "toast") {
+      setTimeout(() => {
+        close();
+      }, props.duration);
+    }
+  },
+);
 </script>
 
 <style lang="scss" scoped>
@@ -105,7 +131,7 @@ watch(() => props.modelValue, (newVal) => {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba($black, 0.6); 
+  background: rgba($black, 0.6);
   z-index: 9999;
   backdrop-filter: blur(4px);
 }
@@ -113,8 +139,8 @@ watch(() => props.modelValue, (newVal) => {
 .modal-container {
   width: fit-content;
   max-width: 300px;
-  background: rgba($white, 0.1); 
-  border: 2px solid rgba($white, 0.2); 
+  background: rgba($white, 0.1);
+  border: 2px solid rgba($white, 0.2);
   border-radius: $border-radius-pc;
   backdrop-filter: blur(20px) saturate(180%);
   color: $white;
@@ -145,12 +171,21 @@ watch(() => props.modelValue, (newVal) => {
   padding-right: 8px;
 
   /* 客製化捲軸樣式 */
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: rgba($white, 0.3); border-radius: 10px; }
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba($white, 0.3);
+    border-radius: 10px;
+  }
 }
 
-.modal-title { letter-spacing: $letter-spacing-wide; }
-.text-danger { color: $vieshow-danger !important; }
+.modal-title {
+  letter-spacing: $letter-spacing-wide;
+}
+.text-danger {
+  color: $vieshow-danger !important;
+}
 
 .btn-vieshow-primary {
   background: $vieshow-gradient-primary;
@@ -159,6 +194,13 @@ watch(() => props.modelValue, (newVal) => {
 }
 
 // 動態效果
-.fade-enter-active, .fade-leave-active { transition: all 0.3s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(-20px); }
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
 </style>
