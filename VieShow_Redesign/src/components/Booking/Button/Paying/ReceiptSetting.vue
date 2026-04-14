@@ -82,9 +82,9 @@ const bookingStore = useBookingStore();
 
 // ── 定義可選的發票類型與捐贈單位 ───────────────────────────
 const receiptOptions = [
-    { id: 'personal-e', label: '個人 - 電子發票' },
-    { id: 'mobile-barcode', label: '個人 - 手機條碼載具' },
-    { id: 'company-e', label: '公司 - 電子發票' },
+    { id: 'personal-e', label: '電子發票' },
+    { id: 'mobile-barcode', label: '手機條碼載具' },
+    { id: 'company-e', label: '統一編號發票' },
     { id: 'donate', label: '捐贈發票' }
 ];
 
