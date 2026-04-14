@@ -97,13 +97,13 @@
           </div>
         </div>
 
-        <hr class="order-card__divider" />
+        <!-- <hr class="order-card__divider" /> -->
 
         <!-- 取餐代碼 -->
-        <div class="d-flex justify-content-between align-items-center">
+        <!-- <div class="d-flex justify-content-between align-items-center">
           <span class="order-card__pickup-label">取餐代碼</span>
           <span class="order-card__pickup-code">{{ pickupCode }}</span>
-        </div>
+        </div> -->
       </div>
     </template>
   </div>

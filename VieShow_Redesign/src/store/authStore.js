@@ -9,12 +9,12 @@ export const useAuthStore = defineStore("auth", () => {
     {
       id: "U001",
       realName: "林芷璿",
-      email: "andylinsally@gmail.com",
+      email: "123@gmail.com",
       password: "Aa12345678",
       idNumber: "A123456789",
       phone: "0912345678",
       isGoogleLinked: true,
-      linkedGoogleEmail: "andylinsally@gmail.com",
+      linkedGoogleEmail: "123@gmail.com",
       walletBalance: 1500
     },
     {

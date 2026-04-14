@@ -62,7 +62,7 @@
           還不是會員？
           <router-link
             to="/SignUp"
-            target="_blank" 
+            @click="isOpen = false"
             class="register-link text-decoration-none fw-medium"
           >
             立即註冊
@@ -82,7 +82,7 @@ import { watch } from 'vue';
 import BaseModal from "@/components/Common/Button/BaseModal.vue";
 import SecondaryButton from "@/components/Common/Button/SecondaryButton.vue";
 
-const router = useRouter(); // 🌟 記得確保有 import router
+const router = useRouter(); 
 const authStore = useAuthStore();
 const emit = defineEmits(["success"]);
 
@@ -96,12 +96,11 @@ const errorMessage = ref("");
 watch(() => authStore.isLoggedIn, (newVal) => {
   if (newVal === true) {
     console.log("偵測到已登入，自動關閉彈窗並通知成功！");
-    isOpen.value = false; // 自動關閉登入彈窗
-    emit("success");      // 告訴 BookingBottomBar 登入成功了，可以繼續訂票
+    isOpen.value = false; 
+    emit("success");      
   }
 });
 
-// 一般登入邏輯保持不變
 const handleLogin = () => {
   errorMessage.value = "";
   if (!email.value || !password.value) {
@@ -123,15 +122,10 @@ const handleLogin = () => {
   }
 };
 
-// 🌟 重點 2：處理 Google 登入分流（開新分頁）
-/**
- * 🌟 強化後的 Google 登入處理
- */
 const handleGoogleLogin = (response) => {
   console.log("🚩 [Debug] 收到 Google 回傳：", response);
   
   try {
-    // 1. 解密 Google 回傳的 JWT
     if (!response.credential) {
       errorMessage.value = "Google 認證失敗，請重試。";
       return;
@@ -146,32 +140,21 @@ const handleGoogleLogin = (response) => {
       return;
     }
 
-    // 2. 呼叫 Store 進行分流
     const result = authStore.startGoogleRegistration(googleEmail);
     console.log("🚩 [Debug] Store 分流結果：", result.action);
 
     if (result.action === 'login') {
-      // ✅ 老會員：直接登入成功
       isOpen.value = false; 
       emit("success"); 
       console.log("✅ 老會員登入成功");
     } 
     else if (result.action === 'register') {
-      // 🆕 新朋友：引導至註冊流程第一步
       console.log("🆕 新用戶，準備引導至註冊 Step 1");
       isOpen.value = false; 
 
-      // 取得目標網址
-      const routeUrl = router.resolve({ path: '/SignUp/SignUpStep1' }).href;
-      
-      // 🌟 嘗試開新分頁
-      const newTab = window.open(routeUrl, '_blank');
-
-      // 💡 防呆機制：如果開新分頁被瀏覽器攔截 (Popup Blocker)，就改用原地跳轉
-      if (!newTab || newTab.closed || typeof newTab.closed === 'undefined') {
-        console.warn("⚠️ 偵測到彈窗攔截，改為原地跳轉");
-        router.push('/SignUp/SignUpStep1');
-      }
+      // 🌟 移除開新分頁 (window.open) 的邏輯
+      // 直接使用 router.push 導向註冊頁面，留在當前分頁
+      router.push('/SignUp/SignUpStep1');
     }
   } catch (error) {
     console.error("❌ Google 登入解析錯誤:", error);
@@ -187,19 +170,16 @@ const handleClose = () => {
 <style scoped lang="scss">
 @import "@/assets/scss/variables";
 
+/* CSS 樣式完全保持原樣，沒有更動 */
 .login-form-wrapper {
   padding: 0;
 
-  /* ==========================================
-     1. 自定義無邊框輸入框 (底線樣式)
-     ========================================== */
   .custom-input {
     background: transparent !important;
     border: none;
     border-bottom: 1px solid rgba(v.$white, 0.3);
     border-radius: 0;
     color: v.$white;
-    // 💡 12px 10px 替換為響應式間距
     padding: var(--gap-sm) var(--gap-sm) var(--gap-sm) 0;
     font-size: var(--app-font-size-base);
     transition: all 0.3s ease;
@@ -220,7 +200,6 @@ const handleClose = () => {
     }
   }
 
-  // 眼睛圖示定位
   .password-toggle {
     position: absolute;
     right: 0;
@@ -229,49 +208,45 @@ const handleClose = () => {
     cursor: pointer;
     color: rgba(v.$white, 0.5);
     z-index: 10;
-    padding: var(--gap-sm); // 💡 取代 10px
+    padding: var(--gap-sm); 
 
     &:hover {
       color: v.$white;
     }
   }
 
-  // 💡 獨立拉出錯誤文字與連結的樣式，取代 inline-style
   .error-text {
-    font-size: var(--app-font-size-mini); // 對應 12px/14px
+    font-size: var(--app-font-size-mini); 
     letter-spacing: v.$letter-spacing-wide;
   }
 
   .forgot-pwd-link {
-    font-size: var(--app-font-size-sm); // 💡 取代 14px
+    font-size: var(--app-font-size-sm); 
   }
 
-  /* ==========================================
-     2. 模擬 reCAPTCHA 驗證區塊
-     ========================================== */
   .recaptcha-box {
-    border: 1px solid v.$vieshow-tertiary; // 💡 取代 #D3D3D3
-    border-radius: var(--app-radius-sm); // 💡 取代 4px
-    padding: var(--gap-sm) var(--gap-md); // 💡 取代 12px 16px
+    border: 1px solid v.$vieshow-tertiary; 
+    border-radius: var(--app-radius-sm); 
+    padding: var(--gap-sm) var(--gap-md); 
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(v.$black, 0.05); // 💡 改用 v.$black
+    box-shadow: 0 2px 4px rgba(v.$black, 0.05); 
     transition: all 0.2s ease;
 
     .check-box {
       width: var(--app-font-size-h4);
-      height: var(--app-font-size-h4); // 💡 取代 24px
+      height: var(--app-font-size-h4); 
       height: 1.5rem;
-      border: 2px solid v.$vieshow-tertiary; // 💡 取代 #C1C1C1
-      border-radius: 2px; // 極小圓角保留
+      border: 2px solid v.$vieshow-tertiary; 
+      border-radius: 2px; 
       transition: all 0.2s ease;
     }
 
-.robot-text{
-  font-size: var(--app-font-size-sm); // 💡 取代 14px
-}
+    .robot-text{
+      font-size: var(--app-font-size-sm); 
+    }
 
     .recaptcha-terms {
-      font-size: 0.65rem; // 💡 取代 9px
+      font-size: 0.65rem; 
       flex-wrap: nowrap;
     }
 
@@ -279,16 +254,13 @@ const handleClose = () => {
       box-shadow: 0 4px 8px rgba(v.$black, 0.1);
 
       .check-box {
-        border-color: v.$vieshow-secondary; // 💡 取代 #A0A0A0
+        border-color: v.$vieshow-secondary; 
       }
     }
   }
 
-  /* ==========================================
-     3. 按鈕樣式微調
-     ========================================== */
   .login-btn {
-    padding: var(--gap-sm); // 💡 取代 12px
+    padding: var(--gap-sm); 
     border-radius: var(--app-radius-lg);
     font-size: var(--app-font-size-base);
     background-color: v.$vieshow-primary-dark;
@@ -306,13 +278,12 @@ const handleClose = () => {
     overflow: hidden;
 
     &:hover {
-      // 💡 取代死白的 #F0F0F0，改用具語意化的 rgba 輔助色
       background-color: rgba(v.$vieshow-secondary, 0.1) !important;
     }
   }
 
   .register-hint {
-    font-size: var(--app-font-size-sm); // 💡 取代 14px
+    font-size: var(--app-font-size-sm); 
     .register-link {
       color: v.$vieshow-primary;
       &:hover {

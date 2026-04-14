@@ -48,7 +48,7 @@
           @click="isLoginOpen = true"
           class="clickable-icon h5 mb-0 text-decoration-none"
         >
-          <i class="fa-solid fa-right-to-bracket text-white"></i>
+          <i class="fa-regular fa-user text-white"></i>
         </div>
 
         <div v-else class="dropdown d-flex align-items-center">
@@ -57,8 +57,8 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            <i class="fa-solid fa-user text-white"></i
-            ><i class="fa-solid fa-caret-down text-white fs-6"></i>
+            <i class="fa-solid fa-user text-white"></i>
+            <i class="fa-solid fa-caret-down text-white fs-6"></i>
           </div>
 
           <ul class="dropdown-menu dropdown-menu-end shadow-sm mt-2 border-0">
