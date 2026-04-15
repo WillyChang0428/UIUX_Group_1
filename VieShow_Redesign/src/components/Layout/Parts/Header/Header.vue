@@ -127,7 +127,7 @@ const handleLogout = () => {
 .header-bg {
   background: v.$vieshow-gradient-primary;
   height: v.$web-top-padding-mobile;
-  z-index: 1050;
+  z-index: 9999;
   display: flex;
   align-items: center;
   padding: 0;

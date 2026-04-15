@@ -24,3 +24,6 @@ app.use(vue3GoogleLogin, {
 
 // 4. 裝備都穿好後，最後才推上戰場掛載到 HTML 上！
 app.mount('#app')
+
+// 讓所有組件的 :active 效果在手機端生效
+document.body.addEventListener('touchstart', function() {}, { passive: true });

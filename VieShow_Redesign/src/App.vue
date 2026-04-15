@@ -20,6 +20,10 @@ const appStore = useAppStore();
 </script>
 
 <style lang="scss">
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 html,
 body,
 #app {
@@ -33,6 +37,7 @@ body,
 .fade-leave-active {
   transition: opacity 0.3s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
@@ -42,8 +47,10 @@ body,
 .global-loading-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999; /* 確保它在最高層，蓋住 Navbar 與 BottomBar */
-  background-color: #0f1115; /* 威秀深色底 */
+  z-index: 9999;
+  /* 確保它在最高層，蓋住 Navbar 與 BottomBar */
+  background-color: #0f1115;
+  /* 威秀深色底 */
   display: flex;
   justify-content: center;
   align-items: center;

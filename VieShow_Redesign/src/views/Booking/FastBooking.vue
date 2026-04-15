@@ -105,7 +105,7 @@ const handleSeatPreview = (previewData) => {
 
   .selector-wrapper {
     position: relative;
-    z-index: 200;
+    z-index: 1050;
   }
 
   .theater-title {

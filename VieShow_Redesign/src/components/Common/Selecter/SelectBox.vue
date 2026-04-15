@@ -1,36 +1,20 @@
 <template>
   <div class="booking-selector w-100" :class="`mode-${mode}`">
     <template v-if="mode === 'home'">
-      <div
-        class="home-widget d-flex flex-column flex-lg-row align-items-lg-center"
-      >
-        <div
-          class="title fw-medium text-white me-lg-4 fs-5 flex-shrink-0 mb-3 mb-lg-0"
-        >
+      <div class="home-widget d-flex flex-column flex-lg-row align-items-lg-center">
+        <div class="title fw-medium text-white me-lg-4 fs-5 flex-shrink-0 mb-3 mb-lg-0">
           快速訂票
         </div>
 
-        <div
-          class="selection-wrapper d-flex flex-column flex-lg-row gap-3 w-100"
-        >
+        <div class="selection-wrapper d-flex flex-column flex-lg-row gap-3 w-100">
           <div class="MovieSelecter">
-            <FlatSelect
-              class="flex-grow-1"
-              :isOpen="isMovieOpen"
-              :isSelected="isMovieSelected"
-              :placeholder="selectedMovie || '選擇電影'"
-              @toggle="isMovieOpen = !isMovieOpen"
-              @clear="clearMovie"
-            >
+            <FlatSelect class="flex-grow-1" :isOpen="isMovieOpen" :isSelected="isMovieSelected"
+              :placeholder="selectedMovie || '選擇電影'" @toggle="isMovieOpen = !isMovieOpen" @clear="clearMovie">
               <template #options>
                 <li @click="handleMovieSelect('all')">
                   <span class="title-zh">全部電影</span>
                 </li>
-                <li
-                  v-for="movie in movieStore.movieList"
-                  :key="movie.id"
-                  @click="handleMovieSelect(movie)"
-                >
+                <li v-for="movie in movieStore.movieList" :key="movie.id" @click="handleMovieSelect(movie)">
                   <span class="title-zh">{{ movie.titleZh }}</span>
                   <span class="title-en ms-2 text-secondary">{{
                     movie.titleEn
@@ -41,26 +25,12 @@
           </div>
           <div class="CinemaGroup d-flex gap-3 w-100">
             <div class="CinemaSelecter d-flex gap-3 w-100">
-              <FlatSelect
-                class="flex-grow-1"
-                :isOpen="isCinemaOpen"
-                :isSelected="isCinemaSelected"
-                :placeholder="selectedCinema || '選擇影城'"
-                @toggle="isCinemaOpen = !isCinemaOpen"
-                @clear="clearCinema"
-              >
+              <FlatSelect class="flex-grow-1" :isOpen="isCinemaOpen" :isSelected="isCinemaSelected"
+                :placeholder="selectedCinema || '選擇影城'" @toggle="isCinemaOpen = !isCinemaOpen" @clear="clearCinema">
                 <template #options>
                   <template v-if="cinemaStore.cinemaList?.length">
-                    <SelectCategory
-                      v-for="region in cinemaStore.cinemaList"
-                      :key="region.id"
-                      :label="region.label"
-                    >
-                      <li
-                        v-for="theater in region.theaters"
-                        :key="theater"
-                        @click="handleCinemaSelect(theater)"
-                      >
+                    <SelectCategory v-for="region in cinemaStore.cinemaList" :key="region.id" :label="region.label">
+                      <li v-for="theater in region.theaters" :key="theater" @click="handleCinemaSelect(theater)">
                         {{ theater }}
                       </li>
                     </SelectCategory>
@@ -68,9 +38,7 @@
                 </template>
               </FlatSelect>
             </div>
-            <SecondaryButton class="search-btn" @click="handleSearch"
-              >搜尋</SecondaryButton
-            >
+            <SecondaryButton class="search-btn" @click="handleSearch">搜尋</SecondaryButton>
           </div>
         </div>
       </div>
@@ -78,22 +46,13 @@
 
     <template v-else>
       <div class="page-widget" :class="{ 'has-selection': isMovieSelected }">
-        <FlatSelect
-          :isOpen="isMovieOpen"
-          :isSelected="isMovieSelected"
-          :placeholder="selectedMovie || '選擇電影'"
-          @toggle="isMovieOpen = !isMovieOpen"
-          @clear="clearMovie"
-        >
+        <FlatSelect :isOpen="isMovieOpen" :isSelected="isMovieSelected" :placeholder="selectedMovie || '選擇電影'"
+          @toggle="isMovieOpen = !isMovieOpen" @clear="clearMovie">
           <template #options>
             <li @click="handleMovieSelect('all')">
               <span class="title-zh">全部電影</span>
             </li>
-            <li
-              v-for="movie in movieStore.movieList"
-              :key="movie.id"
-              @click="handleMovieSelect(movie)"
-            >
+            <li v-for="movie in movieStore.movieList" :key="movie.id" @click="handleMovieSelect(movie)">
               <span class="title-zh">{{ movie.titleZh }}</span>
               <span class="title-en ms-2 text-secondary">{{
                 movie.titleEn
@@ -217,8 +176,8 @@ const handleSearch = () => {
   width: 100%;
 
   /* 💡 核心修正 1：確保「所有」外層與內層的 flex 子元素都不會被文字撐開 */
-  .selection-wrapper > div,
-  .CinemaGroup > div {
+  .selection-wrapper>div,
+  .CinemaGroup>div {
     min-width: 0;
   }
 
@@ -260,8 +219,10 @@ const handleSearch = () => {
     /* 電影選單分配空間 */
     .MovieSelecter {
       width: 100%;
+
       @include media-breakpoint-up(lg) {
-        flex: 2 1 0%; /* 佔 2 份空間 */
+        flex: 2 1 0%;
+        /* 佔 2 份空間 */
         min-width: 0;
       }
     }
@@ -269,8 +230,10 @@ const handleSearch = () => {
     /* 影城與按鈕的群組分配空間 */
     .CinemaGroup {
       width: 100%;
+
       @include media-breakpoint-up(lg) {
-        flex: 3 1 0%; /* 佔 3 份空間 */
+        flex: 3 1 0%;
+        /* 佔 3 份空間 */
         min-width: 0;
       }
     }
@@ -278,8 +241,10 @@ const handleSearch = () => {
     /* 按鈕絕對不壓縮 */
     .search-btn {
       flex-shrink: 0;
-      white-space: nowrap; /* 確保「搜尋」兩個字不換行 */
-      padding: 0 20px; /* 給手機版適當的左右內距 */
+      white-space: nowrap;
+      /* 確保「搜尋」兩個字不換行 */
+      padding: 0 20px;
+      /* 給手機版適當的左右內距 */
 
       @include media-breakpoint-up(lg) {
         width: 100px;
